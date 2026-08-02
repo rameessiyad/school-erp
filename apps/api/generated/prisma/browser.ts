@@ -33,6 +33,11 @@ export type AcademicYear = Prisma.AcademicYearModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model Staff
+ * 
+ */
+export type Staff = Prisma.StaffModel
+/**
  * Model Teacher
  * 
  */
@@ -147,3 +152,18 @@ export type ExamResult = Prisma.ExamResultModel
  * 
  */
 export type SubjectMark = Prisma.SubjectMarkModel
+/**
+ * Model FeeStructure
+ * 
+ */
+export type FeeStructure = Prisma.FeeStructureModel
+/**
+ * Model StudentFee
+ * 
+ */
+export type StudentFee = Prisma.StudentFeeModel
+/**
+ * Model FeePayment
+ * 
+ */
+export type FeePayment = Prisma.FeePaymentModel

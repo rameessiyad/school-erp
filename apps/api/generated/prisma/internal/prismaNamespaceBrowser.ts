@@ -54,6 +54,7 @@ export const ModelName = {
   School: 'School',
   AcademicYear: 'AcademicYear',
   User: 'User',
+  Staff: 'Staff',
   Teacher: 'Teacher',
   Parent: 'Parent',
   Student: 'Student',
@@ -76,7 +77,10 @@ export const ModelName = {
   Exam: 'Exam',
   ExamTimeTable: 'ExamTimeTable',
   ExamResult: 'ExamResult',
-  SubjectMark: 'SubjectMark'
+  SubjectMark: 'SubjectMark',
+  FeeStructure: 'FeeStructure',
+  StudentFee: 'StudentFee',
+  FeePayment: 'FeePayment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -128,6 +132,7 @@ export const UserScalarFieldEnum = {
   email: 'email',
   phone: 'phone',
   passwordHash: 'passwordHash',
+  refreshTokenHash: 'refreshTokenHash',
   isActive: 'isActive',
   lastLogin: 'lastLogin',
   createdAt: 'createdAt',
@@ -135,6 +140,23 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const StaffScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  userId: 'userId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  phone: 'phone',
+  email: 'email',
+  designation: 'designation',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StaffScalarFieldEnum = (typeof StaffScalarFieldEnum)[keyof typeof StaffScalarFieldEnum]
 
 
 export const TeacherScalarFieldEnum = {
@@ -467,6 +489,52 @@ export const SubjectMarkScalarFieldEnum = {
 } as const
 
 export type SubjectMarkScalarFieldEnum = (typeof SubjectMarkScalarFieldEnum)[keyof typeof SubjectMarkScalarFieldEnum]
+
+
+export const FeeStructureScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  academicYearId: 'academicYearId',
+  name: 'name',
+  amount: 'amount',
+  frequency: 'frequency',
+  description: 'description',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FeeStructureScalarFieldEnum = (typeof FeeStructureScalarFieldEnum)[keyof typeof FeeStructureScalarFieldEnum]
+
+
+export const StudentFeeScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  feeStructureId: 'feeStructureId',
+  totalAmount: 'totalAmount',
+  discountAmount: 'discountAmount',
+  dueDate: 'dueDate',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StudentFeeScalarFieldEnum = (typeof StudentFeeScalarFieldEnum)[keyof typeof StudentFeeScalarFieldEnum]
+
+
+export const FeePaymentScalarFieldEnum = {
+  id: 'id',
+  studentFeeId: 'studentFeeId',
+  amount: 'amount',
+  paymentMethod: 'paymentMethod',
+  receiptNumber: 'receiptNumber',
+  paymentDate: 'paymentDate',
+  collectedById: 'collectedById',
+  remarks: 'remarks',
+  createdAt: 'createdAt'
+} as const
+
+export type FeePaymentScalarFieldEnum = (typeof FeePaymentScalarFieldEnum)[keyof typeof FeePaymentScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -20,11 +20,21 @@ export type SchoolStatus = (typeof SchoolStatus)[keyof typeof SchoolStatus]
 export const Role = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   SCHOOL_ADMIN: 'SCHOOL_ADMIN',
+  STAFF: 'STAFF',
   TEACHER: 'TEACHER',
   PARENT: 'PARENT'
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const StaffDesignation = {
+  ACCOUNTANT: 'ACCOUNTANT',
+  ADMISSION_OFFICER: 'ADMISSION_OFFICER',
+  RECEPTIONIST: 'RECEPTIONIST'
+} as const
+
+export type StaffDesignation = (typeof StaffDesignation)[keyof typeof StaffDesignation]
 
 
 export const Gender = {
@@ -122,3 +132,35 @@ export const ExamType = {
 } as const
 
 export type ExamType = (typeof ExamType)[keyof typeof ExamType]
+
+
+export const FeeFrequency = {
+  ONE_TIME: 'ONE_TIME',
+  MONTHLY: 'MONTHLY',
+  TERM: 'TERM',
+  YEARLY: 'YEARLY'
+} as const
+
+export type FeeFrequency = (typeof FeeFrequency)[keyof typeof FeeFrequency]
+
+
+export const FeeStatus = {
+  PENDING: 'PENDING',
+  PARTIALLY_PAID: 'PARTIALLY_PAID',
+  PAID: 'PAID',
+  OVERDUE: 'OVERDUE',
+  WAIVED: 'WAIVED'
+} as const
+
+export type FeeStatus = (typeof FeeStatus)[keyof typeof FeeStatus]
+
+
+export const PaymentMethod = {
+  CASH: 'CASH',
+  UPI: 'UPI',
+  CARD: 'CARD',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  CHEQUE: 'CHEQUE'
+} as const
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]

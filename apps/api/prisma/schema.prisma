@@ -29,6 +29,8 @@ model School {
   classTeacherAssignments   ClassTeacherAssignment[]
   timetables                Timetable[]
   attendances               Attendance[]
+  staffs                    Staff[]
+  feeStructures             FeeStructure[]
 }
 
 enum SchoolStatus {
@@ -56,6 +58,7 @@ model AcademicYear {
   timetables                Timetable[]
   attendances               Attendance[]
   exams                     Exam[]
+  feeStructures             FeeStructure[]
 
   @@unique([schoolId, label])
   @@index([schoolId])
@@ -64,6 +67,7 @@ model AcademicYear {
 enum Role {
   SUPER_ADMIN
   SCHOOL_ADMIN
+  STAFF
   TEACHER
   PARENT
 }
@@ -79,7 +83,8 @@ model User {
   email String?
   phone String?
 
-  passwordHash String
+  passwordHash     String?
+  refreshTokenHash String?
 
   isActive Boolean @default(true)
 
@@ -91,10 +96,42 @@ model User {
   teacher        Teacher?
   parent         Parent?
   examTimeTables ExamTimeTable[]
+  staff          Staff?
+  feePayments    FeePayment[]
 
   @@unique([schoolId, email])
   @@unique([schoolId, phone])
   @@index([schoolId])
+}
+
+model Staff {
+  id String @id @default(uuid())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName String
+  lastName  String?
+
+  phone String?
+  email String?
+
+  designation StaffDesignation 
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum StaffDesignation {
+  ACCOUNTANT
+  ADMISSION_OFFICER
+  RECEPTIONIST
+  // add more as needed
 }
 
 model Teacher {
@@ -191,6 +228,7 @@ model Student {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   examResults ExamResult[]
+  studentFees StudentFee[]
 
   @@unique([schoolId, admissionNo])
   @@index([schoolId])
@@ -693,4 +731,102 @@ enum ExamType {
   CHRISTMAS
   FINAL
   CUSTOM
+}
+
+model FeeStructure {
+  id String @id @default(uuid())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+
+  name   String // Tuition Fee, Admission Fee, Exam Fee
+  amount Decimal @db.Decimal(10, 2)
+
+  frequency FeeFrequency
+
+  description String?
+
+  isActive Boolean @default(true)
+
+  studentFees StudentFee[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+}
+
+model StudentFee {
+  id String @id @default(uuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  feeStructureId String
+  feeStructure   FeeStructure @relation(fields: [feeStructureId], references: [id], onDelete: Cascade)
+
+  totalAmount Decimal @db.Decimal(10, 2)
+
+  discountAmount Decimal @default(0) @db.Decimal(10, 2)
+
+  dueDate DateTime?
+
+  status FeeStatus @default(PENDING)
+
+  payments FeePayment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+}
+
+model FeePayment {
+  id String @id @default(uuid())
+
+  studentFeeId String
+  studentFee   StudentFee @relation(fields: [studentFeeId], references: [id], onDelete: Cascade)
+
+  amount Decimal @db.Decimal(10, 2)
+
+  paymentMethod PaymentMethod
+
+  receiptNumber String @unique
+
+  paymentDate DateTime @default(now())
+
+  collectedById String
+  collectedBy   User   @relation(fields: [collectedById], references: [id])
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+
+  @@index([studentFeeId])
+}
+
+enum FeeFrequency {
+  ONE_TIME
+  MONTHLY
+  TERM
+  YEARLY
+}
+
+enum FeeStatus {
+  PENDING
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  WAIVED
+}
+
+enum PaymentMethod {
+  CASH
+  UPI
+  CARD
+  BANK_TRANSFER
+  CHEQUE
 }
