@@ -42,7 +42,7 @@ export class TeacherService {
           email: dto.email,
           employeeId: dto.employeeId,
           gender: dto.gender,
-          dob: dto.dob,
+          dob: dto.dob ? new Date(dto.dob) : undefined,
           qualification: dto.qualification,
           experience: dto.experience,
           joiningDate: dto.joiningDate ? new Date(dto.joiningDate) : undefined,
@@ -67,7 +67,11 @@ export class TeacherService {
     await this.findOne(schoolId, id);
     return this.prisma.teacher.update({
       where: { id },
-      data: dto,
+      data: {
+        ...dto,
+        dob: dto.dob ? new Date(dto.dob) : undefined,
+        joiningDate: dto.joiningDate ? new Date(dto.joiningDate) : undefined,
+      },
     });
   }
 
