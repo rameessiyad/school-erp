@@ -9,6 +9,7 @@ import { StaffModule } from './staff/staff.module';
 import { SubjectModule } from './subject/subject.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { AcademicYearModule } from './academic-year/academic-year.module';
+import { ClassModule } from './class/class.module';
 import jwtConfig from './config/jwt.config';
 
 @Module({
@@ -24,6 +25,7 @@ import jwtConfig from './config/jwt.config';
     SubjectModule,
     TeacherModule,
     AcademicYearModule,
+    ClassModule,
   ],
   controllers: [AppController],
   providers: [AppService],
