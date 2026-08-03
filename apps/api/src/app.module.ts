@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { StaffModule } from './staff/staff.module';
 import { SubjectModule } from './subject/subject.module';
+import { TeacherModule } from './teacher/teacher.module';
 import jwtConfig from './config/jwt.config';
 
 @Module({
@@ -20,6 +21,7 @@ import jwtConfig from './config/jwt.config';
     UsersModule,
     StaffModule,
     SubjectModule,
+    TeacherModule,
   ],
   controllers: [AppController],
   providers: [AppService],
