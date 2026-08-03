@@ -10,6 +10,7 @@ import { SubjectModule } from './subject/subject.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { AcademicYearModule } from './academic-year/academic-year.module';
 import { ClassModule } from './class/class.module';
+import { SectionModule } from './section/section.module';
 import jwtConfig from './config/jwt.config';
 
 @Module({
@@ -26,6 +27,7 @@ import jwtConfig from './config/jwt.config';
     TeacherModule,
     AcademicYearModule,
     ClassModule,
+    SectionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

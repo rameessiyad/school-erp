@@ -23,7 +23,7 @@ import { CreateClassDto } from './dto/create-class.dto';
 export class ClassController {
   constructor(private classService: ClassService) {}
 
-  @Post()
+  @Post('create')
   create(@Request() req, @Body() dto: CreateClassDto) {
     return this.classService.create(req.user.schoolId, dto);
   }
