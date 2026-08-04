@@ -6,6 +6,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { EnrollStudentDto } from './dto/enroll-student.dto';
 
 @Injectable()
 export class StudentService {
@@ -65,5 +66,51 @@ export class StudentService {
     await this.findOne(schoolId, id);
     await this.prisma.student.delete({ where: { id } });
     return { message: 'Student deleted successfully' };
+  }
+
+  //   enrollment
+  async enroll(schoolId: string, studentId: string, dto: EnrollStudentDto) {
+    await this.findOne(schoolId, studentId);
+
+    const section = await this.prisma.section.findFirst({
+      where: { id: dto.sectionId, schoolId },
+    });
+    if (!section) throw new NotFoundException('Section not found');
+
+    return this.prisma.studentEnrollment.upsert({
+      where: {
+        academicYearId_studentId: {
+          academicYearId: dto.academicYearId,
+          studentId,
+        },
+      },
+      update: {
+        sectionId: dto.sectionId,
+        rollNo: dto.rollNo,
+      },
+      create: {
+        schoolId,
+        studentId,
+        sectionId: dto.sectionId,
+        academicYearId: dto.academicYearId,
+        rollNo: dto.rollNo,
+      },
+    });
+  }
+
+  async getEnrollment(
+    schoolId: string,
+    studentId: string,
+    academicYearId: string,
+  ) {
+    await this.findOne(schoolId, studentId);
+
+    const enrollment = await this.prisma.studentEnrollment.findUnique({
+      where: { academicYearId_studentId: { academicYearId, studentId } },
+      include: { section: { include: { class: true } } },
+    });
+    if (!enrollment)
+      throw new NotFoundException('No enrollment found for this year');
+    return enrollment;
   }
 }

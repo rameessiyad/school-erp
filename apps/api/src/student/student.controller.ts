@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { Module } from 'src/common/permissions/module.enum';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { StudentService } from './student.service';
+import { EnrollStudentDto } from './dto/enroll-student.dto';
 
 @UseGuards(JwtAuthGuard, ModulePermissionGuard)
 @RequireModule(Module.STUDENT_ADMISSIONS)
@@ -50,5 +52,28 @@ export class StudentController {
   @Delete(':id')
   remove(@Request() req, @Param('id') id: string) {
     return this.studentService.remove(req.user.schoolId, id);
+  }
+
+  //   enrollment
+  @Post(':id/enrollment/create')
+  enroll(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: EnrollStudentDto,
+  ) {
+    return this.studentService.enroll(req.user.schoolId, id, dto);
+  }
+
+  @Get(':id/enrollment')
+  getEnrollment(
+    @Request() req,
+    @Param('id') id: string,
+    @Query('academicYearId') academicYearId: string,
+  ) {
+    return this.studentService.getEnrollment(
+      req.user.schoolId,
+      id,
+      academicYearId,
+    );
   }
 }
