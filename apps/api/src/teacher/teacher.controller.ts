@@ -16,6 +16,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { TeacherService } from './teacher.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { CreateAllocationDto } from './dto/create-allocation.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.SCHOOL_ADMIN)
@@ -50,5 +51,33 @@ export class TeacherController {
   @Delete(':id')
   remove(@Request() req, @Param('id') id: string) {
     return this.teacherService.remove(req.user.schoolId, id);
+  }
+
+  // allocations
+  @Post(':id/allocation/create')
+  addAllocation(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: CreateAllocationDto,
+  ) {
+    return this.teacherService.addAllocation(req.user.schoolId, id, dto);
+  }
+
+  @Get(':id/allocations')
+  listAllocations(@Request() req, @Param('id') id: string) {
+    return this.teacherService.listAllocations(req.user.schoolId, id);
+  }
+
+  @Delete(':id/allocations/:allocationId')
+  removeAllocation(
+    @Request() req,
+    @Param('id') id: string,
+    @Param('allocationId') allocationId: string,
+  ) {
+    return this.teacherService.removeAllocation(
+      req.user.schoolId,
+      id,
+      allocationId,
+    );
   }
 }

@@ -8,13 +8,14 @@ import { CreateTeacherDto } from './dto/create-teacher.dto';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'generated/prisma/enums';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { CreateAllocationDto } from './dto/create-allocation.dto';
 
 @Injectable()
 export class TeacherService {
   constructor(private prisma: PrismaService) {}
 
   async create(schoolId: string, dto: CreateTeacherDto) {
-    const existing = await this.prisma.teacher.findFirst({
+    const existing = await this.prisma.user.findFirst({
       where: { schoolId, email: dto.email },
     });
 
@@ -32,7 +33,7 @@ export class TeacherService {
         },
       });
 
-      return tx.teacher.create({
+      const teacher = await tx.teacher.create({
         data: {
           schoolId,
           userId: user.id,
@@ -47,6 +48,23 @@ export class TeacherService {
           experience: dto.experience,
           joiningDate: dto.joiningDate ? new Date(dto.joiningDate) : undefined,
         },
+      });
+
+      if (dto.allocations?.length) {
+        await tx.teacherSubjectAllocation.createMany({
+          data: dto.allocations.map((a) => ({
+            schoolId,
+            teacherId: teacher.id,
+            subjectId: a.subjectId,
+            sectionId: a.sectionId,
+            academicYearId: a.academicYearId,
+          })),
+        });
+      }
+
+      return tx.teacher.findUnique({
+        where: { id: teacher.id },
+        include: { teacherSubjectAllocations: true },
       });
     });
   }
@@ -79,5 +97,59 @@ export class TeacherService {
     const teacher = await this.findOne(schoolId, id);
     await this.prisma.user.delete({ where: { id: teacher.userId } });
     return { message: 'Teacher deleted successfully' };
+  }
+
+  // allocation
+  async addAllocation(
+    schoolId: string,
+    teacherId: string,
+    dto: CreateAllocationDto,
+  ) {
+    await this.findOne(schoolId, teacherId);
+
+    const existing = await this.prisma.teacherSubjectAllocation.findFirst({
+      where: {
+        teacherId,
+        subjectId: dto.subjectId,
+        sectionId: dto.sectionId,
+        academicYearId: dto.academicYearId,
+      },
+    });
+
+    if (existing) throw new ConflictException('This allocation already exists');
+
+    return this.prisma.teacherSubjectAllocation.create({
+      data: {
+        schoolId,
+        teacherId,
+        subjectId: dto.subjectId,
+        sectionId: dto.sectionId,
+        academicYearId: dto.academicYearId,
+      },
+    });
+  }
+
+  async removeAllocation(
+    schoolId: string,
+    teacherId: string,
+    allocationId: string,
+  ) {
+    const allocation = await this.prisma.teacherSubjectAllocation.findFirst({
+      where: { id: allocationId, teacherId, schoolId },
+    });
+    if (!allocation) throw new NotFoundException('Allocation not found');
+
+    await this.prisma.teacherSubjectAllocation.delete({
+      where: { id: allocationId },
+    });
+    return { message: 'Allocation removed successfully' };
+  }
+
+  async listAllocations(schoolId: string, teacherId: string) {
+    await this.findOne(schoolId, teacherId);
+    return this.prisma.teacherSubjectAllocation.findMany({
+      where: { teacherId, schoolId },
+      include: { subject: true, section: true, academicYear: true },
+    });
   }
 }

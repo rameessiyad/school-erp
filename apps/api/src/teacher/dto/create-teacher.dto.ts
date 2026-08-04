@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsDateString,
   IsEmail,
   IsEnum,
@@ -6,9 +7,24 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
 import { Gender } from 'generated/prisma/enums';
+
+class TeacherAllocationDto {
+  @IsUUID()
+  subjectId: string;
+
+  @IsUUID()
+  sectionId: string;
+
+  @IsUUID()
+  academicYearId: string;
+}
 
 export class CreateTeacherDto {
   @IsNotEmpty()
@@ -53,4 +69,10 @@ export class CreateTeacherDto {
   @IsOptional()
   @IsDateString()
   joiningDate?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TeacherAllocationDto)
+  allocations?: TeacherAllocationDto[];
 }
