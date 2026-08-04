@@ -6,6 +6,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateSectionDto } from './dto/update-section.dto';
 import { CreateSectionDto } from './dto/create-section.dto';
+import { AssignClassTeacherDto } from 'src/teacher/dto/assign-class-teacher.dto';
 
 @Injectable()
 export class SectionService {
@@ -58,5 +59,57 @@ export class SectionService {
     await this.findOne(schoolId, id);
     await this.prisma.section.delete({ where: { id } });
     return { message: 'Section deleted successfully' };
+  }
+
+  //class teacher assignment
+  async assignClassTeacher(
+    schoolId: string,
+    sectionId: string,
+    dto: AssignClassTeacherDto,
+  ) {
+    await this.findOne(schoolId, sectionId);
+
+    const teacher = await this.prisma.teacher.findFirst({
+      where: { id: dto.teacherId, schoolId },
+    });
+
+    if (!teacher) throw new NotFoundException('Teacher not found');
+
+    return this.prisma.classTeacherAssignment.upsert({
+      where: {
+        academicYearId_sectionId: {
+          academicYearId: dto.academicYearId,
+          sectionId,
+        },
+      },
+      update: { teacherId: dto.teacherId },
+      create: {
+        schoolId,
+        sectionId,
+        teacherId: dto.teacherId,
+        academicYearId: dto.academicYearId,
+      },
+    });
+  }
+
+  async getClassTeacher(
+    schoolId: string,
+    sectionId: string,
+    academicYearId: string,
+  ) {
+    await this.findOne(schoolId, sectionId);
+
+    const assignment = await this.prisma.classTeacherAssignment.findUnique({
+      where: {
+        academicYearId_sectionId: { academicYearId, sectionId },
+      },
+      include: { teacher: true },
+    });
+
+    if (!assignment)
+      throw new NotFoundException(
+        'No class teacher assigned for this section/year',
+      );
+    return assignment;
   }
 }

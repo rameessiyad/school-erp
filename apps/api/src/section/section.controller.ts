@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { SectionService } from './section.service';
 import { UpdateSectionDto } from './dto/update-section.dto';
 import { CreateSectionDto } from './dto/create-section.dto';
+import { AssignClassTeacherDto } from 'src/teacher/dto/assign-class-teacher.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.SCHOOL_ADMIN)
@@ -50,5 +52,29 @@ export class SectionController {
   @Delete(':id')
   remove(@Request() req, @Param('id') id: string) {
     return this.sectionService.remove(req.user.schoolId, id);
+  }
+
+  // class teacher assignment
+
+  @Post(':id/class-teacher/create')
+  assignClassTeacher(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: AssignClassTeacherDto,
+  ) {
+    return this.sectionService.assignClassTeacher(req.user.schoolId, id, dto);
+  }
+
+  @Get(':id/class-teacher')
+  getClassTeacher(
+    @Request() req,
+    @Param('id') id: string,
+    @Query('academicYearId') academicYearId: string,
+  ) {
+    return this.sectionService.getClassTeacher(
+      req.user.schoolId,
+      id,
+      academicYearId,
+    );
   }
 }
