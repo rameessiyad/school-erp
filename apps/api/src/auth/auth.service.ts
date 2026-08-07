@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { Role } from 'generated/prisma/enums';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { getAllowedModules } from 'src/common/permissions/staff-permission.util';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private prisma: PrismaService,
+    private redisService: RedisService,
   ) {}
 
   async validateAdminLogin(schoolId: string, email: string, password: string) {
@@ -54,6 +56,56 @@ export class AuthService {
         role: user.role,
         allowedModules,
       },
+    };
+  }
+
+  async requestOtp(schoolId: string, phone: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { schoolId, phone, role: Role.PARENT },
+    });
+
+    if (!user)
+      throw new UnauthorizedException(
+        'No parent account found for this phone number',
+      );
+    if (!user.isActive) throw new UnauthorizedException('Account inactive');
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const key = `otp:${schoolId}:${phone}`;
+
+    await this.redisService.getClient().set(key, otp, 'EX', 300);
+    console.log(`OTP for ${phone}: ${otp}`); // TODO: replace with SMS provider
+
+    return { message: 'OTP sent successfully' };
+  }
+
+  async verifyOtp(schoolId: string, phone: string, otp: string) {
+    const key = `otp:${schoolId}:${phone}`;
+    const storedOtp = await this.redisService.getClient().get(key);
+
+    if (!storedOtp || storedOtp !== otp) {
+      throw new UnauthorizedException('Invalid or expired OTP');
+    }
+
+    await this.redisService.getClient().del(key);
+
+    const user = await this.prisma.user.findFirst({
+      where: { schoolId, phone, role: Role.PARENT },
+    });
+
+    if (!user || !user.isActive)
+      throw new UnauthorizedException('Account inactive');
+
+    const payload = {
+      sub: user.id,
+      schoolId: user.schoolId,
+      role: user.role,
+      allowedModules: [],
+    };
+
+    return {
+      accessToken: this.jwtService.sign(payload),
+      user: { id: user.id, phone: user.phone, role: user.role },
     };
   }
 }

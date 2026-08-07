@@ -14,6 +14,7 @@ import { SectionModule } from './section/section.module';
 import { StudentModule } from './student/student.module';
 import { ParentModule } from './parent/parent.module';
 import jwtConfig from './config/jwt.config';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import jwtConfig from './config/jwt.config';
     SectionModule,
     StudentModule,
     ParentModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
