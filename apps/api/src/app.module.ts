@@ -16,6 +16,7 @@ import { ParentModule } from './parent/parent.module';
 import jwtConfig from './config/jwt.config';
 import { RedisModule } from './redis/redis.module';
 import { FeesModule } from './fees/fees.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { FeesModule } from './fees/fees.module';
     ParentModule,
     RedisModule,
     FeesModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
