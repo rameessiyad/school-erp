@@ -119,7 +119,7 @@ model Staff {
   phone String?
   email String?
 
-  designation StaffDesignation 
+  designation StaffDesignation
 
   isActive Boolean @default(true)
 
@@ -279,6 +279,7 @@ model Class {
   // feeStructures FeeStructure[]
   examTimeTables ExamTimeTable[]
   examResults    ExamResult[]
+  feeStructures  FeeStructure[]
 
   @@unique([schoolId, name])
   @@index([schoolId])
@@ -742,10 +743,15 @@ model FeeStructure {
   academicYearId String
   academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
 
+  classId String
+  class   Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
+
   name   String // Tuition Fee, Admission Fee, Exam Fee
   amount Decimal @db.Decimal(10, 2)
 
   frequency FeeFrequency
+
+  dueDate DateTime
 
   description String?
 
@@ -756,6 +762,7 @@ model FeeStructure {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([schoolId, academicYearId, classId, name])
   @@index([schoolId])
 }
 

@@ -186,6 +186,7 @@ export type ClassWhereInput = {
   sections?: Prisma.SectionListRelationFilter
   examTimeTables?: Prisma.ExamTimeTableListRelationFilter
   examResults?: Prisma.ExamResultListRelationFilter
+  feeStructures?: Prisma.FeeStructureListRelationFilter
 }
 
 export type ClassOrderByWithRelationInput = {
@@ -198,6 +199,7 @@ export type ClassOrderByWithRelationInput = {
   sections?: Prisma.SectionOrderByRelationAggregateInput
   examTimeTables?: Prisma.ExamTimeTableOrderByRelationAggregateInput
   examResults?: Prisma.ExamResultOrderByRelationAggregateInput
+  feeStructures?: Prisma.FeeStructureOrderByRelationAggregateInput
 }
 
 export type ClassWhereUniqueInput = Prisma.AtLeast<{
@@ -214,6 +216,7 @@ export type ClassWhereUniqueInput = Prisma.AtLeast<{
   sections?: Prisma.SectionListRelationFilter
   examTimeTables?: Prisma.ExamTimeTableListRelationFilter
   examResults?: Prisma.ExamResultListRelationFilter
+  feeStructures?: Prisma.FeeStructureListRelationFilter
 }, "id" | "schoolId_name">
 
 export type ClassOrderByWithAggregationInput = {
@@ -247,6 +250,7 @@ export type ClassCreateInput = {
   sections?: Prisma.SectionCreateNestedManyWithoutClassInput
   examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutClassInput
   examResults?: Prisma.ExamResultCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutClassInput
 }
 
 export type ClassUncheckedCreateInput = {
@@ -258,6 +262,7 @@ export type ClassUncheckedCreateInput = {
   sections?: Prisma.SectionUncheckedCreateNestedManyWithoutClassInput
   examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutClassInput
   examResults?: Prisma.ExamResultUncheckedCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutClassInput
 }
 
 export type ClassUpdateInput = {
@@ -269,6 +274,7 @@ export type ClassUpdateInput = {
   sections?: Prisma.SectionUpdateManyWithoutClassNestedInput
   examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutClassNestedInput
   examResults?: Prisma.ExamResultUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutClassNestedInput
 }
 
 export type ClassUncheckedUpdateInput = {
@@ -280,6 +286,7 @@ export type ClassUncheckedUpdateInput = {
   sections?: Prisma.SectionUncheckedUpdateManyWithoutClassNestedInput
   examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutClassNestedInput
   examResults?: Prisma.ExamResultUncheckedUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutClassNestedInput
 }
 
 export type ClassCreateManyInput = {
@@ -433,6 +440,20 @@ export type ClassUpdateOneRequiredWithoutExamResultsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ClassUpdateToOneWithWhereWithoutExamResultsInput, Prisma.ClassUpdateWithoutExamResultsInput>, Prisma.ClassUncheckedUpdateWithoutExamResultsInput>
 }
 
+export type ClassCreateNestedOneWithoutFeeStructuresInput = {
+  create?: Prisma.XOR<Prisma.ClassCreateWithoutFeeStructuresInput, Prisma.ClassUncheckedCreateWithoutFeeStructuresInput>
+  connectOrCreate?: Prisma.ClassCreateOrConnectWithoutFeeStructuresInput
+  connect?: Prisma.ClassWhereUniqueInput
+}
+
+export type ClassUpdateOneRequiredWithoutFeeStructuresNestedInput = {
+  create?: Prisma.XOR<Prisma.ClassCreateWithoutFeeStructuresInput, Prisma.ClassUncheckedCreateWithoutFeeStructuresInput>
+  connectOrCreate?: Prisma.ClassCreateOrConnectWithoutFeeStructuresInput
+  upsert?: Prisma.ClassUpsertWithoutFeeStructuresInput
+  connect?: Prisma.ClassWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ClassUpdateToOneWithWhereWithoutFeeStructuresInput, Prisma.ClassUpdateWithoutFeeStructuresInput>, Prisma.ClassUncheckedUpdateWithoutFeeStructuresInput>
+}
+
 export type ClassCreateWithoutSchoolInput = {
   id?: string
   name: string
@@ -441,6 +462,7 @@ export type ClassCreateWithoutSchoolInput = {
   sections?: Prisma.SectionCreateNestedManyWithoutClassInput
   examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutClassInput
   examResults?: Prisma.ExamResultCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutClassInput
 }
 
 export type ClassUncheckedCreateWithoutSchoolInput = {
@@ -451,6 +473,7 @@ export type ClassUncheckedCreateWithoutSchoolInput = {
   sections?: Prisma.SectionUncheckedCreateNestedManyWithoutClassInput
   examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutClassInput
   examResults?: Prisma.ExamResultUncheckedCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutClassInput
 }
 
 export type ClassCreateOrConnectWithoutSchoolInput = {
@@ -498,6 +521,7 @@ export type ClassCreateWithoutSectionsInput = {
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutClassInput
   examResults?: Prisma.ExamResultCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutClassInput
 }
 
 export type ClassUncheckedCreateWithoutSectionsInput = {
@@ -508,6 +532,7 @@ export type ClassUncheckedCreateWithoutSectionsInput = {
   updatedAt?: Date | string
   examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutClassInput
   examResults?: Prisma.ExamResultUncheckedCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutClassInput
 }
 
 export type ClassCreateOrConnectWithoutSectionsInput = {
@@ -534,6 +559,7 @@ export type ClassUpdateWithoutSectionsInput = {
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutClassNestedInput
   examResults?: Prisma.ExamResultUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutClassNestedInput
 }
 
 export type ClassUncheckedUpdateWithoutSectionsInput = {
@@ -544,6 +570,7 @@ export type ClassUncheckedUpdateWithoutSectionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutClassNestedInput
   examResults?: Prisma.ExamResultUncheckedUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutClassNestedInput
 }
 
 export type ClassCreateWithoutExamTimeTablesInput = {
@@ -554,6 +581,7 @@ export type ClassCreateWithoutExamTimeTablesInput = {
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   sections?: Prisma.SectionCreateNestedManyWithoutClassInput
   examResults?: Prisma.ExamResultCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutClassInput
 }
 
 export type ClassUncheckedCreateWithoutExamTimeTablesInput = {
@@ -564,6 +592,7 @@ export type ClassUncheckedCreateWithoutExamTimeTablesInput = {
   updatedAt?: Date | string
   sections?: Prisma.SectionUncheckedCreateNestedManyWithoutClassInput
   examResults?: Prisma.ExamResultUncheckedCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutClassInput
 }
 
 export type ClassCreateOrConnectWithoutExamTimeTablesInput = {
@@ -590,6 +619,7 @@ export type ClassUpdateWithoutExamTimeTablesInput = {
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   sections?: Prisma.SectionUpdateManyWithoutClassNestedInput
   examResults?: Prisma.ExamResultUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutClassNestedInput
 }
 
 export type ClassUncheckedUpdateWithoutExamTimeTablesInput = {
@@ -600,6 +630,7 @@ export type ClassUncheckedUpdateWithoutExamTimeTablesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sections?: Prisma.SectionUncheckedUpdateManyWithoutClassNestedInput
   examResults?: Prisma.ExamResultUncheckedUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutClassNestedInput
 }
 
 export type ClassCreateWithoutExamResultsInput = {
@@ -610,6 +641,7 @@ export type ClassCreateWithoutExamResultsInput = {
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   sections?: Prisma.SectionCreateNestedManyWithoutClassInput
   examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutClassInput
 }
 
 export type ClassUncheckedCreateWithoutExamResultsInput = {
@@ -620,6 +652,7 @@ export type ClassUncheckedCreateWithoutExamResultsInput = {
   updatedAt?: Date | string
   sections?: Prisma.SectionUncheckedCreateNestedManyWithoutClassInput
   examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutClassInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutClassInput
 }
 
 export type ClassCreateOrConnectWithoutExamResultsInput = {
@@ -646,6 +679,7 @@ export type ClassUpdateWithoutExamResultsInput = {
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   sections?: Prisma.SectionUpdateManyWithoutClassNestedInput
   examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutClassNestedInput
 }
 
 export type ClassUncheckedUpdateWithoutExamResultsInput = {
@@ -656,6 +690,67 @@ export type ClassUncheckedUpdateWithoutExamResultsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sections?: Prisma.SectionUncheckedUpdateManyWithoutClassNestedInput
   examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutClassNestedInput
+}
+
+export type ClassCreateWithoutFeeStructuresInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  school: Prisma.SchoolCreateNestedOneWithoutClassesInput
+  sections?: Prisma.SectionCreateNestedManyWithoutClassInput
+  examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutClassInput
+  examResults?: Prisma.ExamResultCreateNestedManyWithoutClassInput
+}
+
+export type ClassUncheckedCreateWithoutFeeStructuresInput = {
+  id?: string
+  schoolId: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sections?: Prisma.SectionUncheckedCreateNestedManyWithoutClassInput
+  examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutClassInput
+  examResults?: Prisma.ExamResultUncheckedCreateNestedManyWithoutClassInput
+}
+
+export type ClassCreateOrConnectWithoutFeeStructuresInput = {
+  where: Prisma.ClassWhereUniqueInput
+  create: Prisma.XOR<Prisma.ClassCreateWithoutFeeStructuresInput, Prisma.ClassUncheckedCreateWithoutFeeStructuresInput>
+}
+
+export type ClassUpsertWithoutFeeStructuresInput = {
+  update: Prisma.XOR<Prisma.ClassUpdateWithoutFeeStructuresInput, Prisma.ClassUncheckedUpdateWithoutFeeStructuresInput>
+  create: Prisma.XOR<Prisma.ClassCreateWithoutFeeStructuresInput, Prisma.ClassUncheckedCreateWithoutFeeStructuresInput>
+  where?: Prisma.ClassWhereInput
+}
+
+export type ClassUpdateToOneWithWhereWithoutFeeStructuresInput = {
+  where?: Prisma.ClassWhereInput
+  data: Prisma.XOR<Prisma.ClassUpdateWithoutFeeStructuresInput, Prisma.ClassUncheckedUpdateWithoutFeeStructuresInput>
+}
+
+export type ClassUpdateWithoutFeeStructuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
+  sections?: Prisma.SectionUpdateManyWithoutClassNestedInput
+  examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutClassNestedInput
+  examResults?: Prisma.ExamResultUpdateManyWithoutClassNestedInput
+}
+
+export type ClassUncheckedUpdateWithoutFeeStructuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  schoolId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sections?: Prisma.SectionUncheckedUpdateManyWithoutClassNestedInput
+  examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutClassNestedInput
+  examResults?: Prisma.ExamResultUncheckedUpdateManyWithoutClassNestedInput
 }
 
 export type ClassCreateManySchoolInput = {
@@ -673,6 +768,7 @@ export type ClassUpdateWithoutSchoolInput = {
   sections?: Prisma.SectionUpdateManyWithoutClassNestedInput
   examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutClassNestedInput
   examResults?: Prisma.ExamResultUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutClassNestedInput
 }
 
 export type ClassUncheckedUpdateWithoutSchoolInput = {
@@ -683,6 +779,7 @@ export type ClassUncheckedUpdateWithoutSchoolInput = {
   sections?: Prisma.SectionUncheckedUpdateManyWithoutClassNestedInput
   examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutClassNestedInput
   examResults?: Prisma.ExamResultUncheckedUpdateManyWithoutClassNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutClassNestedInput
 }
 
 export type ClassUncheckedUpdateManyWithoutSchoolInput = {
@@ -701,12 +798,14 @@ export type ClassCountOutputType = {
   sections: number
   examTimeTables: number
   examResults: number
+  feeStructures: number
 }
 
 export type ClassCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sections?: boolean | ClassCountOutputTypeCountSectionsArgs
   examTimeTables?: boolean | ClassCountOutputTypeCountExamTimeTablesArgs
   examResults?: boolean | ClassCountOutputTypeCountExamResultsArgs
+  feeStructures?: boolean | ClassCountOutputTypeCountFeeStructuresArgs
 }
 
 /**
@@ -740,6 +839,13 @@ export type ClassCountOutputTypeCountExamResultsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.ExamResultWhereInput
 }
 
+/**
+ * ClassCountOutputType without action
+ */
+export type ClassCountOutputTypeCountFeeStructuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FeeStructureWhereInput
+}
+
 
 export type ClassSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -751,6 +857,7 @@ export type ClassSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   sections?: boolean | Prisma.Class$sectionsArgs<ExtArgs>
   examTimeTables?: boolean | Prisma.Class$examTimeTablesArgs<ExtArgs>
   examResults?: boolean | Prisma.Class$examResultsArgs<ExtArgs>
+  feeStructures?: boolean | Prisma.Class$feeStructuresArgs<ExtArgs>
   _count?: boolean | Prisma.ClassCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["class"]>
 
@@ -786,6 +893,7 @@ export type ClassInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   sections?: boolean | Prisma.Class$sectionsArgs<ExtArgs>
   examTimeTables?: boolean | Prisma.Class$examTimeTablesArgs<ExtArgs>
   examResults?: boolean | Prisma.Class$examResultsArgs<ExtArgs>
+  feeStructures?: boolean | Prisma.Class$feeStructuresArgs<ExtArgs>
   _count?: boolean | Prisma.ClassCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ClassIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -802,6 +910,7 @@ export type $ClassPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     sections: Prisma.$SectionPayload<ExtArgs>[]
     examTimeTables: Prisma.$ExamTimeTablePayload<ExtArgs>[]
     examResults: Prisma.$ExamResultPayload<ExtArgs>[]
+    feeStructures: Prisma.$FeeStructurePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1207,6 +1316,7 @@ export interface Prisma__ClassClient<T, Null = never, ExtArgs extends runtime.Ty
   sections<T extends Prisma.Class$sectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Class$sectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   examTimeTables<T extends Prisma.Class$examTimeTablesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Class$examTimeTablesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExamTimeTablePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   examResults<T extends Prisma.Class$examResultsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Class$examResultsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExamResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  feeStructures<T extends Prisma.Class$feeStructuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Class$feeStructuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeeStructurePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1711,6 +1821,30 @@ export type Class$examResultsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ExamResultScalarFieldEnum | Prisma.ExamResultScalarFieldEnum[]
+}
+
+/**
+ * Class.feeStructures
+ */
+export type Class$feeStructuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FeeStructure
+   */
+  select?: Prisma.FeeStructureSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FeeStructure
+   */
+  omit?: Prisma.FeeStructureOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeeStructureInclude<ExtArgs> | null
+  where?: Prisma.FeeStructureWhereInput
+  orderBy?: Prisma.FeeStructureOrderByWithRelationInput | Prisma.FeeStructureOrderByWithRelationInput[]
+  cursor?: Prisma.FeeStructureWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FeeStructureScalarFieldEnum | Prisma.FeeStructureScalarFieldEnum[]
 }
 
 /**
