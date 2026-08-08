@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   School,
+  Briefcase,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -44,6 +45,11 @@ const navigation = [
     icon: Users,
   },
   {
+    label: "Staff",
+    href: "/dashboard/staff",
+    icon: Briefcase,
+  },
+  {
     label: "Fee Structures",
     href: "/dashboard/fee-structures",
     icon: Wallet,
@@ -54,7 +60,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
+    <aside className="hidden h-full w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white shadow-md shadow-blue-600/20">
