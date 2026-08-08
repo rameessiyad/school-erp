@@ -10,6 +10,7 @@ import {
   LogOut,
   School,
   Briefcase,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -48,6 +49,11 @@ const navigation = [
     label: "Staff",
     href: "/dashboard/staff",
     icon: Briefcase,
+  },
+  {
+    label: "Subjects",
+    href: "/dashboard/subjects",
+    icon: BookOpen,
   },
   {
     label: "Fee Structures",
