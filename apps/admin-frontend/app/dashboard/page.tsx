@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   Clock3,
 } from "lucide-react";
+import { DashboardCharts } from "@/components/dashboard/dashboard-charts";
 
 interface DashboardStats {
   studentCount: number;
@@ -132,6 +133,12 @@ export default async function DashboardPage() {
           );
         })}
       </div>
+
+      <DashboardCharts
+        studentCount={stats?.studentCount ?? 0}
+        teacherCount={stats?.teacherCount ?? 0}
+        parentCount={stats?.parentCount ?? 0}
+      />
 
       {/* Keep your existing Recent Activity + Quick Actions sections below as-is */}
     </div>

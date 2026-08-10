@@ -15,7 +15,8 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface DashboardSidebarProps {
   user: {
@@ -76,6 +77,19 @@ const navigation = [
 
 export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth", { method: "DELETE" }); // was POST to /api/logout
+      router.push("/login");
+      router.refresh();
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <aside className="hidden h-full w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
@@ -158,7 +172,9 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
 
           <button
             type="button"
-            className="text-slate-400 transition hover:text-red-500"
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="text-slate-400 cursor-pointer transition hover:text-red-500 disabled:opacity-50"
             title="Logout"
           >
             <LogOut className="h-4 w-4" />

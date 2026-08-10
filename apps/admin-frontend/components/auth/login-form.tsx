@@ -33,7 +33,7 @@ export function LoginForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("api/login", {
+      const res = await fetch("api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
@@ -144,7 +144,7 @@ export function LoginForm() {
             <Button
               type="submit"
               disabled={loading}
-              className="h-11 w-full rounded-lg bg-blue-600 text-sm font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-11 w-full rounded-lg cursor-pointer bg-blue-600 text-sm font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Signing in..." : "Sign in"}
             </Button>

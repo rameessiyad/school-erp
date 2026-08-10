@@ -32,3 +32,17 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE() {
+  const response = NextResponse.json({ message: "Logged out" });
+
+  response.cookies.set("accessToken", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+
+  return response;
+}
