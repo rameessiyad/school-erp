@@ -31,8 +31,8 @@ export class SectionController {
   }
 
   @Get()
-  findAll(@Request() req) {
-    return this.sectionService.findAll(req.user.schoolId);
+  findAll(@Request() req, @Query('classId') classId?: string) {
+    return this.sectionService.findAll(req.user.schoolId, classId);
   }
 
   @Get(':id')

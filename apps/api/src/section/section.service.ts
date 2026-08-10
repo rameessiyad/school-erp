@@ -35,9 +35,9 @@ export class SectionService {
     });
   }
 
-  async findAll(schoolId: string) {
+  async findAll(schoolId: string, classId: string) {
     return this.prisma.section.findMany({
-      where: { schoolId },
+      where: { schoolId, ...(classId && { classId }) },
       include: { class: true, academicYear: true },
     });
   }
