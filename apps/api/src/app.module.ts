@@ -17,6 +17,7 @@ import jwtConfig from './config/jwt.config';
 import { RedisModule } from './redis/redis.module';
 import { FeesModule } from './fees/fees.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     RedisModule,
     FeesModule,
     DashboardModule,
+    FileUploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

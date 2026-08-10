@@ -9,12 +9,19 @@ import * as bcrypt from 'bcrypt';
 import { Role } from 'generated/prisma/enums';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { CreateAllocationDto } from './dto/create-allocation.dto';
+import {
+  FileUploadService,
+  UploadedFile,
+} from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class TeacherService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileUploadService: FileUploadService,
+  ) {}
 
-  async create(schoolId: string, dto: CreateTeacherDto) {
+  async create(schoolId: string, dto: CreateTeacherDto, photo?: UploadedFile) {
     const existing = await this.prisma.user.findFirst({
       where: { schoolId, email: dto.email },
     });
@@ -22,6 +29,15 @@ export class TeacherService {
     if (existing) throw new ConflictException('Email already in use');
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
+
+    let photoUrl: string | undefined;
+
+    if (photo) {
+      photoUrl = await this.fileUploadService.uploadImage(
+        photo,
+        `schools/${schoolId}/teachers`,
+      );
+    }
 
     return this.prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
@@ -47,6 +63,7 @@ export class TeacherService {
           qualification: dto.qualification,
           experience: dto.experience,
           joiningDate: dto.joiningDate ? new Date(dto.joiningDate) : undefined,
+          photoUrl,
         },
       });
 
@@ -81,14 +98,28 @@ export class TeacherService {
     return teacher;
   }
 
-  async update(schoolId: string, id: string, dto: UpdateTeacherDto) {
+  async update(
+    schoolId: string,
+    id: string,
+    dto: UpdateTeacherDto,
+    photo?: UploadedFile,
+  ) {
     await this.findOne(schoolId, id);
+    let photoUrl: string | undefined;
+
+    if (photo) {
+      photoUrl = await this.fileUploadService.uploadImage(
+        photo,
+        `schools/${schoolId}/teachers`,
+      );
+    }
     return this.prisma.teacher.update({
       where: { id },
       data: {
         ...dto,
         dob: dto.dob ? new Date(dto.dob) : undefined,
         joiningDate: dto.joiningDate ? new Date(dto.joiningDate) : undefined,
+        ...(photoUrl && { photoUrl }),
       },
     });
   }

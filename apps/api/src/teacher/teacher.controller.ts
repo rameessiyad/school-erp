@@ -7,8 +7,12 @@ import {
   Patch,
   Post,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadedFile as UploadedFileType } from 'src/file-upload/file-upload.service';
 import { Role } from 'generated/prisma/enums';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -25,8 +29,13 @@ export class TeacherController {
   constructor(private teacherService: TeacherService) {}
 
   @Post('create')
-  create(@Request() req, @Body() dto: CreateTeacherDto) {
-    return this.teacherService.create(req.user.schoolId, dto);
+  @UseInterceptors(FileInterceptor('photo'))
+  create(
+    @Request() req,
+    @Body() dto: CreateTeacherDto,
+    @UploadedFile() photo?: UploadedFileType,
+  ) {
+    return this.teacherService.create(req.user.schoolId, dto, photo);
   }
 
   @Get()
@@ -44,8 +53,9 @@ export class TeacherController {
     @Request() req,
     @Param('id') id: string,
     @Body() dto: UpdateTeacherDto,
+    @UploadedFile() photo?: UploadedFileType,
   ) {
-    return this.teacherService.update(req.user.schoolId, id, dto);
+    return this.teacherService.update(req.user.schoolId, id, dto, photo);
   }
 
   @Delete(':id')
