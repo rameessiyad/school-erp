@@ -11,6 +11,8 @@ import {
   School,
   Briefcase,
   BookOpen,
+  Layers,
+  LayoutGrid,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -54,6 +56,16 @@ const navigation = [
     label: "Subjects",
     href: "/dashboard/subjects",
     icon: BookOpen,
+  },
+  {
+    label: "Classes",
+    href: "/dashboard/classes",
+    icon: Layers,
+  },
+  {
+    label: "Sections",
+    href: "/dashboard/sections",
+    icon: LayoutGrid,
   },
   {
     label: "Fee Structures",

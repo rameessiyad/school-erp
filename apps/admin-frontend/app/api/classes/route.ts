@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import { createServerApi } from "@/lib/axios/server";
 
@@ -7,6 +7,26 @@ export async function GET() {
   try {
     const { data } = await api.get("/class");
     return NextResponse.json(data);
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return NextResponse.json(error.response.data, {
+        status: error.response.status,
+      });
+    }
+    return NextResponse.json(
+      { message: "Something went wrong" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const api = await createServerApi();
+  const body = await req.json();
+
+  try {
+    const { data } = await api.post("/class/create", body);
+    return NextResponse.json(data, { status: 201 });
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       return NextResponse.json(error.response.data, {
