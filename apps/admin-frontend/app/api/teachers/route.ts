@@ -23,17 +23,21 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const api = await createServerApi();
-  const body = await req.json();
 
   try {
-    const { data } = await api.post("/teacher/create", body);
-    return NextResponse.json(data, { status: 201 });
+    const formData = await req.formData();
+    const { data } = await api.post("/teacher/create", formData);
+
+    return NextResponse.json(data, {
+      status: 201,
+    });
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       return NextResponse.json(error.response.data, {
         status: error.response.status,
       });
     }
+
     return NextResponse.json(
       { message: "Something went wrong" },
       { status: 500 },

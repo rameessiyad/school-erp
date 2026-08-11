@@ -21,6 +21,7 @@ export const createTeacherSchema = z.object({
   experience: z.coerce.number().int().nonnegative().optional(),
   joiningDate: z.string().optional(),
   allocations: z.array(allocationSchema).optional(),
+  photo: z.string().optional(),
 });
 
 export type CreateTeacherValues = z.infer<typeof createTeacherSchema>;

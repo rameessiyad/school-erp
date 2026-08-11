@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Trash2, Plus } from "lucide-react";
+import Image from "next/image";
 
 interface Option {
   id: string;
@@ -34,6 +35,8 @@ export function TeacherForm() {
   const [loading, setLoading] = useState(false);
 
   const [subjects, setSubjects] = useState<Option[]>([]);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   // const [sections, setSections] = useState<Option[]>([]);
   const [academicYears, setAcademicYears] = useState<Option[]>([]);
   const [classes, setClasses] = useState<Option[]>([]);
@@ -84,15 +87,63 @@ export function TeacherForm() {
     name: "allocations",
   });
 
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      setPhoto(null);
+      setPhotoPreview(null);
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setServerError("Please select a valid image file.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setServerError("Image size must be less than 5MB.");
+      return;
+    }
+
+    setServerError(null);
+    setPhoto(file);
+
+    const previewUrl = URL.createObjectURL(file);
+    setPhotoPreview(previewUrl);
+  };
+
   const onSubmit = async (values: CreateTeacherValues) => {
     setServerError(null);
     setLoading(true);
 
     try {
+      const formData = new FormData();
+
+      formData.append("firstName", values.firstName);
+      formData.append("lastName", values.lastName ?? "");
+      formData.append("email", values.email);
+      formData.append("phone", values.phone ?? "");
+      formData.append("password", values.password);
+      formData.append("employeeId", values.employeeId ?? "");
+      formData.append("gender", values.gender ?? "");
+      formData.append("dob", values.dob ?? "");
+      formData.append("qualification", values.qualification ?? "");
+      formData.append(
+        "experience",
+        values.experience !== undefined ? String(values.experience) : "",
+      );
+      formData.append("joiningDate", values.joiningDate ?? "");
+
+      if (photo) {
+        formData.append("photo", photo);
+      }
+
+      formData.append("allocations", JSON.stringify(values.allocations ?? []));
+
       const res = await fetch("/api/teachers", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: formData,
       });
 
       const data = await res.json();
@@ -365,6 +416,44 @@ export function TeacherForm() {
                   />
                 </div>
               </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="photo"
+                  className="text-sm font-medium text-slate-700"
+                >
+                  Teacher Photo
+                </Label>
+
+                <div className="flex items-center gap-5">
+                  {photoPreview ? (
+                    <Image
+                      src={photoPreview}
+                      alt="Teacher preview"
+                      width={96}
+                      height={96}
+                      className="h-24 w-24 rounded-full border border-slate-200 object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full border border-dashed border-slate-300 bg-slate-50 text-xs text-slate-400">
+                      No Photo
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Input
+                      id="photo"
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="h-11 max-w-sm cursor-pointer bg-white"
+                    />
+
+                    <p className="text-xs text-slate-400">
+                      JPG, PNG or WEBP. Maximum 5MB.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -484,7 +573,8 @@ export function TeacherForm() {
                           <SelectTrigger>
                             <SelectValue placeholder="Class">
                               {(value: string) =>
-                                classes.find((c) => c.id === value)?.name ?? "select class"
+                                classes.find((c) => c.id === value)?.name ??
+                                "select class"
                               }
                             </SelectValue>
                           </SelectTrigger>

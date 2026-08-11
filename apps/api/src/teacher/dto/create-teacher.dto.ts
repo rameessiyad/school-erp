@@ -11,7 +11,7 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { plainToInstance, Transform } from 'class-transformer';
 
 import { Gender } from 'generated/prisma/enums';
 
@@ -43,6 +43,7 @@ export class CreateTeacherDto {
   phone?: string;
 
   @IsNotEmpty()
+  @IsString()
   @MinLength(6)
   password: string;
 
@@ -63,6 +64,9 @@ export class CreateTeacherDto {
   qualification?: string;
 
   @IsOptional()
+  @Transform(({ value }) =>
+    value === '' || value === undefined ? undefined : Number(value),
+  )
   @IsInt()
   experience?: number;
 
@@ -70,9 +74,25 @@ export class CreateTeacherDto {
   @IsDateString()
   joiningDate?: string;
 
+  // parse the JSON string AND build real DTO instances in one step —
+  // don't rely on @Type here, it's what was dropping the fields
   @IsOptional()
+  @Transform(({ value }) => {
+    let parsed = value;
+
+    if (typeof value === 'string') {
+      try {
+        parsed = JSON.parse(value);
+      } catch {
+        return value;
+      }
+    }
+
+    if (!Array.isArray(parsed)) return parsed;
+
+    return parsed.map((item) => plainToInstance(TeacherAllocationDto, item));
+  })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => TeacherAllocationDto)
   allocations?: TeacherAllocationDto[];
 }

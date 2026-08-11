@@ -10,7 +10,6 @@ export async function createServerApi() {
   return axios.create({
     baseURL: API_URL,
     headers: {
-      "Content-Type": "application/json",
       ...(token && { Authorization: `Bearer ${token}` }),
     },
   });
