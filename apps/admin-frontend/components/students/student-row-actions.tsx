@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Eye, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DeleteStudentDialog } from "./delete-student-dialog";
 import { DeleteEntityDialog } from "../shared/delete-entity-dialog";
 import { studentsApi } from "@/lib/api/students";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface StudentRowActionsProps {
   studentId: string;
@@ -14,6 +14,7 @@ export function StudentRowActions({
   studentId,
   studentName,
 }: StudentRowActionsProps) {
+  const queryClient = useQueryClient();
   return (
     <div className="flex items-center justify-end gap-1">
       <Link href={`/dashboard/students/${studentId}`}>
@@ -30,6 +31,9 @@ export function StudentRowActions({
         entityLabel="student"
         entityName={studentName}
         onDelete={() => studentsApi.remove(studentId)}
+        onSuccess={() =>
+          queryClient.invalidateQueries({ queryKey: ["students"] })
+        }
       />
     </div>
   );
