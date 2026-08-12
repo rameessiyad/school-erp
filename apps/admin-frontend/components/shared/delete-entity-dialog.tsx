@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,31 +14,36 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { getErrorMessage } from "@/lib/api/error";
 
-interface DeleteStudentDialogProps {
-  studentId: string;
-  studentName: string;
+interface DeleteEntityDialogProps {
+  entityLabel: string;
+  entityName: string;
+  onDelete: () => Promise<void>;
+  onSuccess?: () => void;
+  description?: string;
 }
 
-export function DeleteStudentDialog({
-  studentId,
-  studentName,
-}: DeleteStudentDialogProps) {
-  const router = useRouter();
+export function DeleteEntityDialog({
+  entityLabel,
+  entityName,
+  onDelete,
+  onSuccess,
+  description,
+}: DeleteEntityDialogProps) {
   const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   const handleDelete = async () => {
     setLoading(true);
+    setServerError(null);
     try {
-      const res = await fetch(`/api/students/${studentId}`, {
-        method: "DELETE",
-      });
-
-      if (res.ok) {
-        setOpen(false);
-        router.refresh();
-      }
+      await onDelete();
+      setOpen(false);
+      onSuccess?.();
+    } catch (error) {
+      setServerError(getErrorMessage(error, `Failed to delete ${entityLabel}`));
     } finally {
       setLoading(false);
     }
@@ -54,12 +58,13 @@ export function DeleteStudentDialog({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete {studentName}?</AlertDialogTitle>
+          <AlertDialogTitle>Delete {entityName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently remove this student and all associated
-            records. This action cannot be undone.
+            {description ??
+              `This will permanently remove this ${entityLabel} and all associated records. This action cannot be undone.`}
           </AlertDialogDescription>
         </AlertDialogHeader>
+        {serverError && <p className="text-sm text-red-600">{serverError}</p>}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
           <AlertDialogAction

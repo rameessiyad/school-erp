@@ -1,23 +1,20 @@
-import { cookies } from "next/headers";
+"use client";
+
 import Link from "next/link";
-import { Teacher } from "@/lib/validations/teacher";
+import Image from "next/image";
+import { teachersApi } from "@/lib/api/teachers";
+import { TeacherRowActions } from "@/components/teachers/teacher-row-actions";
+import { useQuery } from "@tanstack/react-query";
 
-async function getTeachers(): Promise<Teacher[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) return [];
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/teacher`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
+export default function TeachersPage() {
+  const { data: teachers = [], isLoading } = useQuery({
+    queryKey: ["teachers"],
+    queryFn: teachersApi.list,
   });
 
-  if (!res.ok) return [];
-  return res.json();
-}
-
-export default async function TeachersPage() {
-  const teachers = await getTeachers();
+  if (isLoading) {
+    return <p className="text-sm text-slate-400">Loading teachers...</p>;
+  }
 
   return (
     <div className="space-y-8">
@@ -106,6 +103,10 @@ export default async function TeachersPage() {
                 <th className="px-6 py-3.5 font-medium text-slate-500">
                   Status
                 </th>
+
+                <th className="px-6 py-3.5 font-medium text-slate-500 text-right">
+                  Actions
+                </th>
               </tr>
             </thead>
 
@@ -140,10 +141,20 @@ export default async function TeachersPage() {
                   <tr key={t.id} className="transition hover:bg-slate-50/70">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-xs font-semibold text-blue-700">
-                          {t.firstName.slice(0, 1).toUpperCase()}
-                          {t.lastName?.slice(0, 1).toUpperCase() ?? ""}
-                        </div>
+                        {t.photoUrl ? (
+                          <Image
+                            src={t.photoUrl}
+                            alt={`${t.firstName} ${t.lastName ?? ""}`}
+                            width={36}
+                            height={36}
+                            className="h-9 w-9 rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-xs font-semibold text-blue-700">
+                            {t.firstName.slice(0, 1).toUpperCase()}
+                            {t.lastName?.slice(0, 1).toUpperCase() ?? ""}
+                          </div>
+                        )}
 
                         <div>
                           <p className="font-medium text-slate-800">
@@ -181,6 +192,13 @@ export default async function TeachersPage() {
                       >
                         {t.isActive ? "Active" : "Inactive"}
                       </span>
+                    </td>
+
+                    <td className="px-6 py-4 text-right">
+                      <TeacherRowActions
+                        teacherId={t.id}
+                        teacherName={`${t.firstName} ${t.lastName ?? ""}`}
+                      />
                     </td>
                   </tr>
                 ))

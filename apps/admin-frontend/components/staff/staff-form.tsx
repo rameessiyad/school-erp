@@ -20,6 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { apiClient } from "@/lib/axios/client";
+import axios from "axios";
+import { staffApi } from "@/lib/api/staff";
+import { getErrorMessage } from "@/lib/api/error";
 
 export function StaffForm() {
   const router = useRouter();
@@ -40,23 +44,11 @@ export function StaffForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/staff", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setServerError(data.message ?? "Failed to create staff");
-        return;
-      }
-
+      await staffApi.create(values);
       router.push("/dashboard/staff");
       router.refresh();
-    } catch {
-      setServerError("Something went wrong. Please try again.");
+    } catch (error) {
+      setServerError(getErrorMessage(error, "Failed to create staff"));
     } finally {
       setLoading(false);
     }

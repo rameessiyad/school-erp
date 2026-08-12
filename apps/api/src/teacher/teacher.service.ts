@@ -93,6 +93,15 @@ export class TeacherService {
   async findOne(schoolId: string, id: string) {
     const teacher = await this.prisma.teacher.findFirst({
       where: { id, schoolId },
+      include: {
+        teacherSubjectAllocations: {
+          include: {
+            subject: true,
+            section: { include: { class: true } },
+            academicYear: true,
+          },
+        },
+      },
     });
     if (!teacher) throw new NotFoundException('Teacher not found');
     return teacher;

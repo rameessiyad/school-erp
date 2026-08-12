@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Eye, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DeleteStudentDialog } from "./delete-student-dialog";
+import { DeleteEntityDialog } from "../shared/delete-entity-dialog";
+import { studentsApi } from "@/lib/api/students";
 
 interface StudentRowActionsProps {
   studentId: string;
@@ -24,7 +26,11 @@ export function StudentRowActions({
           <Pencil className="h-4 w-4 text-slate-500" />
         </Button>
       </Link>
-      <DeleteStudentDialog studentId={studentId} studentName={studentName} />
+      <DeleteEntityDialog
+        entityLabel="student"
+        entityName={studentName}
+        onDelete={() => studentsApi.remove(studentId)}
+      />
     </div>
   );
 }

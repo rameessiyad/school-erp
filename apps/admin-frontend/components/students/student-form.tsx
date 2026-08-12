@@ -20,6 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { optionsApi } from "@/lib/api/options";
+import { getErrorMessage } from "@/lib/api/error";
+import { studentsApi } from "@/lib/api/students";
 
 interface Option {
   id: string;
@@ -52,20 +55,17 @@ export function StudentForm({
 
   useEffect(() => {
     async function loadOptions() {
-      const [classesRes, yearsRes] = await Promise.all([
-        fetch("/api/classes"),
-        fetch("/api/academic-year"),
+      const [classesData, yearsData] = await Promise.all([
+        optionsApi.classes(),
+        optionsApi.academicYears(),
       ]);
 
-      if (classesRes.ok) setClasses(await classesRes.json());
-      if (yearsRes.ok) setAcademicYears(await yearsRes.json());
+      setClasses(classesData);
+      setAcademicYears(yearsData);
 
-      // If editing with a pre-filled class, load its sections too
       if (defaultValues?.classId) {
-        const sectionsRes = await fetch(
-          `/api/sections?classId=${defaultValues.classId}`,
-        );
-        if (sectionsRes.ok) setSections(await sectionsRes.json());
+        const sectionsData = await optionsApi.sections(defaultValues.classId);
+        setSections(sectionsData);
       }
     }
 
@@ -85,8 +85,8 @@ export function StudentForm({
 
   async function handleClassChange(classId: string) {
     setValue("sectionId", "");
-    const res = await fetch(`/api/sections?classId=${classId}`);
-    if (res.ok) setSections(await res.json());
+    const sectionsData = await optionsApi.sections(classId);
+    setSections(sectionsData);
   }
 
   const onSubmit = async (values: CreateStudentValues) => {
@@ -94,40 +94,22 @@ export function StudentForm({
     setLoading(true);
 
     try {
-      const { classId, sectionId, academicYearId, rollNo, ...studentPayload } =
-        values;
+      const { sectionId, academicYearId, rollNo, ...studentPayload } = values;
 
-      const res = await fetch(
-        isEditMode ? `/api/students/${studentId}` : "/api/students",
-        {
-          method: isEditMode ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(studentPayload),
-        },
-      );
+      const student = isEditMode
+        ? await studentsApi.update(studentId!, studentPayload)
+        : await studentsApi.create(studentPayload);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setServerError(
-          data.message ??
-            `Failed to ${isEditMode ? "update" : "create"} student`,
-        );
-        return;
-      }
-
-      // Only handle enrollment on create, not edit (edit doesn't touch enrollment here)
       if (!isEditMode && enableEnrollment && sectionId && academicYearId) {
-        const enrollRes = await fetch(`/api/students/${data.id}/enrollment`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sectionId, academicYearId, rollNo }),
-        });
-
-        if (!enrollRes.ok) {
-          const enrollData = await enrollRes.json();
+        try {
+          await studentsApi.createEnrollment(student.id, {
+            sectionId,
+            academicYearId,
+            rollNo,
+          });
+        } catch (enrollError) {
           setServerError(
-            `Student ${isEditMode ? "updated" : "created"}, but enrollment failed: ${enrollData.message ?? "Unknown error"}`,
+            `Student created, but enrollment failed: ${getErrorMessage(enrollError)}`,
           );
           return;
         }
@@ -135,8 +117,13 @@ export function StudentForm({
 
       router.push("/dashboard/students");
       router.refresh();
-    } catch {
-      setServerError("Something went wrong. Please try again.");
+    } catch (error) {
+      setServerError(
+        getErrorMessage(
+          error,
+          `Failed to ${isEditMode ? "update" : "create"} student`,
+        ),
+      );
     } finally {
       setLoading(false);
     }

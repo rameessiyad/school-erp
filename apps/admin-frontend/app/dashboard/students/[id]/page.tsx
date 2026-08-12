@@ -1,8 +1,11 @@
-import { cookies } from "next/headers";
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Pencil, ArrowLeft, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { studentsApi } from "@/lib/api/students";
+import { useQuery } from "@tanstack/react-query";
 
 interface StudentDetail {
   id: string;
@@ -16,39 +19,32 @@ interface StudentDetail {
   isActive: boolean;
 }
 
-async function getStudent(id: string): Promise<StudentDetail | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+export default function StudentDetailPage() {
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
 
-  if (!token) return null;
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
+  const {
+    data: student,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["student", params.id],
+    queryFn: () => studentsApi.get(params.id),
   });
 
-  if (!res.ok) return null;
+  if (isLoading) {
+    return <p className="text-sm text-slate-400">Loading Student...</p>;
+  }
 
-  return res.json();
-}
-
-export default async function StudentDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const student = await getStudent(id);
-
-  if (!student) notFound();
+  if (isError || !student) {
+    router.push("/dashboard/students");
+    return null;
+  }
 
   const fullName = `${student.firstName} ${student.lastName ?? ""}`.trim();
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="mb-1 text-sm font-medium text-blue-600">Students</p>
@@ -73,7 +69,7 @@ export default async function StudentDetailPage({
             </Button>
           </Link>
 
-          <Link href={`/dashboard/students/${id}/edit`}>
+          <Link href={`/dashboard/students/${student.id}/edit`}>
             <Button className="h-10 rounded-lg bg-blue-600 px-5 text-white hover:bg-blue-700">
               <Pencil className="mr-2 h-4 w-4" />
               Edit Student
@@ -82,7 +78,6 @@ export default async function StudentDetailPage({
         </div>
       </div>
 
-      {/* Profile Card */}
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="flex flex-col gap-5 border-b border-slate-100 p-6 sm:flex-row sm:items-center">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-blue-50 text-lg font-bold text-blue-600">
@@ -117,7 +112,6 @@ export default async function StudentDetailPage({
           </span>
         </div>
 
-        {/* Personal Information */}
         <div className="p-6">
           <div className="mb-5 flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50">

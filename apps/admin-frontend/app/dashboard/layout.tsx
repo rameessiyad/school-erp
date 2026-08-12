@@ -1,34 +1,59 @@
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 
-async function getCurrentUser() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-
-  if (!token) return null;
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  });
-
-  if (!res.ok) return null;
-
-  return res.json();
+interface CurrentUser {
+  id: string;
+  email: string;
+  role: string;
+  allowedModules: string[];
 }
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [user, setUser] = useState<CurrentUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then((data) => setUser(data))
+      .catch(() => {
+        localStorage.removeItem("accessToken");
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      })
+      .finally(() => setLoading(false));
+  }, [pathname, router]);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50">
+        <p className="text-sm text-slate-400">Loading...</p>
+      </div>
+    );
+  }
 
   if (!user) {
-    redirect("/login");
+    return null;
   }
 
   return (
@@ -49,7 +74,6 @@ export default async function DashboardLayout({
                 <p className="text-sm font-medium text-slate-800">
                   {user.email ?? "Administrator"}
                 </p>
-
                 <p className="text-xs text-slate-500">{user.role}</p>
               </div>
 

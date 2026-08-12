@@ -1,5 +1,6 @@
 "use client";
 
+import { authApi } from "@/lib/api/auth";
 import {
   LayoutDashboard,
   GraduationCap,
@@ -83,7 +84,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
-      await fetch("/api/auth", { method: "DELETE" }); // was POST to /api/logout
+      authApi.logout();
       router.push("/login");
       router.refresh();
     } finally {

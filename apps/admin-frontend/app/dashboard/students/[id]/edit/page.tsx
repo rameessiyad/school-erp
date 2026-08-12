@@ -1,75 +1,51 @@
-import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { StudentForm } from "@/components/students/student-form";
+import { studentsApi } from "@/lib/api/students";
+import { optionsApi } from "@/lib/api/options";
 
-async function getStudent(id: string) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) return null;
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-
-  if (!res.ok) return null;
-  return res.json();
+interface Enrollment {
+  sectionId: string;
+  academicYearId: string;
+  rollNo?: string;
+  section?: { class?: { id: string } };
 }
 
-async function getActiveAcademicYear() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) return null;
+export default function EditStudentPage() {
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [notFoundFlag, setNotFoundFlag] = useState(false);
+  const [defaultValues, setDefaultValues] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
+  const [initialEnrollmentEnabled, setInitialEnrollmentEnabled] =
+    useState(false);
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/academic-year`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
+  useEffect(() => {
+    async function load() {
+      try {
+        const student = await studentsApi.get(params.id);
 
-  if (!res.ok) return null;
-  const years = await res.json();
-  return years.find((y: { isActive: boolean }) => y.isActive) ?? null;
-}
+        let enrollment: Enrollment | null = null;
+        try {
+          const years = await optionsApi.academicYears();
+          const activeYear = years.find((y) => y.isActive) ?? null;
 
-async function getEnrollment(studentId: string, academicYearId: string) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) return null;
+          if (activeYear) {
+            enrollment = await studentsApi.getEnrollment(
+              params.id,
+              activeYear.id,
+            );
+          }
+        } catch {
+          enrollment = null;
+        }
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/student/${studentId}/enrollment?academicYearId=${academicYearId}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    },
-  );
-
-  if (!res.ok) return null; // no enrollment for this year — that's fine
-  return res.json();
-}
-
-export default async function EditStudentPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const student = await getStudent(id);
-
-  if (!student) notFound();
-
-  const activeYear = await getActiveAcademicYear();
-  const enrollment = activeYear ? await getEnrollment(id, activeYear.id) : null;
-
-  return (
-    <div className="max-w-3xl">
-      <h1 className="mb-6 text-2xl font-semibold text-slate-900">
-        Edit Student
-      </h1>
-      <StudentForm
-        studentId={id}
-        initialEnrollmentEnabled={!!enrollment}
-        defaultValues={{
+        setDefaultValues({
           admissionNo: student.admissionNo,
           firstName: student.firstName,
           lastName: student.lastName ?? undefined,
@@ -85,7 +61,36 @@ export default async function EditStudentPage({
             academicYearId: enrollment.academicYearId,
             rollNo: enrollment.rollNo ?? undefined,
           }),
-        }}
+        });
+        setInitialEnrollmentEnabled(!!enrollment);
+      } catch {
+        setNotFoundFlag(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [params.id]);
+
+  if (loading) {
+    return <p className="text-sm text-slate-400">Loading student...</p>;
+  }
+
+  if (notFoundFlag) {
+    router.push("/dashboard/students");
+    return null;
+  }
+
+  return (
+    <div className="max-w-3xl">
+      <h1 className="mb-6 text-2xl font-semibold text-slate-900">
+        Edit Student
+      </h1>
+      <StudentForm
+        studentId={params.id}
+        initialEnrollmentEnabled={initialEnrollmentEnabled}
+        defaultValues={defaultValues ?? undefined}
       />
     </div>
   );

@@ -14,6 +14,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { authApi } from "@/lib/api/auth";
+import { getErrorMessage } from "@/lib/api/error";
 
 export function LoginForm() {
   const router = useRouter();
@@ -33,23 +35,11 @@ export function LoginForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setServerError(data.message ?? "Login failed");
-        return;
-      }
-
+      await authApi.login(values.schoolId, values.email, values.password);
       router.push("/dashboard");
       router.refresh();
-    } catch {
-      setServerError("Something went wrong. Please try again.");
+    } catch (error) {
+      setServerError(getErrorMessage(error, "Login failed"));
     } finally {
       setLoading(false);
     }

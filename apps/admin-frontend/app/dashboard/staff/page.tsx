@@ -1,25 +1,25 @@
-import { cookies } from "next/headers";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Staff } from "@/lib/validations/staff";
+import { staffApi } from "@/lib/api/staff";
 
-async function getStaff(): Promise<Staff[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+export default function StaffPage() {
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!token) return [];
+  useEffect(() => {
+    staffApi
+      .list()
+      .then(setStaff)
+      .catch(() => setStaff([]))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/staff`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-
-  if (!res.ok) return [];
-
-  return res.json();
-}
-
-export default async function StaffPage() {
-  const staff = await getStaff();
+  if (loading) {
+    return <p className="text-sm text-slate-400">Loading staff...</p>;
+  }
 
   return (
     <div className="mx-auto max-w-7xl space-y-8">
@@ -29,7 +29,7 @@ export default async function StaffPage() {
           <p className="mb-1 text-sm font-medium text-blue-600">
             Administration
           </p>
-          ```
+
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">
             Staff
           </h1>
@@ -45,6 +45,7 @@ export default async function StaffPage() {
           + Add Staff
         </Link>
       </div>
+
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -79,6 +80,7 @@ export default async function StaffPage() {
           <p className="mt-1 text-xs text-slate-400">Currently inactive</p>
         </div>
       </div>
+
       {/* Staff Table */}
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="flex flex-col justify-between gap-3 border-b border-slate-100 px-6 py-4 sm:flex-row sm:items-center">
@@ -154,7 +156,6 @@ export default async function StaffPage() {
 
                   return (
                     <tr key={s.id} className="transition hover:bg-slate-50/70">
-                      {/* Name */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-semibold text-blue-700">
@@ -173,22 +174,18 @@ export default async function StaffPage() {
                         </div>
                       </td>
 
-                      {/* Email */}
                       <td className="px-6 py-4 text-slate-600">{s.email}</td>
 
-                      {/* Phone */}
                       <td className="px-6 py-4 text-slate-600">
                         {s.phone ?? "—"}
                       </td>
 
-                      {/* Designation */}
                       <td className="px-6 py-4">
                         <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium capitalize text-slate-600">
                           {s.designation.replace(/_/g, " ")}
                         </span>
                       </td>
 
-                      {/* Status */}
                       <td className="px-6 py-4">
                         <span
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
@@ -214,7 +211,6 @@ export default async function StaffPage() {
           </table>
         </div>
       </div>
-      ```
     </div>
   );
 }

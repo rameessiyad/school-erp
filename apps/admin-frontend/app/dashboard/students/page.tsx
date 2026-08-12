@@ -1,24 +1,19 @@
-import { cookies } from "next/headers";
+"use client";
+
 import Link from "next/link";
-import { Student } from "@/lib/validations/student";
 import { StudentRowActions } from "@/components/students/student-row-actions";
+import { studentsApi } from "@/lib/api/students";
+import { useQuery } from "@tanstack/react-query";
 
-async function getStudents(): Promise<Student[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) return [];
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
+export default function StudentsPage() {
+  const { data: students = [], isLoading } = useQuery({
+    queryKey: ["students"],
+    queryFn: studentsApi.list,
   });
 
-  if (!res.ok) return [];
-  return res.json();
-}
-
-export default async function StudentsPage() {
-  const students = await getStudents();
+  if (isLoading) {
+    return <p className="text-sm text-slate-400">Loading students...</p>;
+  }
 
   return (
     <div className="space-y-8">

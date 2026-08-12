@@ -55,6 +55,7 @@ export class TeacherController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('photo'))
   update(
     @Request() req,
     @Param('id') id: string,

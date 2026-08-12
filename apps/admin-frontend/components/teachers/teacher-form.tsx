@@ -8,6 +8,7 @@ import {
   createTeacherSchema,
   CreateTeacherValues,
   genders,
+  getTeacherSchema,
 } from "@/lib/validations/teacher";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,9 @@ import {
 } from "@/components/ui/select";
 import { Trash2, Plus } from "lucide-react";
 import Image from "next/image";
+import { optionsApi } from "@/lib/api/options";
+import { teachersApi } from "@/lib/api/teachers";
+import { getErrorMessage } from "@/lib/api/error";
 
 interface Option {
   id: string;
@@ -29,14 +33,34 @@ interface Option {
   label?: string;
 }
 
-export function TeacherForm() {
+interface AllocationMeta {
+  subjectId: string;
+  sectionId: string;
+  academicYearId: string;
+  classId?: string;
+}
+
+interface TeacherFormProps {
+  teacherId?: string;
+  defaultValues?: Partial<CreateTeacherValues> & { photoUrl?: string | null };
+  initialAllocationsMeta?: AllocationMeta[];
+}
+
+export function TeacherForm({
+  teacherId,
+  defaultValues,
+  initialAllocationsMeta,
+}: TeacherFormProps) {
+  const isEditMode = !!teacherId;
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const [subjects, setSubjects] = useState<Option[]>([]);
   const [photo, setPhoto] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(
+    defaultValues?.photoUrl ?? null,
+  );
   // const [sections, setSections] = useState<Option[]>([]);
   const [academicYears, setAcademicYears] = useState<Option[]>([]);
   const [classes, setClasses] = useState<Option[]>([]);
@@ -48,28 +72,33 @@ export function TeacherForm() {
   );
 
   useEffect(() => {
+    if (!initialAllocationsMeta?.length) return;
+
+    initialAllocationsMeta.forEach(async (alloc, index) => {
+      if (!alloc.classId) return;
+
+      setSelectedClassByRow((prev) => ({ ...prev, [index]: alloc.classId! }));
+
+      const sections = await optionsApi.sections(alloc.classId);
+      setSectionsByRow((prev) => ({ ...prev, [index]: sections }));
+    });
+  }, [initialAllocationsMeta]);
+
+  useEffect(() => {
     async function loadOptions() {
-      const [subjectsRes, classesRes, yearsRes] = await Promise.all([
-        fetch("/api/subjects"),
-        fetch("/api/classes"),
-        fetch("/api/academic-year"),
+      const [subjectsData, classesData, yearsData] = await Promise.all([
+        optionsApi.subjects(),
+        optionsApi.classes(),
+        optionsApi.academicYears(),
       ]);
 
-      if (subjectsRes.ok) setSubjects(await subjectsRes.json());
-      if (classesRes.ok) setClasses(await classesRes.json());
-      if (yearsRes.ok) setAcademicYears(await yearsRes.json());
+      setSubjects(subjectsData);
+      setClasses(classesData);
+      setAcademicYears(yearsData);
     }
 
     loadOptions();
   }, []);
-
-  async function handleClassChange(index: number, classId: string) {
-    const res = await fetch(`/api/sections?classId=${classId}`);
-    if (res.ok) {
-      const data = await res.json();
-      setSectionsByRow((prev) => ({ ...prev, [index]: data }));
-    }
-  }
 
   const {
     register,
@@ -78,8 +107,8 @@ export function TeacherForm() {
     setValue,
     formState: { errors },
   } = useForm<CreateTeacherValues>({
-    resolver: zodResolver(createTeacherSchema),
-    defaultValues: { allocations: [] },
+    resolver: zodResolver(getTeacherSchema(isEditMode)),
+    defaultValues: { allocations: [], ...defaultValues },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -87,12 +116,17 @@ export function TeacherForm() {
     name: "allocations",
   });
 
+  async function handleClassChange(index: number, classId: string) {
+    const sections = await optionsApi.sections(classId);
+    setSectionsByRow((prev) => ({ ...prev, [index]: sections }));
+  }
+
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) {
       setPhoto(null);
-      setPhotoPreview(null);
+      setPhotoPreview(defaultValues?.photoUrl ?? null);
       return;
     }
 
@@ -118,45 +152,27 @@ export function TeacherForm() {
     setLoading(true);
 
     try {
-      const formData = new FormData();
-
-      formData.append("firstName", values.firstName);
-      formData.append("lastName", values.lastName ?? "");
-      formData.append("email", values.email);
-      formData.append("phone", values.phone ?? "");
-      formData.append("password", values.password);
-      formData.append("employeeId", values.employeeId ?? "");
-      formData.append("gender", values.gender ?? "");
-      formData.append("dob", values.dob ?? "");
-      formData.append("qualification", values.qualification ?? "");
-      formData.append(
-        "experience",
-        values.experience !== undefined ? String(values.experience) : "",
-      );
-      formData.append("joiningDate", values.joiningDate ?? "");
-
-      if (photo) {
-        formData.append("photo", photo);
+      // don't send an empty password string on update — leave it out entirely
+      const payload = { ...values };
+      if (isEditMode && !payload.password) {
+        delete payload.password;
       }
 
-      formData.append("allocations", JSON.stringify(values.allocations ?? []));
-
-      const res = await fetch("/api/teachers", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setServerError(data.message ?? "Failed to create teacher");
-        return;
+      if (isEditMode) {
+        await teachersApi.update(teacherId!, payload, photo);
+      } else {
+        await teachersApi.create(payload, photo);
       }
 
       router.push("/dashboard/teachers");
       router.refresh();
-    } catch {
-      setServerError("Something went wrong. Please try again.");
+    } catch (error) {
+      setServerError(
+        getErrorMessage(
+          error,
+          `Failed to ${isEditMode ? "update" : "create"} teacher`,
+        ),
+      );
     } finally {
       setLoading(false);
     }
@@ -283,10 +299,21 @@ export function TeacherForm() {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Create a secure password"
+                    placeholder={
+                      isEditMode
+                        ? "Leave blank to keep current password"
+                        : "Create a secure password"
+                    }
                     {...register("password")}
                     className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
                   />
+
+                  {isEditMode && (
+                    <p className="text-xs text-slate-400">
+                      Only fill this in if you want to set a new password for
+                      this teacher.
+                    </p>
+                  )}
 
                   {errors.password && (
                     <p className="text-xs text-red-500">
@@ -681,7 +708,13 @@ export function TeacherForm() {
               disabled={loading}
               className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Creating..." : "Create Teacher"}
+              {loading
+                ? isEditMode
+                  ? "Updating..."
+                  : "Creating..."
+                : isEditMode
+                  ? "Update Teacher"
+                  : "Create Teacher"}
             </Button>
           </div>
         </form>

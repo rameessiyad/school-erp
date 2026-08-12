@@ -1,4 +1,6 @@
-import { cookies } from "next/headers";
+"use client";
+
+import { useEffect, useState } from "react";
 import {
   GraduationCap,
   UserRound,
@@ -17,13 +19,7 @@ interface DashboardStats {
 }
 
 async function getDashboardStats(): Promise<DashboardStats | null> {
-  console.log("getDashboardStats called"); // ADD THIS FIRST
-
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-
-  console.log("Token found:", !!token); // AND THIS
-
+  const token = localStorage.getItem("accessToken");
   if (!token) return null;
 
   const res = await fetch(
@@ -34,13 +30,7 @@ async function getDashboardStats(): Promise<DashboardStats | null> {
     },
   );
 
-  console.log("Response status:", res.status); // AND THIS
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.log("Error response:", errorText); // AND THIS
-    return null;
-  }
+  if (!res.ok) return null;
 
   return res.json();
 }
@@ -52,8 +42,15 @@ function formatCurrency(amount: number) {
   return `₹${amount.toLocaleString("en-IN")}`;
 }
 
-export default async function DashboardPage() {
-  const stats = await getDashboardStats();
+export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getDashboardStats()
+      .then(setStats)
+      .finally(() => setLoading(false));
+  }, []);
 
   const statCards = [
     {
@@ -81,6 +78,10 @@ export default async function DashboardPage() {
       icon: Wallet,
     },
   ];
+
+  if (loading) {
+    return <p className="text-sm text-slate-400">Loading dashboard...</p>;
+  }
 
   return (
     <div className="mx-auto max-w-7xl space-y-8">
@@ -139,8 +140,6 @@ export default async function DashboardPage() {
         teacherCount={stats?.teacherCount ?? 0}
         parentCount={stats?.parentCount ?? 0}
       />
-
-      {/* Keep your existing Recent Activity + Quick Actions sections below as-is */}
     </div>
   );
 }
