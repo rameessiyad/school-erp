@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createParentSchema,
   CreateParentValues,
@@ -20,27 +21,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { parentsApi } from "@/lib/api/parents";
+import { studentsApi } from "@/lib/api/students";
+import { getErrorMessage } from "@/lib/api/error";
 
-interface StudentOption {
-  id: string;
-  firstName: string;
-  lastName: string | null;
-  admissionNo: string;
+interface ParentFormProps {
+  parentId?: string;
+  defaultValues?: Partial<CreateParentValues>;
 }
 
-export function ParentForm() {
+export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
+  const isEditMode = !!parentId;
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [students, setStudents] = useState<StudentOption[]>([]);
 
-  useEffect(() => {
-    async function loadStudents() {
-      const res = await fetch("/api/students");
-      if (res.ok) setStudents(await res.json());
-    }
-    loadStudents();
-  }, []);
+  const { data: students = [] } = useQuery({
+    queryKey: ["students"],
+    queryFn: () => studentsApi.list(),
+  });
 
   const {
     register,
@@ -49,34 +48,38 @@ export function ParentForm() {
     formState: { errors },
   } = useForm<CreateParentValues>({
     resolver: zodResolver(createParentSchema),
-    defaultValues: { isPrimary: false },
+    defaultValues: { isPrimary: false, ...defaultValues },
   });
 
-  const onSubmit = async (values: CreateParentValues) => {
-    setServerError(null);
-    setLoading(true);
+  const saveParentMutation = useMutation({
+    mutationFn: (values: CreateParentValues) =>
+      isEditMode
+        ? parentsApi.update(parentId!, values)
+        : parentsApi.create(values),
 
-    try {
-      const res = await fetch("/api/parents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["parents"] });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setServerError(data.message ?? "Failed to create parent");
-        return;
+      if (isEditMode) {
+        queryClient.invalidateQueries({ queryKey: ["parent", parentId] });
       }
 
       router.push("/dashboard/parents");
-      router.refresh();
-    } catch {
-      setServerError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    },
+
+    onError: (error) => {
+      setServerError(
+        getErrorMessage(
+          error,
+          `Failed to ${isEditMode ? "update" : "create"} parent`,
+        ),
+      );
+    },
+  });
+
+  const onSubmit = (values: CreateParentValues) => {
+    setServerError(null);
+    saveParentMutation.mutate(values);
   };
 
   return (
@@ -360,7 +363,7 @@ export function ParentForm() {
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              disabled={loading}
+              disabled={saveParentMutation.isPending}
               className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
             >
               Cancel
@@ -368,10 +371,16 @@ export function ParentForm() {
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={saveParentMutation.isPending}
               className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Creating..." : "Create Parent"}
+              {saveParentMutation.isPending
+                ? parentId
+                  ? "Updating..."
+                  : "Creating..."
+                : parentId
+                  ? "Update Parent"
+                  : "Create Parent"}
             </Button>
           </div>
         </form>

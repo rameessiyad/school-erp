@@ -1,86 +1,68 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { StudentForm } from "@/components/students/student-form";
 import { studentsApi } from "@/lib/api/students";
 import { optionsApi } from "@/lib/api/options";
+import { useQuery } from "@tanstack/react-query";
 
-interface Enrollment {
-  sectionId: string;
-  academicYearId: string;
-  rollNo?: string;
-  section?: { class?: { id: string } };
-}
 
 export default function EditStudentPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [notFoundFlag, setNotFoundFlag] = useState(false);
-  const [defaultValues, setDefaultValues] = useState<Record<
-    string,
-    unknown
-  > | null>(null);
-  const [initialEnrollmentEnabled, setInitialEnrollmentEnabled] =
-    useState(false);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const student = await studentsApi.get(params.id);
+  const {
+    data: student,
+    isLoading: studentLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["student", params.id],
+    queryFn: () => studentsApi.get(params.id),
+  });
 
-        let enrollment: Enrollment | null = null;
-        try {
-          const years = await optionsApi.academicYears();
-          const activeYear = years.find((y) => y.isActive) ?? null;
+  const { data: years } = useQuery({
+    queryKey: ["academicYears"],
+    queryFn: () => optionsApi.academicYears(),
+    enabled: !!student,
+  });
 
-          if (activeYear) {
-            enrollment = await studentsApi.getEnrollment(
-              params.id,
-              activeYear.id,
-            );
-          }
-        } catch {
-          enrollment = null;
-        }
+  const activeYear = years?.find((y) => y.isActive) ?? null;
 
-        setDefaultValues({
-          admissionNo: student.admissionNo,
-          firstName: student.firstName,
-          lastName: student.lastName ?? undefined,
-          gender: student.gender ?? undefined,
-          dob: student.dob ? student.dob.split("T")[0] : undefined,
-          bloodGroup: student.bloodGroup ?? undefined,
-          admissionDate: student.admissionDate
-            ? student.admissionDate.split("T")[0]
-            : undefined,
-          ...(enrollment && {
-            classId: enrollment.section?.class?.id,
-            sectionId: enrollment.sectionId,
-            academicYearId: enrollment.academicYearId,
-            rollNo: enrollment.rollNo ?? undefined,
-          }),
-        });
-        setInitialEnrollmentEnabled(!!enrollment);
-      } catch {
-        setNotFoundFlag(true);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const { data: enrollment, isLoading: enrollmentLoading } = useQuery({
+    queryKey: ["enrollment", params.id, activeYear?.id],
+    queryFn: () => studentsApi.getEnrollment(params.id, activeYear!.id),
+    enabled: !!activeYear,
+    retry: false,
+  });
 
-    load();
-  }, [params.id]);
-
-  if (loading) {
-    return <p className="text-sm text-slate-400">Loading student...</p>;
-  }
-
-  if (notFoundFlag) {
+  if (isError) {
     router.push("/dashboard/students");
     return null;
   }
+
+  if (studentLoading || (activeYear && enrollmentLoading)) {
+    return <p className="text-sm text-slate-400">Loading student...</p>;
+  }
+
+  const defaultValues = student
+    ? {
+        admissionNo: student.admissionNo,
+        firstName: student.firstName,
+        lastName: student.lastName ?? undefined,
+        gender: student.gender ?? undefined,
+        dob: student.dob ? student.dob.split("T")[0] : undefined,
+        bloodGroup: student.bloodGroup ?? undefined,
+        admissionDate: student.admissionDate
+          ? student.admissionDate.split("T")[0]
+          : undefined,
+        ...(enrollment && {
+          classId: enrollment.section?.class?.id,
+          sectionId: enrollment.sectionId,
+          academicYearId: enrollment.academicYearId,
+          rollNo: enrollment.rollNo ?? undefined,
+        }),
+      }
+    : undefined;
 
   return (
     <div className="max-w-3xl">
@@ -89,8 +71,8 @@ export default function EditStudentPage() {
       </h1>
       <StudentForm
         studentId={params.id}
-        initialEnrollmentEnabled={initialEnrollmentEnabled}
-        defaultValues={defaultValues ?? undefined}
+        initialEnrollmentEnabled={!!enrollment}
+        defaultValues={defaultValues}
       />
     </div>
   );

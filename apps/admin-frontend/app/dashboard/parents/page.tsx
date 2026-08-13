@@ -1,28 +1,19 @@
-import { cookies } from "next/headers";
+"use client";
+
 import Link from "next/link";
-import { Parent } from "@/lib/validations/parent";
+import { useQuery } from "@tanstack/react-query";
+import { parentsApi } from "@/lib/api/parents";
+import { ParentRowActions } from "@/components/parents/parent-row-actions";
 
-async function getParents(): Promise<Parent[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-
-  if (!token) return [];
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/parent`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
+export default function ParentsPage() {
+  const { data: parents = [], isLoading } = useQuery({
+    queryKey: ["parents"],
+    queryFn: parentsApi.list,
   });
 
-  if (!res.ok) return [];
-
-  return res.json();
-}
-
-export default async function ParentsPage() {
-  const parents = await getParents();
-
+  if (isLoading) {
+    return <p className="text-sm text-slate-400">Loading parents...</p>;
+  }
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -90,6 +81,7 @@ export default async function ParentsPage() {
                 <th className="px-6 py-3 font-medium">Email</th>
                 <th className="px-6 py-3 font-medium">Phone</th>
                 <th className="px-6 py-3 font-medium">Linked Student(s)</th>
+                <th className="px-6 py-3 font-medium">Actions</th>
               </tr>
             </thead>
 
@@ -157,6 +149,12 @@ export default async function ParentsPage() {
                       ) : (
                         <span className="text-slate-400">—</span>
                       )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <ParentRowActions
+                        parentId={p.id}
+                        parentName={`${p.firstName} ${p.lastName ?? ""}`}
+                      />
                     </td>
                   </tr>
                 ))

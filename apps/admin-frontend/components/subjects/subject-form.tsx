@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   createSubjectSchema,
   CreateSubjectValues,
@@ -12,11 +13,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { subjectsApi } from "@/lib/api/subjects";
+import { getErrorMessage } from "@/lib/api/error";
 
-export function SubjectForm() {
+interface SubjectFormProps {
+  subjectId?: string;
+  defaultValues?: Partial<CreateSubjectValues>;
+}
+
+export function SubjectForm({ subjectId, defaultValues }: SubjectFormProps) {
+  const isEditMode = !!subjectId;
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -24,33 +33,38 @@ export function SubjectForm() {
     formState: { errors },
   } = useForm<CreateSubjectValues>({
     resolver: zodResolver(createSubjectSchema),
+    defaultValues,
   });
 
-  const onSubmit = async (values: CreateSubjectValues) => {
-    setServerError(null);
-    setLoading(true);
+  const saveSubjectMutation = useMutation({
+    mutationFn: (values: CreateSubjectValues) =>
+      isEditMode
+        ? subjectsApi.update(subjectId!, values)
+        : subjectsApi.create(values),
 
-    try {
-      const res = await fetch("/api/subjects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["subjects"] });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setServerError(data.message ?? "Failed to create subject");
-        return;
+      if (isEditMode) {
+        queryClient.invalidateQueries({ queryKey: ["subject", subjectId] });
       }
 
       router.push("/dashboard/subjects");
-      router.refresh();
-    } catch {
-      setServerError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    },
+
+    onError: (error) => {
+      setServerError(
+        getErrorMessage(
+          error,
+          `Failed to ${isEditMode ? "update" : "create"} subject`,
+        ),
+      );
+    },
+  });
+
+  const onSubmit = (values: CreateSubjectValues) => {
+    setServerError(null);
+    saveSubjectMutation.mutate(values);
   };
 
   return (
@@ -118,7 +132,7 @@ export function SubjectForm() {
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              disabled={loading}
+              disabled={saveSubjectMutation.isPending}
               className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
             >
               Cancel
@@ -126,10 +140,16 @@ export function SubjectForm() {
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={saveSubjectMutation.isPending}
               className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Creating..." : "Create Subject"}
+              {saveSubjectMutation.isPending
+                ? isEditMode
+                  ? "Updating..."
+                  : "Creating..."
+                : isEditMode
+                  ? "Update Subject"
+                  : "Create Subject"}
             </Button>
           </div>
         </form>

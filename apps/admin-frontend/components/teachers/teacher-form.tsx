@@ -26,6 +26,7 @@ import Image from "next/image";
 import { optionsApi } from "@/lib/api/options";
 import { teachersApi } from "@/lib/api/teachers";
 import { getErrorMessage } from "@/lib/api/error";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Option {
   id: string;
@@ -53,8 +54,9 @@ export function TeacherForm({
 }: TeacherFormProps) {
   const isEditMode = !!teacherId;
   const router = useRouter();
+  const queryClient = useQueryClient();
+
   const [serverError, setServerError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const [subjects, setSubjects] = useState<Option[]>([]);
   const [photo, setPhoto] = useState<File | null>(null);
@@ -147,35 +149,42 @@ export function TeacherForm({
     setPhotoPreview(previewUrl);
   };
 
-  const onSubmit = async (values: CreateTeacherValues) => {
-    setServerError(null);
-    setLoading(true);
-
-    try {
+  const saveTeacherMutation = useMutation({
+    mutationFn: (values: CreateTeacherValues) => {
       // don't send an empty password string on update — leave it out entirely
       const payload = { ...values };
       if (isEditMode && !payload.password) {
         delete payload.password;
       }
 
+      return isEditMode
+        ? teachersApi.update(teacherId!, payload, photo)
+        : teachersApi.create(payload, photo);
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teachers"] });
+
       if (isEditMode) {
-        await teachersApi.update(teacherId!, payload, photo);
-      } else {
-        await teachersApi.create(payload, photo);
+        queryClient.invalidateQueries({ queryKey: ["teacher", teacherId] });
       }
 
       router.push("/dashboard/teachers");
-      router.refresh();
-    } catch (error) {
+    },
+
+    onError: (error) => {
       setServerError(
         getErrorMessage(
           error,
           `Failed to ${isEditMode ? "update" : "create"} teacher`,
         ),
       );
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const onSubmit = (values: CreateTeacherValues) => {
+    setServerError(null);
+    saveTeacherMutation.mutate(values);
   };
 
   return (
@@ -697,7 +706,7 @@ export function TeacherForm({
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              disabled={loading}
+              disabled={saveTeacherMutation.isPending}
               className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
             >
               Cancel
@@ -705,10 +714,10 @@ export function TeacherForm({
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={saveTeacherMutation.isPending}
               className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading
+              {saveTeacherMutation.isPending
                 ? isEditMode
                   ? "Updating..."
                   : "Creating..."

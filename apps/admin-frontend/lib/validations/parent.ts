@@ -25,7 +25,9 @@ export interface Parent {
   email: string | null;
   phone: string | null;
   occupation: string | null;
+  address: string | null;
   parentStudents?: {
+    studentId: string;
     relationship: string;
     isPrimary: boolean;
     student: { id: string; firstName: string; lastName: string | null };

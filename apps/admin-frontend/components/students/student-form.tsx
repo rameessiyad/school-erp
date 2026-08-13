@@ -23,6 +23,7 @@ import {
 import { optionsApi } from "@/lib/api/options";
 import { getErrorMessage } from "@/lib/api/error";
 import { studentsApi } from "@/lib/api/students";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Option {
   id: string;
@@ -43,8 +44,8 @@ export function StudentForm({
 }: StudentFormProps) {
   const isEditMode = !!studentId;
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const [enableEnrollment, setEnableEnrollment] = useState(
     initialEnrollmentEnabled,
   );
@@ -89,11 +90,8 @@ export function StudentForm({
     setSections(sectionsData);
   }
 
-  const onSubmit = async (values: CreateStudentValues) => {
-    setServerError(null);
-    setLoading(true);
-
-    try {
+  const saveStudentMutation = useMutation({
+    mutationFn: async (values: CreateStudentValues) => {
       const { sectionId, academicYearId, rollNo, ...studentPayload } = values;
 
       const student = isEditMode
@@ -108,25 +106,37 @@ export function StudentForm({
             rollNo,
           });
         } catch (enrollError) {
-          setServerError(
+          throw new Error(
             `Student created, but enrollment failed: ${getErrorMessage(enrollError)}`,
           );
-          return;
         }
+      }
+      return student;
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["students"] });
+
+      if (isEditMode) {
+        queryClient.invalidateQueries({ queryKey: ["student", studentId] });
       }
 
       router.push("/dashboard/students");
-      router.refresh();
-    } catch (error) {
+    },
+
+    onError: (error) => {
       setServerError(
         getErrorMessage(
           error,
           `Failed to ${isEditMode ? "update" : "create"} student`,
         ),
       );
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const onSubmit = (values: CreateStudentValues) => {
+    setServerError(null);
+    saveStudentMutation.mutate(values);
   };
 
   return (
@@ -484,7 +494,7 @@ export function StudentForm({
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              disabled={loading}
+              disabled={saveStudentMutation.isPending}
               className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
             >
               Cancel
@@ -492,10 +502,10 @@ export function StudentForm({
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={saveStudentMutation.isPending}
               className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading
+              {saveStudentMutation.isPending
                 ? studentId
                   ? "Updating..."
                   : "Creating..."

@@ -1,25 +1,19 @@
-import { cookies } from "next/headers";
+"use client";
+
 import Link from "next/link";
-import { Subject } from "@/lib/validations/subject";
+import { useQuery } from "@tanstack/react-query";
+import { subjectsApi } from "@/lib/api/subjects";
+import { SubjectRowActions } from "@/components/subjects/subject-row-actions";
 
-async function getSubjects(): Promise<Subject[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-
-  if (!token) return [];
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subject`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
+export default function SubjectsPage() {
+  const { data: subjects = [], isLoading } = useQuery({
+    queryKey: ["subjects"],
+    queryFn: subjectsApi.list,
   });
 
-  if (!res.ok) return [];
-
-  return res.json();
-}
-
-export default async function SubjectsPage() {
-  const subjects = await getSubjects();
+  if (isLoading) {
+    return <p className="text-sm text-slate-400">Loading subjects...</p>;
+  }
 
   return (
     <div className="space-y-8">
@@ -96,6 +90,10 @@ export default async function SubjectsPage() {
                 </th>
 
                 <th className="px-6 py-3.5 font-medium text-slate-500">Code</th>
+
+                <th className="px-6 py-3.5 font-medium text-slate-500">
+                  Actions
+                </th>
               </tr>
             </thead>
 
@@ -152,6 +150,13 @@ export default async function SubjectsPage() {
                       ) : (
                         <span className="text-slate-400">—</span>
                       )}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <SubjectRowActions
+                        subjectId={s.id}
+                        subjectName={s.name}
+                      />
                     </td>
                   </tr>
                 ))

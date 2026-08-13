@@ -2,22 +2,11 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Pencil, ArrowLeft, UserRound } from "lucide-react";
+import { Pencil, ArrowLeft, UserRound, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { studentsApi } from "@/lib/api/students";
+import { optionsApi } from "@/lib/api/options";
 import { useQuery } from "@tanstack/react-query";
-
-interface StudentDetail {
-  id: string;
-  admissionNo: string;
-  firstName: string;
-  lastName: string | null;
-  gender: string | null;
-  dob: string | null;
-  bloodGroup: string | null;
-  admissionDate: string | null;
-  isActive: boolean;
-}
 
 export default function StudentDetailPage() {
   const params = useParams<{ id: string }>();
@@ -32,6 +21,24 @@ export default function StudentDetailPage() {
     queryFn: () => studentsApi.get(params.id),
   });
 
+  const { data: years } = useQuery({
+    queryKey: ["academicYears"],
+    queryFn: optionsApi.academicYears,
+  });
+
+  const activeYear = years?.find((y) => y.isActive) ?? null;
+
+  const {
+    data: enrollment,
+    isLoading: enrollmentLoading,
+    isError: enrollmentError,
+  } = useQuery({
+    queryKey: ["enrollment", params.id, activeYear?.id],
+    queryFn: () => studentsApi.getEnrollment(params.id, activeYear!.id),
+    enabled: !!activeYear,
+    retry: false, // a 404 just means "not enrolled", not a real failure
+  });
+
   if (isLoading) {
     return <p className="text-sm text-slate-400">Loading Student...</p>;
   }
@@ -42,6 +49,7 @@ export default function StudentDetailPage() {
   }
 
   const fullName = `${student.firstName} ${student.lastName ?? ""}`.trim();
+  const hasEnrollment = !!enrollment && !enrollmentError;
 
   return (
     <div className="space-y-8">
@@ -168,6 +176,70 @@ export default function StudentDetailPage() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Enrollment */}
+        <div className="border-t border-slate-100 p-6">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50">
+              <GraduationCap className="h-4 w-4 text-blue-600" />
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-slate-900">Enrollment</h3>
+
+              <p className="text-xs text-slate-500">
+                Current class and section for the active academic year.
+              </p>
+            </div>
+          </div>
+
+          {enrollmentLoading ? (
+            <p className="text-sm text-slate-400">Loading enrollment...</p>
+          ) : hasEnrollment ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-lg border border-slate-100 bg-slate-50/50 p-4">
+                <p className="text-xs font-medium text-slate-400">Class</p>
+
+                <p className="mt-2 text-sm font-medium text-slate-800">
+                  {enrollment.section?.class?.name ?? "—"}
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-slate-100 bg-slate-50/50 p-4">
+                <p className="text-xs font-medium text-slate-400">Section</p>
+
+                <p className="mt-2 text-sm font-medium text-slate-800">
+                  {enrollment.section?.name ?? "—"}
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-slate-100 bg-slate-50/50 p-4">
+                <p className="text-xs font-medium text-slate-400">Roll No.</p>
+
+                <p className="mt-2 text-sm font-medium text-slate-800">
+                  {enrollment.rollNo ?? "—"}
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-slate-100 bg-slate-50/50 p-4">
+                <p className="text-xs font-medium text-slate-400">
+                  Academic Year
+                </p>
+
+                <p className="mt-2 text-sm font-medium text-slate-800">
+                  {activeYear?.label ?? "—"}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-lg border border-blue-100 bg-blue-50/50 px-4 py-3">
+              <p className="text-sm text-blue-700">
+                This student is not enrolled in a class for the current academic
+                year.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
