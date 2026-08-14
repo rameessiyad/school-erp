@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  createStaffSchema,
+  getStaffSchema,
   CreateStaffValues,
   staffDesignations,
 } from "@/lib/validations/staff";
@@ -20,15 +21,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { apiClient } from "@/lib/axios/client";
-import axios from "axios";
 import { staffApi } from "@/lib/api/staff";
 import { getErrorMessage } from "@/lib/api/error";
 
-export function StaffForm() {
+interface StaffFormProps {
+  staffId?: string;
+  defaultValues?: Partial<CreateStaffValues>;
+}
+
+export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
+  const isEditMode = !!staffId;
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -36,22 +41,44 @@ export function StaffForm() {
     control,
     formState: { errors },
   } = useForm<CreateStaffValues>({
-    resolver: zodResolver(createStaffSchema),
+    resolver: zodResolver(getStaffSchema(isEditMode)),
+    defaultValues,
   });
 
-  const onSubmit = async (values: CreateStaffValues) => {
-    setServerError(null);
-    setLoading(true);
+  const saveStaffMutation = useMutation({
+    mutationFn: (values: CreateStaffValues) => {
+      const { password, ...rest } = values;
+      const payload = isEditMode && !password ? rest : values;
 
-    try {
-      await staffApi.create(values);
+      return isEditMode
+        ? staffApi.update(staffId!, payload)
+        : staffApi.create(payload);
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+
+      if (isEditMode) {
+        queryClient.invalidateQueries({ queryKey: ["staff", staffId] });
+      }
+
       router.push("/dashboard/staff");
       router.refresh();
-    } catch (error) {
-      setServerError(getErrorMessage(error, "Failed to create staff"));
-    } finally {
-      setLoading(false);
-    }
+    },
+
+    onError: (error) => {
+      setServerError(
+        getErrorMessage(
+          error,
+          `Failed to ${isEditMode ? "update" : "create"} staff`,
+        ),
+      );
+    },
+  });
+
+  const onSubmit = (values: CreateStaffValues) => {
+    setServerError(null);
+    saveStaffMutation.mutate(values);
   };
 
   return (
@@ -157,7 +184,11 @@ export function StaffForm() {
             <Input
               id="password"
               type="password"
-              placeholder="Create a secure password"
+              placeholder={
+                isEditMode
+                  ? "Leave blank to keep current password"
+                  : "Create a secure password"
+              }
               {...register("password")}
               className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
             />
@@ -220,7 +251,7 @@ export function StaffForm() {
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              disabled={loading}
+              disabled={saveStaffMutation.isPending}
               className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
             >
               Cancel
@@ -228,10 +259,16 @@ export function StaffForm() {
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={saveStaffMutation.isPending}
               className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Creating..." : "Create Staff"}
+              {saveStaffMutation.isPending
+                ? staffId
+                  ? "Updating..."
+                  : "Creating..."
+                : staffId
+                  ? "Update Staff"
+                  : "Create Staff"}
             </Button>
           </div>
         </form>

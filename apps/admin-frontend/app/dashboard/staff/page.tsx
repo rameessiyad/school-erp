@@ -4,20 +4,16 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Staff } from "@/lib/validations/staff";
 import { staffApi } from "@/lib/api/staff";
+import { useQuery } from "@tanstack/react-query";
+import { StaffRowActions } from "@/components/staff/staff-row-actions";
 
 export default function StaffPage() {
-  const [staff, setStaff] = useState<Staff[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: staff = [], isLoading } = useQuery({
+    queryKey: ["staffs"],
+    queryFn: staffApi.list,
+  });
 
-  useEffect(() => {
-    staffApi
-      .list()
-      .then(setStaff)
-      .catch(() => setStaff([]))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <p className="text-sm text-slate-400">Loading staff...</p>;
   }
 
@@ -120,6 +116,10 @@ export default function StaffPage() {
                 <th className="px-6 py-3.5 font-medium text-slate-500">
                   Status
                 </th>
+
+                <th className="px-6 py-3.5 font-medium text-slate-500">
+                  Actions
+                </th>
               </tr>
             </thead>
 
@@ -202,6 +202,13 @@ export default function StaffPage() {
 
                           {s.isActive ? "Active" : "Inactive"}
                         </span>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <StaffRowActions
+                          staffId={s.id}
+                          staffName={`${s.firstName} ${s.lastName ?? ""}`}
+                        />
                       </td>
                     </tr>
                   );
