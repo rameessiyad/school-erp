@@ -45,9 +45,9 @@ export const teachersApi = {
     return data;
   },
 
-  get: async (id: string) => {
-    const {data} = await apiClient.get(`/teacher/${id}`);
-    return data
+  get: async (id: string): Promise<Teacher> => {
+    const { data } = await apiClient.get(`/teacher/${id}`);
+    return data;
   },
 
   create: async (
