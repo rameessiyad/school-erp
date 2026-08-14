@@ -18,6 +18,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { Module } from "@/lib/permissions/module.enum";
 
 interface DashboardSidebarProps {
   user: {
@@ -28,51 +29,67 @@ interface DashboardSidebarProps {
   };
 }
 
+// requiredModules: undefined = always visible (e.g. Overview)
+// []           = admin/super-admin only, no staff designation currently grants this
+// [Module...]  = visible if user.allowedModules includes ANY of these
 const navigation = [
   {
     label: "Overview",
     href: "/dashboard",
     icon: LayoutDashboard,
+    requiredModules: undefined,
   },
   {
     label: "Students",
     href: "/dashboard/students",
     icon: GraduationCap,
+    requiredModules: [Module.STUDENT_ADMISSIONS, Module.STUDENT_REGISTRATION],
   },
   {
     label: "Teachers",
     href: "/dashboard/teachers",
     icon: UserRound,
+    requiredModules: [Module.TEACHER_MANAGEMENT],
   },
   {
     label: "Parents",
     href: "/dashboard/parents",
     icon: Users,
+    requiredModules: [Module.PARENT_DETAILS],
   },
   {
     label: "Staff",
     href: "/dashboard/staff",
     icon: Briefcase,
+    requiredModules: [Module.USER_MANAGEMENT], // admin-only today
   },
   {
     label: "Subjects",
     href: "/dashboard/subjects",
     icon: BookOpen,
+    requiredModules: [Module.ACADEMIC_YEAR], // assumption — adjust if wrong
   },
   {
     label: "Classes",
     href: "/dashboard/classes",
     icon: Layers,
+    requiredModules: [Module.ACADEMIC_YEAR], // assumption — adjust if wrong
   },
   {
     label: "Sections",
     href: "/dashboard/sections",
     icon: LayoutGrid,
+    requiredModules: [Module.ACADEMIC_YEAR], // assumption — adjust if wrong
   },
   {
     label: "Fee Structures",
     href: "/dashboard/fee-structures",
     icon: Wallet,
+    requiredModules: [
+      Module.STUDENT_FEES,
+      Module.FEE_REPORTS,
+      Module.PAYMENT_HISTORY,
+    ],
   },
 ];
 
@@ -80,6 +97,15 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
+
+  const isAdmin = user.role === "SCHOOL_ADMIN" || user.role === "SUPER_ADMIN";
+  const allowedModules = user.allowedModules ?? [];
+
+  const visibleNavigation = navigation.filter((item) => {
+    if (isAdmin) return true;
+    if (!item.requiredModules) return true; // always-visible items (Overview)
+    return item.requiredModules.some((m) => allowedModules.includes(m));
+  });
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -113,7 +139,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         </p>
 
         <nav className="space-y-1">
-          {navigation.map((item) => {
+          {visibleNavigation.map((item) => {
             const Icon = item.icon;
             const active =
               pathname === item.href ||
@@ -141,17 +167,21 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           })}
         </nav>
 
-        <p className="mb-3 mt-8 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-          System
-        </p>
+        {isAdmin && (
+          <>
+            <p className="mb-3 mt-8 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              System
+            </p>
 
-        <Link
-          href="/dashboard/settings"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-        >
-          <Settings className="h-[18px] w-[18px] text-slate-400" />
-          Settings
-        </Link>
+            <Link
+              href="/dashboard/settings"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+            >
+              <Settings className="h-[18px] w-[18px] text-slate-400" />
+              Settings
+            </Link>
+          </>
+        )}
       </div>
 
       {/* User */}
