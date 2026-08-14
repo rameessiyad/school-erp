@@ -1,23 +1,18 @@
-import { cookies } from "next/headers";
+"use client";
+
+import { sectionsApi } from "@/lib/api/sections";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { Section } from "@/lib/validations/section";
 
-async function getSections(): Promise<Section[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) return [];
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/section`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
+export default function SectionsPage() {
+  const { data: sections = [], isLoading } = useQuery({
+    queryKey: ["sections"],
+    queryFn: sectionsApi.list,
   });
 
-  if (!res.ok) return [];
-  return res.json();
-}
-
-export default async function SectionsPage() {
-  const sections = await getSections();
+  if (isLoading) {
+    return <p className="text-sm text-slate-400">Loading sections...</p>;
+  }
 
   return (
     <div className="space-y-8">

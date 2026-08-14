@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { PowerOff } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -15,6 +15,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { feeStructureApi } from "@/lib/api/fee-structures";
+import { getErrorMessage } from "@/lib/api/error";
 
 interface DeactivateFeeStructureButtonProps {
   feeStructureId: string;
@@ -25,31 +27,37 @@ export function DeactivateFeeStructureButton({
   feeStructureId,
   feeStructureName,
 }: DeactivateFeeStructureButtonProps) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleDeactivate = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `/api/fee-structures/${feeStructureId}/deactivate`,
-        {
-          method: "PATCH",
-        },
+  const deactivateMutation = useMutation({
+    mutationFn: () => feeStructureApi.deactivate(feeStructureId),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feeStructures"] });
+      queryClient.invalidateQueries({
+        queryKey: ["feeStructure", feeStructureId],
+      });
+
+      setOpen(false);
+    },
+
+    onError: (error) => {
+      setServerError(
+        getErrorMessage(error, "Failed to deactivate fee structure"),
       );
-
-      if (res.ok) {
-        setOpen(false);
-        router.refresh();
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
+    <AlertDialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) setServerError(null);
+      }}
+    >
       <AlertDialogTrigger>
         <Button
           variant="outline"
@@ -81,20 +89,30 @@ export function DeactivateFeeStructureButton({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
+        {serverError && (
+          <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3">
+            <p className="text-center text-sm text-red-600">{serverError}</p>
+          </div>
+        )}
+
         <AlertDialogFooter className="border-t border-slate-100 pt-4">
           <AlertDialogCancel
-            disabled={loading}
+            disabled={deactivateMutation.isPending}
             className="h-10 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
           >
             Cancel
           </AlertDialogCancel>
 
           <AlertDialogAction
-            onClick={handleDeactivate}
-            disabled={loading}
+            onClick={(e) => {
+              e.preventDefault();
+              setServerError(null);
+              deactivateMutation.mutate();
+            }}
+            disabled={deactivateMutation.isPending}
             className="h-10 rounded-lg bg-red-600 px-5 font-medium text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Deactivating..." : "Deactivate"}
+            {deactivateMutation.isPending ? "Deactivating..." : "Deactivate"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

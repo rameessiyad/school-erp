@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   GraduationCap,
   UserRound,
@@ -8,32 +7,13 @@ import {
   Wallet,
   ArrowUpRight,
   Clock3,
+  ReceiptText,
 } from "lucide-react";
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { DashboardCharts } from "@/components/dashboard/dashboard-charts";
-
-interface DashboardStats {
-  studentCount: number;
-  teacherCount: number;
-  parentCount: number;
-  totalFeesCollected: number;
-}
-
-async function getDashboardStats(): Promise<DashboardStats | null> {
-  const token = localStorage.getItem("accessToken");
-  if (!token) return null;
-
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/dashboard/stats`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    },
-  );
-
-  if (!res.ok) return null;
-
-  return res.json();
-}
+import { dashboardApi } from "@/lib/api/dashboard";
+import { MiniCalendar } from "@/components/dashboard/mini-calendar";
 
 function formatCurrency(amount: number) {
   if (amount >= 100000) {
@@ -42,15 +22,29 @@ function formatCurrency(amount: number) {
   return `₹${amount.toLocaleString("en-IN")}`;
 }
 
-export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+const quickActions = [
+  {
+    title: "Add Teacher",
+    href: "/dashboard/teachers/new",
+    icon: UserRound,
+  },
+  {
+    title: "Add Student",
+    href: "/dashboard/students/new",
+    icon: GraduationCap,
+  },
+  {
+    title: "Add Fee Structure",
+    href: "/dashboard/fee-structures/new",
+    icon: ReceiptText,
+  },
+];
 
-  useEffect(() => {
-    getDashboardStats()
-      .then(setStats)
-      .finally(() => setLoading(false));
-  }, []);
+export default function DashboardPage() {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["dashboardStats"],
+    queryFn: dashboardApi.getStats,
+  });
 
   const statCards = [
     {
@@ -79,7 +73,7 @@ export default function DashboardPage() {
     },
   ];
 
-  if (loading) {
+  if (isLoading) {
     return <p className="text-sm text-slate-400">Loading dashboard...</p>;
   }
 
@@ -133,6 +127,39 @@ export default function DashboardPage() {
             </div>
           );
         })}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-1">
+          <MiniCalendar />
+        </div>
+
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+          <p className="text-sm font-medium text-slate-500">Quick Actions</p>
+
+          <div className="mt-4 space-y-2">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <Link
+                  key={action.title}
+                  href={action.href}
+                  className="group flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-3 transition hover:border-blue-300 hover:bg-blue-50"
+                >
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-blue-600 shadow-sm transition group-hover:bg-blue-600 group-hover:text-white">
+                    <Icon className="h-4 w-4" />
+                  </div>
+
+                  <p className="text-sm font-medium text-slate-700">
+                    {action.title}
+                  </p>
+
+                  <ArrowUpRight className="ml-auto h-4 w-4 text-slate-300 transition group-hover:text-blue-500" />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       <DashboardCharts

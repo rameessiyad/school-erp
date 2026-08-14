@@ -104,7 +104,10 @@ export class FeeStructureService {
 
     return this.prisma.feeStructure.update({
       where: { id },
-      data: dto,
+      data: {
+        ...dto,
+        ...(dto.dueDate && { dueDate: new Date(dto.dueDate) }),
+      },
     });
   }
 

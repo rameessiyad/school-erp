@@ -23,7 +23,11 @@ export class ClassService {
   }
 
   async findAll(schoolId: string) {
-    return this.prisma.class.findMany({ where: { schoolId } });
+    return this.prisma.class.findMany({
+      where: { schoolId },
+      include: { sections: { select: { id: true, name: true } } },
+      orderBy: { name: 'asc' },
+    });
   }
 
   async findOne(schoolId: string, id: string) {

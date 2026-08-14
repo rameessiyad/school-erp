@@ -1,55 +1,52 @@
-import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+"use client";
+
 import { FeeStructureForm } from "@/components/fee-structures/fee-structure-form";
+import { feeStructureApi } from "@/lib/api/fee-structures";
+import { CreateFeeStructureValues } from "@/lib/validations/fee-structure";
+import { useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
 
-async function getFeeStructure(id: string) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+export default function EditFeeStructurePage() {
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
 
-  if (!token) return null;
+  const {
+    data: feeStructure,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["feeStructure", params.id],
+    queryFn: () => feeStructureApi.get(params.id),
+  });
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/fee-structure/${id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    },
-  );
+  if (isError) {
+    router.push("/dashboard/fee-structures");
+    return null;
+  }
 
-  if (!res.ok) return null;
-
-  return res.json();
-}
-
-export default async function EditFeeStructurePage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-
-  const fs = await getFeeStructure(id);
-
-  if (!fs) notFound();
+  if (isLoading || !feeStructure) {
+    return <p className="text-sm text-slate-400">Loading fee structure...</p>;
+  }
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="mb-6 text-2xl font-semibold text-slate-900">
-        Edit Fee Structure
-      </h1>
+    <div className="max-w-2xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold text-slate-900">
+          Edit Fee Structure
+        </h1>
+      </div>
 
       <FeeStructureForm
-        feeStructureId={id}
+        feeStructureId={params.id}
         defaultValues={{
-          academicYearId: fs.academicYear?.id,
-          classId: fs.class?.id,
-          name: fs.name,
-          amount: Number(fs.amount),
-          frequency: fs.frequency,
-          dueDate: fs.dueDate.split("T")[0],
-          description: fs.description ?? undefined,
+          name: feeStructure.name,
+          classId: feeStructure.class?.id ?? "",
+          academicYearId: feeStructure.academicYear?.id ?? "",
+          amount: Number(feeStructure.amount),
+          frequency:
+            feeStructure.frequency as CreateFeeStructureValues["frequency"],
+          dueDate: feeStructure.dueDate.slice(0, 10),
+          description: feeStructure.description ?? "",
         }}
       />
     </div>

@@ -22,7 +22,7 @@ import { Module } from 'src/common/permissions/module.enum';
 export class FeeStructureController {
   constructor(private readonly feeStructureService: FeeStructureService) {}
 
-  @Post()
+  @Post('/create')
   @RequireModule(Module.STUDENT_FEES)
   create(@Request() req, @Body() dto: CreateFeeStructureDto) {
     return this.feeStructureService.create(req.user.schoolId, dto);

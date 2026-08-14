@@ -33,3 +33,8 @@ export interface FeeStructure {
   academicYear?: { id: string; label: string };
   createdAt: string;
 }
+
+export interface AcademicYearOption {
+  id: string;
+  label: string;
+}

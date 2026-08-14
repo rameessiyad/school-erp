@@ -112,4 +112,53 @@ export class SectionService {
       );
     return assignment;
   }
+
+  async getSectionDetails(schoolId: string, sectionId: string) {
+    const section = await this.prisma.section.findFirst({
+      where: { id: sectionId, schoolId },
+      include: { class: true },
+    });
+    if (!section) throw new NotFoundException('Section not found');
+
+    const academicYear =
+      (await this.prisma.academicYear.findFirst({
+        where: { schoolId, isActive: true },
+      })) ??
+      (await this.prisma.academicYear.findFirst({
+        where: { schoolId },
+        orderBy: { startDate: 'desc' },
+      }));
+
+    if (!academicYear) {
+      return { section, academicYear: null, classTeacher: null, students: [] };
+    }
+
+    const [classTeacherAssignment, enrollments] = await Promise.all([
+      this.prisma.classTeacherAssignment.findUnique({
+        where: {
+          academicYearId_sectionId: {
+            academicYearId: academicYear.id,
+            sectionId,
+          },
+        },
+        include: { teacher: true },
+      }),
+      this.prisma.studentEnrollment.findMany({
+        where: { sectionId, academicYearId: academicYear.id },
+        include: { student: true },
+        orderBy: { rollNo: 'asc' },
+      }),
+    ]);
+
+    return {
+      section,
+      academicYear,
+      classTeacher: classTeacherAssignment?.teacher ?? null,
+      students: enrollments.map((e) => ({
+        enrollmentId: e.id,
+        rollNo: e.rollNo,
+        ...e.student,
+      })),
+    };
+  }
 }

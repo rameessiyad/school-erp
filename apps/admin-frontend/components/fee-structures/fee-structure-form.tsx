@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createFeeStructureSchema,
   CreateFeeStructureValues,
@@ -21,12 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface Option {
-  id: string;
-  name?: string;
-  label?: string;
-}
+import { classesApi } from "@/lib/api/classes";
+import { academicYearApi } from "@/lib/api/academic-year";
+import { feeStructureApi } from "@/lib/api/fee-structures";
+import { getErrorMessage } from "@/lib/api/error";
 
 interface FeeStructureFormProps {
   feeStructureId?: string;
@@ -39,24 +38,18 @@ export function FeeStructureForm({
 }: FeeStructureFormProps) {
   const isEditMode = !!feeStructureId;
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [classes, setClasses] = useState<Option[]>([]);
-  const [academicYears, setAcademicYears] = useState<Option[]>([]);
 
-  useEffect(() => {
-    async function loadOptions() {
-      const [classesRes, yearsRes] = await Promise.all([
-        fetch("/api/classes"),
-        fetch("/api/academic-year"),
-      ]);
+  const { data: classes = [] } = useQuery({
+    queryKey: ["schoolClasses"],
+    queryFn: classesApi.list,
+  });
 
-      if (classesRes.ok) setClasses(await classesRes.json());
-      if (yearsRes.ok) setAcademicYears(await yearsRes.json());
-    }
-
-    loadOptions();
-  }, []);
+  const { data: academicYears = [] } = useQuery({
+    queryKey: ["academicYears"],
+    queryFn: academicYearApi.list,
+  });
 
   const {
     register,
@@ -68,39 +61,39 @@ export function FeeStructureForm({
     defaultValues,
   });
 
-  const onSubmit = async (values: CreateFeeStructureValues) => {
-    setServerError(null);
-    setLoading(true);
+  const saveFeeStructureMutation = useMutation({
+    mutationFn: (values: CreateFeeStructureValues) => {
+      return isEditMode
+        ? feeStructureApi.update(feeStructureId!, values)
+        : feeStructureApi.create(values);
+    },
 
-    try {
-      const res = await fetch(
-        isEditMode
-          ? `/api/fee-structure/${feeStructureId}`
-          : "/api/fee-structure",
-        {
-          method: isEditMode ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
-        },
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feeStructures"] });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setServerError(
-          data.message ??
-            `Failed to ${isEditMode ? "update" : "create"} fee structure`,
-        );
-        return;
+      if (isEditMode) {
+        queryClient.invalidateQueries({
+          queryKey: ["feeStructure", feeStructureId],
+        });
       }
 
       router.push("/dashboard/fee-structures");
       router.refresh();
-    } catch {
-      setServerError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    },
+
+    onError: (error) => {
+      setServerError(
+        getErrorMessage(
+          error,
+          `Failed to ${isEditMode ? "update" : "create"} fee structure`,
+        ),
+      );
+    },
+  });
+
+  const onSubmit = (values: CreateFeeStructureValues) => {
+    setServerError(null);
+    saveFeeStructureMutation.mutate(values);
   };
 
   return (
@@ -326,7 +319,7 @@ export function FeeStructureForm({
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              disabled={loading}
+              disabled={saveFeeStructureMutation.isPending}
               className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
             >
               Cancel
@@ -334,10 +327,10 @@ export function FeeStructureForm({
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={saveFeeStructureMutation.isPending}
               className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading
+              {saveFeeStructureMutation.isPending
                 ? isEditMode
                   ? "Updating..."
                   : "Creating..."

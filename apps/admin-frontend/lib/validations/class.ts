@@ -10,4 +10,5 @@ export interface SchoolClass {
   id: string;
   name: string;
   createdAt: string;
+  sections?: { id: string; name: string }[];
 }

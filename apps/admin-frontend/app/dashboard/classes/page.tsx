@@ -1,23 +1,20 @@
-import { cookies } from "next/headers";
+"use client";
+
 import Link from "next/link";
 import { SchoolClass } from "@/lib/validations/class";
+import { useQuery } from "@tanstack/react-query";
+import { classesApi } from "@/lib/api/classes";
+import { ClassesRow } from "@/components/classes/classes-row-actions";
 
-async function getClasses(): Promise<SchoolClass[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  if (!token) return [];
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/class`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
+export default function ClassesPage() {
+  const { data: schoolClasses = [], isLoading } = useQuery({
+    queryKey: ["schoolClasses"],
+    queryFn: classesApi.list,
   });
 
-  if (!res.ok) return [];
-  return res.json();
-}
-
-export default async function ClassesPage() {
-  const classes = await getClasses();
+  if (isLoading) {
+    return <p className="text-sm text-slate-400">Loading classes...</p>;
+  }
 
   return (
     <div className="space-y-8">
@@ -47,7 +44,7 @@ export default async function ClassesPage() {
           <p className="text-sm font-medium text-slate-500">Total Classes</p>
 
           <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
-            {classes.length}
+            {schoolClasses.length}
           </p>
 
           <p className="mt-1 text-xs text-slate-400">
@@ -67,7 +64,8 @@ export default async function ClassesPage() {
           </div>
 
           <span className="text-sm text-slate-400">
-            {classes.length} {classes.length === 1 ? "class" : "classes"}
+            {schoolClasses.length}{" "}
+            {schoolClasses.length === 1 ? "class" : "classes"}
           </span>
         </div>
 
@@ -78,13 +76,21 @@ export default async function ClassesPage() {
                 <th className="px-6 py-3.5 font-medium text-slate-500">
                   Class Name
                 </th>
+
+                <th className="px-6 py-3.5 font-medium text-slate-500">
+                  Sections
+                </th>
+
+                <th className="px-6 py-3.5 font-medium text-slate-500">
+                  Actions
+                </th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-slate-100">
-              {classes.length === 0 ? (
+              {schoolClasses.length === 0 ? (
                 <tr>
-                  <td className="px-6 py-12 text-center">
+                  <td colSpan={3} className="px-6 py-12 text-center">
                     <div className="mx-auto flex max-w-sm flex-col items-center">
                       <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
                         <span className="text-lg font-semibold">+</span>
@@ -108,7 +114,7 @@ export default async function ClassesPage() {
                   </td>
                 </tr>
               ) : (
-                classes.map((c) => (
+                schoolClasses.map((c: SchoolClass) => (
                   <tr key={c.id} className="transition hover:bg-slate-50/70">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -122,6 +128,30 @@ export default async function ClassesPage() {
                           <p className="text-xs text-slate-400">School class</p>
                         </div>
                       </div>
+                    </td>
+
+                    <td className="px-6 py-4">
+                      {c.sections && c.sections.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {c.sections.map((s) => (
+                            <Link
+                              key={s.id}
+                              href={`/dashboard/sections/${s.id}`}
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                            >
+                              {s.name}
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-sm text-slate-400">
+                          No sections
+                        </span>
+                      )}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <ClassesRow classId={c.id} className={c.name} />
                     </td>
                   </tr>
                 ))

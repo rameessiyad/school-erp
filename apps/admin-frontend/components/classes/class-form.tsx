@@ -4,16 +4,25 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClassSchema, CreateClassValues } from "@/lib/validations/class";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { classesApi } from "@/lib/api/classes";
+import { getErrorMessage } from "@/lib/api/error";
 
-export function ClassForm() {
+interface ClassFormProps {
+  classId?: string;
+  defaultValues?: Partial<CreateClassValues>;
+}
+
+export function ClassForm({ classId, defaultValues }: ClassFormProps) {
+  const isEditMode = !!classId;
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -21,33 +30,40 @@ export function ClassForm() {
     formState: { errors },
   } = useForm<CreateClassValues>({
     resolver: zodResolver(createClassSchema),
+    defaultValues,
   });
 
-  const onSubmit = async (values: CreateClassValues) => {
-    setServerError(null);
-    setLoading(true);
+  const saveClassMutation = useMutation({
+    mutationFn: (values: CreateClassValues) => {
+      return isEditMode
+        ? classesApi.update(classId!, values)
+        : classesApi.create(values);
+    },
 
-    try {
-      const res = await fetch("/api/classes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schoolClasses"] });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setServerError(data.message ?? "Failed to create class");
-        return;
+      if (isEditMode) {
+        queryClient.invalidateQueries({ queryKey: ["schoolClass", classId] });
       }
 
       router.push("/dashboard/classes");
       router.refresh();
-    } catch {
-      setServerError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    },
+
+    onError: (error) => {
+      setServerError(
+        getErrorMessage(
+          error,
+          `Failed to ${isEditMode ? "update" : "create"} class`,
+        ),
+      );
+    },
+  });
+
+  const onSubmit = (values: CreateClassValues) => {
+    setServerError(null);
+    saveClassMutation.mutate(values);
   };
 
   return (
@@ -95,7 +111,7 @@ export function ClassForm() {
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              disabled={loading}
+              disabled={saveClassMutation.isPending}
               className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
             >
               Cancel
@@ -103,10 +119,16 @@ export function ClassForm() {
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={saveClassMutation.isPending}
               className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Creating..." : "Create Class"}
+              {saveClassMutation.isPending
+                ? classId
+                  ? "Updating..."
+                  : "Creating..."
+                : classId
+                  ? "Update Class"
+                  : "Create Class"}
             </Button>
           </div>
         </form>

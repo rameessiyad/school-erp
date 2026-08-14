@@ -77,4 +77,9 @@ export class SectionController {
       academicYearId,
     );
   }
+
+  @Get(':id/details')
+  getSectionDetails(@Request() req, @Param('id') id: string) {
+    return this.sectionService.getSectionDetails(req.user.schoolId, id);
+  }
 }

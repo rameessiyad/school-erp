@@ -1,44 +1,37 @@
-import { cookies } from "next/headers";
+"use client";
+
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Pencil, ArrowLeft } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { FeeStructure } from "@/lib/validations/fee-structure";
+import { DeactivateFeeStructureButton } from "@/components/fee-structures/deactivate-fee-structure-button";
+import { feeStructureApi } from "@/lib/api/fee-structures";
 
-async function getFeeStructure(id: string): Promise<FeeStructure | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+export default function FeeStructureDetailPage() {
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
 
-  if (!token) return null;
+  const {
+    data: fs,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["feeStructure", params.id],
+    queryFn: () => feeStructureApi.get(params.id),
+  });
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/fee-structure/${id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    },
-  );
+  if (isError) {
+    router.push("/dashboard/fee-structures");
+    return null;
+  }
 
-  if (!res.ok) return null;
-
-  return res.json();
-}
-
-export default async function FeeStructureDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const fs = await getFeeStructure(id);
-
-  if (!fs) notFound();
+  if (isLoading || !fs) {
+    return <p className="text-sm text-slate-400">Loading fee structure...</p>;
+  }
 
   return (
     <div className="max-w-4xl space-y-6">
-      {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
           <Link
@@ -52,15 +45,23 @@ export default async function FeeStructureDetailPage({
           <h1 className="text-2xl font-semibold text-slate-900">{fs.name}</h1>
         </div>
 
-        <Link href={`/dashboard/fee-structures/${id}/edit`}>
-          <Button variant="outline">
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href={`/dashboard/fee-structures/${params.id}/edit`}>
+            <Button variant="outline">
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
+            </Button>
+          </Link>
+
+          {fs.isActive && (
+            <DeactivateFeeStructureButton
+              feeStructureId={fs.id}
+              feeStructureName={fs.name}
+            />
+          )}
+        </div>
       </div>
 
-      {/* Details Card */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
           <div>

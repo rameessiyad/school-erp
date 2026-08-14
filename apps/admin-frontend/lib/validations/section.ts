@@ -17,3 +17,30 @@ export interface Section {
   academicYear?: { id: string; label: string };
   createdAt: string;
 }
+
+export interface ClassTeacher {
+  id: string;
+  firstName: string;
+  lastName: string | null;
+  email: string | null;
+  phone: string | null;
+}
+
+export interface SectionStudent {
+  enrollmentId: string;
+  rollNo: string | null;
+  id: string;
+  admissionNo: string;
+  firstName: string;
+  lastName: string | null;
+  gender: string | null;
+  photoUrl: string | null;
+  isActive: boolean;
+}
+
+export interface SectionDetails {
+  section: Section;
+  academicYear: { id: string; label: string } | null;
+  classTeacher: ClassTeacher | null;
+  students: SectionStudent[];
+}

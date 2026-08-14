@@ -1,30 +1,21 @@
-import { cookies } from "next/headers";
+"use client";
+
 import Link from "next/link";
 import { Eye, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FeeStructure } from "@/lib/validations/fee-structure";
 import { DeactivateFeeStructureButton } from "@/components/fee-structures/deactivate-fee-structure-button";
+import { useQuery } from "@tanstack/react-query";
+import { feeStructureApi } from "@/lib/api/fee-structures";
 
-async function getFeeStructures(): Promise<FeeStructure[]> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-
-  if (!token) return [];
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/fee-structure`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
+export default function FeeStructuresPage() {
+  const { data: feeStructures = [], isLoading } = useQuery({
+    queryKey: ["feeStructures"],
+    queryFn: feeStructureApi.list,
   });
 
-  if (!res.ok) return [];
-
-  return res.json();
-}
-
-export default async function FeeStructuresPage() {
-  const feeStructures = await getFeeStructures();
+  if (isLoading) {
+    return <p className="text-sm text-slate-400">Loading fee structures...</p>;
+  }
 
   return (
     <div className="space-y-6">
