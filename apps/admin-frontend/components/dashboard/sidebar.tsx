@@ -14,6 +14,7 @@ import {
   BookOpen,
   Layers,
   LayoutGrid,
+  Receipt,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -61,25 +62,25 @@ const navigation = [
     label: "Staff",
     href: "/dashboard/staff",
     icon: Briefcase,
-    requiredModules: [Module.USER_MANAGEMENT], // admin-only today
+    requiredModules: [Module.USER_MANAGEMENT],
   },
   {
     label: "Subjects",
     href: "/dashboard/subjects",
     icon: BookOpen,
-    requiredModules: [Module.ACADEMIC_YEAR], // assumption — adjust if wrong
+    requiredModules: [Module.ACADEMIC_YEAR],
   },
   {
     label: "Classes",
     href: "/dashboard/classes",
     icon: Layers,
-    requiredModules: [Module.ACADEMIC_YEAR], // assumption — adjust if wrong
+    requiredModules: [Module.ACADEMIC_YEAR],
   },
   {
     label: "Sections",
     href: "/dashboard/sections",
     icon: LayoutGrid,
-    requiredModules: [Module.ACADEMIC_YEAR], // assumption — adjust if wrong
+    requiredModules: [Module.ACADEMIC_YEAR],
   },
   {
     label: "Fee Structures",
@@ -90,6 +91,12 @@ const navigation = [
       Module.FEE_REPORTS,
       Module.PAYMENT_HISTORY,
     ],
+  },
+  {
+    label: "Fees",
+    href: "/dashboard/fees",
+    icon: Receipt,
+    requiredModules: [Module.STUDENT_FEES, Module.PAYMENT_HISTORY],
   },
 ];
 

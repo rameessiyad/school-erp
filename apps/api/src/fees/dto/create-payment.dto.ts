@@ -1,27 +1,29 @@
 import {
-  IsString,
   IsNotEmpty,
+  IsUUID,
   IsNumber,
   IsPositive,
   IsEnum,
   IsOptional,
-  IsUUID,
+  IsString,
 } from 'class-validator';
 import { PaymentMethod } from 'generated/prisma/enums';
 
 export class CreatePaymentDto {
-  @IsUUID()
   @IsNotEmpty()
+  @IsUUID()
   studentFeeId: string;
 
+  @IsNotEmpty()
   @IsNumber()
   @IsPositive()
   amount: number;
 
+  @IsNotEmpty()
   @IsEnum(PaymentMethod)
   paymentMethod: PaymentMethod;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   remarks?: string;
 }
