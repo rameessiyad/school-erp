@@ -84,8 +84,8 @@ export default function EditTeacherPage() {
     : undefined;
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="mb-6 text-2xl font-semibold text-slate-900">
+    <div className="w-auto">
+      <h1 className="mb-6 text-2xl font-semibold text-text-primary">
         Edit Teacher
       </h1>
       <TeacherForm

@@ -35,12 +35,6 @@ export class TeacherController {
     @Body() dto: CreateTeacherDto,
     @UploadedFile() photo?: UploadedFileType,
   ) {
-    console.log(
-      'photo received:',
-      photo?.originalname,
-      photo?.size,
-      photo?.mimetype,
-    );
     return this.teacherService.create(req.user.schoolId, dto, photo);
   }
 

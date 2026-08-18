@@ -6,7 +6,7 @@ export default function NewStudentPage() {
       <div>
         <p className="mb-1 text-sm font-medium text-blue-600">Students</p>
 
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="mb-6 text-2xl font-semibold text-text-primary">
           Add Student
         </h1>
 
@@ -15,7 +15,7 @@ export default function NewStudentPage() {
         </p>
       </div>
 
-      <div className="max-w-4xl">
+      <div className="w-auto">
         <StudentForm />
       </div>
     </div>

@@ -1,5 +1,9 @@
 import { apiClient } from "@/lib/axios/client";
-import { CreateTeacherValues, Teacher } from "@/lib/validations/teacher";
+import {
+  CreateTeacherValues,
+  Teacher,
+  TeacherAllocation,
+} from "@/lib/validations/teacher";
 
 function buildTeacherFormData(
   values: Partial<CreateTeacherValues>,
@@ -71,6 +75,24 @@ export const teachersApi = {
 
   remove: async (id: string) => {
     const { data } = await apiClient.delete(`/teacher/${id}`);
+    return data;
+  },
+
+  addAllocation: async (
+    teacherId: string,
+    payload: { subjectId: string; sectionId: string; academicYearId: string },
+  ): Promise<TeacherAllocation> => {
+    const { data } = await apiClient.post(
+      `/teacher/${teacherId}/allocation/create`,
+      payload,
+    );
+    return data;
+  },
+
+  removeAllocation: async (teacherId: string, allocationId: string) => {
+    const { data } = await apiClient.delete(
+      `/teacher/${teacherId}/allocations/${allocationId}`,
+    );
     return data;
   },
 };

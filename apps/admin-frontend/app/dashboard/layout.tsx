@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { authApi } from "@/lib/api/auth";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function DashboardLayout({
   children,
@@ -37,34 +38,36 @@ export default function DashboardLayout({
 
   if (!hasToken || isLoading || !user) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
-        <p className="text-sm text-slate-400">Loading...</p>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <p className="text-sm text-text-muted">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-50">
+    <div className="h-screen overflow-hidden bg-background">
       <div className="flex h-full">
         <DashboardSidebar user={user} />
 
         <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
+          <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-surface px-6">
             <div>
-              <h2 className="text-sm font-medium text-slate-500">
+              <h2 className="text-sm font-medium text-text-secondary">
                 School Administration
               </h2>
             </div>
 
             <div className="flex items-center gap-3">
+              <ThemeToggle />
+
               <div className="hidden text-right sm:block">
-                <p className="text-sm font-medium text-slate-800">
+                <p className="text-sm font-medium text-text-primary">
                   {user.email ?? "Administrator"}
                 </p>
-                <p className="text-xs text-slate-500">{user.role}</p>
+                <p className="text-xs text-text-secondary">{user.role}</p>
               </div>
 
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
                 {(user.email?.[0] ?? "A").toUpperCase()}
               </div>
             </div>

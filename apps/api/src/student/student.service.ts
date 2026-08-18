@@ -7,18 +7,34 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { EnrollStudentDto } from './dto/enroll-student.dto';
+import {
+  FileUploadService,
+  UploadedFile,
+} from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class StudentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileUploadService: FileUploadService,
+  ) {}
 
-  async create(schoolId: string, dto: CreateStudentDto) {
+  async create(schoolId: string, dto: CreateStudentDto, photo?: UploadedFile) {
     const existing = await this.prisma.student.findFirst({
       where: { schoolId, admissionNo: dto.admissionNo },
     });
 
     if (existing)
       throw new ConflictException('Admission number already in use');
+
+    let photoUrl: string | undefined;
+
+    if (photo) {
+      photoUrl = await this.fileUploadService.uploadImage(
+        photo,
+        `schools/${schoolId}/students`,
+      );
+    }
 
     return this.prisma.student.create({
       data: {
@@ -32,12 +48,32 @@ export class StudentService {
         admissionDate: dto.admissionDate
           ? new Date(dto.admissionDate)
           : undefined,
+        photoUrl,
       },
     });
   }
 
   async findAll(schoolId: string) {
     return this.prisma.student.findMany({ where: { schoolId } });
+  }
+
+  async findUnassigned(schoolId: string) {
+    const activeYear = await this.prisma.academicYear.findFirst({
+      where: { schoolId, isActive: true },
+    });
+
+    return this.prisma.student.findMany({
+      where: {
+        schoolId,
+        isActive: true,
+        ...(activeYear && {
+          academicEnrollments: {
+            none: { academicYearId: activeYear.id },
+          },
+        }),
+      },
+      orderBy: { firstName: 'asc' },
+    });
   }
 
   async findOne(schoolId: string, id: string) {
@@ -48,8 +84,22 @@ export class StudentService {
     return student;
   }
 
-  async update(schoolId: string, id: string, dto: UpdateStudentDto) {
+  async update(
+    schoolId: string,
+    id: string,
+    dto: UpdateStudentDto,
+    photo?: UploadedFile,
+  ) {
     await this.findOne(schoolId, id);
+
+    let photoUrl: string | undefined;
+
+    if (photo) {
+      photoUrl = await this.fileUploadService.uploadImage(
+        photo,
+        `schools/${schoolId}/students`,
+      );
+    }
     return this.prisma.student.update({
       where: { id },
       data: {
@@ -58,6 +108,7 @@ export class StudentService {
         admissionDate: dto.admissionDate
           ? new Date(dto.admissionDate)
           : undefined,
+        ...(photoUrl && { photoUrl }),
       },
     });
   }

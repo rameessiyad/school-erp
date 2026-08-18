@@ -8,12 +8,23 @@ import { CreateStaffDto } from './dto/create-staff.dto';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'generated/prisma/enums';
 import { UpdateStaffDto } from './dto/update-staff.dto';
+import {
+  FileUploadService,
+  UploadedFile,
+} from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class StaffService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileUploadService: FileUploadService,
+  ) {}
 
-  async createStaff(schoolId: string, dto: CreateStaffDto) {
+  async createStaff(
+    schoolId: string,
+    dto: CreateStaffDto,
+    photo?: UploadedFile,
+  ) {
     const existing = await this.prisma.staff.findFirst({
       where: { schoolId, email: dto.email },
     });
@@ -21,6 +32,15 @@ export class StaffService {
     if (existing) throw new ConflictException('Email already in use');
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
+
+    let photoUrl: string | undefined;
+
+    if (photo) {
+      photoUrl = await this.fileUploadService.uploadImage(
+        photo,
+        `schools/${schoolId}/staff`,
+      );
+    }
 
     return this.prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
@@ -41,6 +61,7 @@ export class StaffService {
           phone: dto.phone,
           email: dto.email,
           designation: dto.designation,
+          photoUrl,
         },
       });
     });
@@ -59,8 +80,22 @@ export class StaffService {
     return staff;
   }
 
-  async updateStaff(schoolId: string, id: string, dto: UpdateStaffDto) {
+  async updateStaff(
+    schoolId: string,
+    id: string,
+    dto: UpdateStaffDto,
+    photo?: UploadedFile,
+  ) {
     await this.findOne(schoolId, id);
+
+    let photoUrl: string | undefined;
+
+    if (photo) {
+      photoUrl = await this.fileUploadService.uploadImage(
+        photo,
+        `schools/${schoolId}/staff`,
+      );
+    }
 
     return this.prisma.staff.update({
       where: { id },
@@ -70,6 +105,7 @@ export class StaffService {
         phone: dto.phone,
         email: dto.email,
         designation: dto.designation,
+        ...(photoUrl && { photoUrl }),
       },
     });
   }

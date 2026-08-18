@@ -23,14 +23,16 @@ export function MiniCalendar() {
   ];
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
       <div className="flex items-baseline justify-between">
         <div>
-          <p className="text-sm font-semibold text-slate-900">{monthLabel}</p>
-          <p className="text-xs text-slate-400">{weekday}</p>
+          <p className="text-sm font-semibold text-text-primary">
+            {monthLabel}
+          </p>
+          <p className="text-xs text-text-muted">{weekday}</p>
         </div>
 
-        <p className="text-3xl font-bold tracking-tight text-blue-600">
+        <p className="text-3xl font-bold tracking-tight text-primary">
           {todayDate}
         </p>
       </div>
@@ -39,7 +41,7 @@ export function MiniCalendar() {
         {WEEKDAYS.map((d, i) => (
           <span
             key={`${d}-${i}`}
-            className="text-[11px] font-medium text-slate-400"
+            className="text-[11px] font-medium text-text-muted"
           >
             {d}
           </span>
@@ -53,8 +55,8 @@ export function MiniCalendar() {
               key={day}
               className={`mx-auto flex h-7 w-7 items-center justify-center rounded-full text-xs ${
                 day === todayDate
-                  ? "bg-blue-600 font-semibold text-white"
-                  : "text-slate-600"
+                  ? "bg-primary font-semibold text-primary-foreground"
+                  : "text-text-secondary"
               }`}
             >
               {day}

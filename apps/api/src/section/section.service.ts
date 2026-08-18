@@ -161,4 +161,81 @@ export class SectionService {
       })),
     };
   }
+
+  async getSectionParents(schoolId: string, sectionId: string) {
+    const section = await this.prisma.section.findFirst({
+      where: { id: sectionId, schoolId },
+      include: { class: true },
+    });
+    if (!section) throw new NotFoundException('Section not found');
+
+    const academicYear =
+      (await this.prisma.academicYear.findFirst({
+        where: { schoolId, isActive: true },
+      })) ??
+      (await this.prisma.academicYear.findFirst({
+        where: { schoolId },
+        orderBy: { startDate: 'desc' },
+      }));
+
+    if (!academicYear) {
+      return { section, academicYear: null, parents: [] };
+    }
+
+    const enrollments = await this.prisma.studentEnrollment.findMany({
+      where: { sectionId, academicYearId: academicYear.id },
+      select: { studentId: true },
+    });
+
+    const studentIds = enrollments.map((e) => e.studentId);
+
+    if (studentIds.length === 0) {
+      return { section, academicYear, parents: [] };
+    }
+
+    const parents = await this.prisma.parent.findMany({
+      where: {
+        schoolId,
+        parentStudents: { some: { studentId: { in: studentIds } } },
+      },
+      include: {
+        parentStudents: {
+          where: { studentId: { in: studentIds } },
+          include: { student: true },
+        },
+      },
+      orderBy: { firstName: 'asc' },
+    });
+
+    return { section, academicYear, parents };
+  }
+
+  async getSectionAllocations(schoolId: string, sectionId: string) {
+    const section = await this.prisma.section.findFirst({
+      where: { id: sectionId, schoolId },
+      include: { class: true },
+    });
+    if (!section) throw new NotFoundException('Section not found');
+
+    const academicYear =
+      (await this.prisma.academicYear.findFirst({
+        where: { schoolId, isActive: true },
+      })) ??
+      (await this.prisma.academicYear.findFirst({
+        where: { schoolId },
+        orderBy: { startDate: 'desc' },
+      }));
+
+    if (!academicYear) {
+      return { section, academicYear: null, allocations: [] };
+    }
+
+    const allocations = await this.prisma.teacherSubjectAllocation.findMany({
+      where: { sectionId, academicYearId: academicYear.id, schoolId },
+      include: { teacher: true, subject: true },
+      orderBy: { subject: { name: 'asc' } },
+    });
+
+    return { section, academicYear, allocations };
+  }
 }

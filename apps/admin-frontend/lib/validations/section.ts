@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Parent } from "./parent";
 
 export const createSectionSchema = z.object({
   name: z.string().min(1, "Section name is required"),
@@ -43,4 +44,24 @@ export interface SectionDetails {
   academicYear: { id: string; label: string } | null;
   classTeacher: ClassTeacher | null;
   students: SectionStudent[];
+}
+
+export interface SectionParentDetails {
+  section: Section;
+  academicYear: { id: string; name: string } | null;
+  parents: Parent[];
+}
+
+export interface SectionAllocation {
+  id: string;
+  subjectId: string;
+  teacherId: string;
+  subject: { id: string; name: string; code: string };
+  teacher: { id: string; firstName: string; lastName: string | null };
+}
+
+export interface SectionAllocationDetails {
+  section: Section;
+  academicYear: { id: string; label: string } | null;
+  allocations: SectionAllocation[];
 }

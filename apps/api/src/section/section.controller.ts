@@ -82,4 +82,14 @@ export class SectionController {
   getSectionDetails(@Request() req, @Param('id') id: string) {
     return this.sectionService.getSectionDetails(req.user.schoolId, id);
   }
+
+  @Get(':id/parents')
+  getSectionParents(@Request() req, @Param('id') id: string) {
+    return this.sectionService.getSectionParents(req.user.schoolId, id);
+  }
+
+  @Get(':id/subject-allocations')
+  getSectionAllocations(@Request() req, @Param('id') id: string) {
+    return this.sectionService.getSectionAllocations(req.user.schoolId, id);
+  }
 }

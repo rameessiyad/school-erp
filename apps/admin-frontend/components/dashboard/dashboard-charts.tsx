@@ -37,12 +37,12 @@ export function DashboardCharts({
   ];
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
       <div className="mb-6">
-        <h2 className="text-base font-semibold text-slate-900">
+        <h2 className="text-base font-semibold text-text-primary">
           School Overview
         </h2>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-text-secondary">
           Overview of students, teachers and parents.
         </p>
       </div>
@@ -58,35 +58,43 @@ export function DashboardCharts({
               bottom: 0,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="var(--border)"
+            />
 
             <XAxis
               dataKey="name"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 12, fill: "var(--text-secondary)" }}
             />
 
             <YAxis
               allowDecimals={false}
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 12, fill: "var(--text-secondary)" }}
             />
 
             <Tooltip
-              cursor={{ fill: "rgba(148, 163, 184, 0.08)" }}
+              cursor={{ fill: "var(--primary-soft)" }}
               contentStyle={{
                 borderRadius: "8px",
-                border: "1px solid #e2e8f0",
+                border: "1px solid var(--border)",
+                backgroundColor: "var(--surface)",
+                color: "var(--text-primary)",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
               }}
+              labelStyle={{ color: "var(--text-primary)" }}
+              itemStyle={{ color: "var(--text-secondary)" }}
             />
 
             <Bar
               dataKey="count"
               name="Count"
-              fill="#2563eb"
+              fill="var(--primary)"
               radius={[6, 6, 0, 0]}
               barSize={55}
             />

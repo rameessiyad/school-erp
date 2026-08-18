@@ -151,6 +151,7 @@ export const StaffScalarFieldEnum = {
   phone: 'phone',
   email: 'email',
   designation: 'designation',
+  photoUrl: 'photoUrl',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

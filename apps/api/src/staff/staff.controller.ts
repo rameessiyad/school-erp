@@ -7,9 +7,11 @@ import {
   Patch,
   Post,
   Request,
+  UploadedFile,
   UseGuards,
 } from '@nestjs/common';
 import { Role } from 'generated/prisma/enums';
+import { UploadedFile as UploadedFileType } from 'src/file-upload/file-upload.service';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -24,8 +26,12 @@ export class StaffController {
   constructor(private staffService: StaffService) {}
 
   @Post('create')
-  create(@Request() req, @Body() dto: CreateStaffDto) {
-    return this.staffService.createStaff(req.user.schoolId, dto);
+  create(
+    @Request() req,
+    @Body() dto: CreateStaffDto,
+    @UploadedFile() photo?: UploadedFileType,
+  ) {
+    return this.staffService.createStaff(req.user.schoolId, dto, photo);
   }
 
   @Get()
@@ -39,8 +45,13 @@ export class StaffController {
   }
 
   @Patch(':id')
-  update(@Request() req, @Param('id') id: string, @Body() dto: UpdateStaffDto) {
-    return this.staffService.updateStaff(req.user.schoolId, id, dto);
+  update(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: UpdateStaffDto,
+    @UploadedFile() photo?: UploadedFileType,
+  ) {
+    return this.staffService.updateStaff(req.user.schoolId, id, dto, photo);
   }
 
   @Delete(':id')

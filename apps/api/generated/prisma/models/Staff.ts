@@ -33,6 +33,7 @@ export type StaffMinAggregateOutputType = {
   phone: string | null
   email: string | null
   designation: $Enums.StaffDesignation | null
+  photoUrl: string | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -47,6 +48,7 @@ export type StaffMaxAggregateOutputType = {
   phone: string | null
   email: string | null
   designation: $Enums.StaffDesignation | null
+  photoUrl: string | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -61,6 +63,7 @@ export type StaffCountAggregateOutputType = {
   phone: number
   email: number
   designation: number
+  photoUrl: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -77,6 +80,7 @@ export type StaffMinAggregateInputType = {
   phone?: true
   email?: true
   designation?: true
+  photoUrl?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -91,6 +95,7 @@ export type StaffMaxAggregateInputType = {
   phone?: true
   email?: true
   designation?: true
+  photoUrl?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -105,6 +110,7 @@ export type StaffCountAggregateInputType = {
   phone?: true
   email?: true
   designation?: true
+  photoUrl?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -192,6 +198,7 @@ export type StaffGroupByOutputType = {
   phone: string | null
   email: string | null
   designation: $Enums.StaffDesignation
+  photoUrl: string | null
   isActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -227,6 +234,7 @@ export type StaffWhereInput = {
   phone?: Prisma.StringNullableFilter<"Staff"> | string | null
   email?: Prisma.StringNullableFilter<"Staff"> | string | null
   designation?: Prisma.EnumStaffDesignationFilter<"Staff"> | $Enums.StaffDesignation
+  photoUrl?: Prisma.StringNullableFilter<"Staff"> | string | null
   isActive?: Prisma.BoolFilter<"Staff"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Staff"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Staff"> | Date | string
@@ -243,6 +251,7 @@ export type StaffOrderByWithRelationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   designation?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -262,6 +271,7 @@ export type StaffWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringNullableFilter<"Staff"> | string | null
   email?: Prisma.StringNullableFilter<"Staff"> | string | null
   designation?: Prisma.EnumStaffDesignationFilter<"Staff"> | $Enums.StaffDesignation
+  photoUrl?: Prisma.StringNullableFilter<"Staff"> | string | null
   isActive?: Prisma.BoolFilter<"Staff"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Staff"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Staff"> | Date | string
@@ -278,6 +288,7 @@ export type StaffOrderByWithAggregationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   designation?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -298,6 +309,7 @@ export type StaffScalarWhereWithAggregatesInput = {
   phone?: Prisma.StringNullableWithAggregatesFilter<"Staff"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Staff"> | string | null
   designation?: Prisma.EnumStaffDesignationWithAggregatesFilter<"Staff"> | $Enums.StaffDesignation
+  photoUrl?: Prisma.StringNullableWithAggregatesFilter<"Staff"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Staff"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Staff"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Staff"> | Date | string
@@ -310,6 +322,7 @@ export type StaffCreateInput = {
   phone?: string | null
   email?: string | null
   designation: $Enums.StaffDesignation
+  photoUrl?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -326,6 +339,7 @@ export type StaffUncheckedCreateInput = {
   phone?: string | null
   email?: string | null
   designation: $Enums.StaffDesignation
+  photoUrl?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -338,6 +352,7 @@ export type StaffUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -354,6 +369,7 @@ export type StaffUncheckedUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -368,6 +384,7 @@ export type StaffCreateManyInput = {
   phone?: string | null
   email?: string | null
   designation: $Enums.StaffDesignation
+  photoUrl?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -380,6 +397,7 @@ export type StaffUpdateManyMutationInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -394,6 +412,7 @@ export type StaffUncheckedUpdateManyInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -423,6 +442,7 @@ export type StaffCountOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   designation?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -437,6 +457,7 @@ export type StaffMaxOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   designation?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -451,6 +472,7 @@ export type StaffMinOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   designation?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -541,6 +563,7 @@ export type StaffCreateWithoutSchoolInput = {
   phone?: string | null
   email?: string | null
   designation: $Enums.StaffDesignation
+  photoUrl?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -555,6 +578,7 @@ export type StaffUncheckedCreateWithoutSchoolInput = {
   phone?: string | null
   email?: string | null
   designation: $Enums.StaffDesignation
+  photoUrl?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -598,6 +622,7 @@ export type StaffScalarWhereInput = {
   phone?: Prisma.StringNullableFilter<"Staff"> | string | null
   email?: Prisma.StringNullableFilter<"Staff"> | string | null
   designation?: Prisma.EnumStaffDesignationFilter<"Staff"> | $Enums.StaffDesignation
+  photoUrl?: Prisma.StringNullableFilter<"Staff"> | string | null
   isActive?: Prisma.BoolFilter<"Staff"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Staff"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Staff"> | Date | string
@@ -610,6 +635,7 @@ export type StaffCreateWithoutUserInput = {
   phone?: string | null
   email?: string | null
   designation: $Enums.StaffDesignation
+  photoUrl?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -624,6 +650,7 @@ export type StaffUncheckedCreateWithoutUserInput = {
   phone?: string | null
   email?: string | null
   designation: $Enums.StaffDesignation
+  photoUrl?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -652,6 +679,7 @@ export type StaffUpdateWithoutUserInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -666,6 +694,7 @@ export type StaffUncheckedUpdateWithoutUserInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -679,6 +708,7 @@ export type StaffCreateManySchoolInput = {
   phone?: string | null
   email?: string | null
   designation: $Enums.StaffDesignation
+  photoUrl?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -691,6 +721,7 @@ export type StaffUpdateWithoutSchoolInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -705,6 +736,7 @@ export type StaffUncheckedUpdateWithoutSchoolInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -718,6 +750,7 @@ export type StaffUncheckedUpdateManyWithoutSchoolInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -734,6 +767,7 @@ export type StaffSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   phone?: boolean
   email?: boolean
   designation?: boolean
+  photoUrl?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -750,6 +784,7 @@ export type StaffSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   phone?: boolean
   email?: boolean
   designation?: boolean
+  photoUrl?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -766,6 +801,7 @@ export type StaffSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   phone?: boolean
   email?: boolean
   designation?: boolean
+  photoUrl?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -782,12 +818,13 @@ export type StaffSelectScalar = {
   phone?: boolean
   email?: boolean
   designation?: boolean
+  photoUrl?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type StaffOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "schoolId" | "userId" | "firstName" | "lastName" | "phone" | "email" | "designation" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["staff"]>
+export type StaffOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "schoolId" | "userId" | "firstName" | "lastName" | "phone" | "email" | "designation" | "photoUrl" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["staff"]>
 export type StaffInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -816,6 +853,7 @@ export type $StaffPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     phone: string | null
     email: string | null
     designation: $Enums.StaffDesignation
+    photoUrl: string | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1252,6 +1290,7 @@ export interface StaffFieldRefs {
   readonly phone: Prisma.FieldRef<"Staff", 'String'>
   readonly email: Prisma.FieldRef<"Staff", 'String'>
   readonly designation: Prisma.FieldRef<"Staff", 'StaffDesignation'>
+  readonly photoUrl: Prisma.FieldRef<"Staff", 'String'>
   readonly isActive: Prisma.FieldRef<"Staff", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Staff", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Staff", 'DateTime'>

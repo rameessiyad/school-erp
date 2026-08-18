@@ -15,6 +15,7 @@ import {
   Layers,
   LayoutGrid,
   Receipt,
+  ClipboardList,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -30,9 +31,6 @@ interface DashboardSidebarProps {
   };
 }
 
-// requiredModules: undefined = always visible (e.g. Overview)
-// []           = admin/super-admin only, no staff designation currently grants this
-// [Module...]  = visible if user.allowedModules includes ANY of these
 const navigation = [
   {
     label: "Overview",
@@ -76,10 +74,16 @@ const navigation = [
     icon: Layers,
     requiredModules: [Module.ACADEMIC_YEAR],
   },
+  // {
+  //   label: "Sections",
+  //   href: "/dashboard/sections",
+  //   icon: LayoutGrid,
+  //   requiredModules: [Module.ACADEMIC_YEAR],
+  // },
   {
-    label: "Sections",
-    href: "/dashboard/sections",
-    icon: LayoutGrid,
+    label: "Subject Allocation",
+    href: "/dashboard/subject-allocation",
+    icon: ClipboardList,
     requiredModules: [Module.ACADEMIC_YEAR],
   },
   {
@@ -110,7 +114,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
 
   const visibleNavigation = navigation.filter((item) => {
     if (isAdmin) return true;
-    if (!item.requiredModules) return true; // always-visible items (Overview)
+    if (!item.requiredModules) return true;
     return item.requiredModules.some((m) => allowedModules.includes(m));
   });
 
@@ -126,22 +130,22 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   };
 
   return (
-    <aside className="hidden h-full w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
+    <aside className="hidden h-full w-64 shrink-0 border-r border-border bg-surface lg:flex lg:flex-col">
       {/* Logo */}
-      <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white shadow-md shadow-blue-600/20">
+      <div className="flex h-16 items-center gap-3 border-b border-border px-5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md shadow-primary/20">
           <School className="h-5 w-5" />
         </div>
 
         <div>
-          <h1 className="text-sm font-bold text-slate-900">School ERP</h1>
-          <p className="text-[11px] text-slate-400">Administration</p>
+          <h1 className="text-sm font-bold text-text-primary">School ERP</h1>
+          <p className="text-[11px] text-text-muted">Administration</p>
         </div>
       </div>
 
       {/* Navigation */}
       <div className="flex-1 px-3 py-5">
-        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
           Main Menu
         </p>
 
@@ -158,13 +162,13 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                 href={item.href}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                   active
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    ? "bg-primary-soft text-primary"
+                    : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                 }`}
               >
                 <Icon
                   className={`h-[18px] w-[18px] ${
-                    active ? "text-blue-600" : "text-slate-400"
+                    active ? "text-primary" : "text-text-muted"
                   }`}
                 />
 
@@ -176,15 +180,15 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
 
         {isAdmin && (
           <>
-            <p className="mb-3 mt-8 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-3 mt-8 px-3 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
               System
             </p>
 
             <Link
               href="/dashboard/settings"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-surface-secondary hover:text-text-primary"
             >
-              <Settings className="h-[18px] w-[18px] text-slate-400" />
+              <Settings className="h-[18px] w-[18px] text-text-muted" />
               Settings
             </Link>
           </>
@@ -192,18 +196,18 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
       </div>
 
       {/* User */}
-      <div className="border-t border-slate-100 p-3">
-        <div className="flex items-center gap-3 rounded-lg bg-slate-50 p-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+      <div className="border-t border-border p-3">
+        <div className="flex items-center gap-3 rounded-lg bg-surface-secondary p-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary">
             {(user.email?.[0] ?? "A").toUpperCase()}
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-slate-800">
+            <p className="truncate text-sm font-medium text-text-primary">
               {user.email ?? "Administrator"}
             </p>
 
-            <p className="text-xs capitalize text-slate-400">
+            <p className="text-xs capitalize text-text-muted">
               {user.role.toLowerCase()}
             </p>
           </div>
@@ -212,7 +216,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
             type="button"
             onClick={handleLogout}
             disabled={loggingOut}
-            className="text-slate-400 cursor-pointer transition hover:text-red-500 disabled:opacity-50"
+            className="text-text-muted cursor-pointer transition hover:text-error disabled:opacity-50"
             title="Logout"
           >
             <LogOut className="h-4 w-4" />

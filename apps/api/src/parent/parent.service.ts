@@ -12,6 +12,7 @@ import { UpdateParentDto } from './dto/update-parent.dto';
 export class ParentService {
   constructor(private prisma: PrismaService) {}
 
+
   async create(schoolId: string, dto: CreateParentDto) {
     const existingUser = await this.prisma.user.findFirst({
       where: { schoolId, email: dto.email },

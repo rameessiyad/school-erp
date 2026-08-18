@@ -15,6 +15,7 @@ export const createStudentSchema = z.object({
   sectionId: z.string().optional(),
   academicYearId: z.string().optional(),
   rollNo: z.string().optional(),
+  photo: z.string().optional(),
 });
 
 export type CreateStudentValues = z.infer<typeof createStudentSchema>;
@@ -27,4 +28,5 @@ export interface Student {
   gender: string | null;
   bloodGroup: string | null;
   isActive: boolean;
+  photo: string | null;
 }

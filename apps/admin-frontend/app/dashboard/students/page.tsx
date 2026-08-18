@@ -1,203 +1,289 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { StudentRowActions } from "@/components/students/student-row-actions";
+import { Search, Users, X } from "lucide-react";
+import { classesApi } from "@/lib/api/classes";
 import { studentsApi } from "@/lib/api/students";
 import { useQuery } from "@tanstack/react-query";
+import { useDebouncedValue } from "@/hooks/use-debounzed-values";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function StudentsPage() {
-  const { data: students = [], isLoading } = useQuery({
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebouncedValue(searchInput, 250)
+    .trim()
+    .toLowerCase();
+
+  const { data: classes = [], isLoading: classesLoading } = useQuery({
+    queryKey: ["schoolClasses"],
+    queryFn: classesApi.list,
+  });
+
+  const { data: unassigned = [], isLoading: unassignedLoading } = useQuery({
+    queryKey: ["students", "unassigned"],
+    queryFn: studentsApi.listUnassigned,
+  });
+
+  const { data: allStudents = [], isLoading: allStudentsLoading } = useQuery({
     queryKey: ["students"],
     queryFn: studentsApi.list,
   });
 
-  if (isLoading) {
-    return <p className="text-sm text-slate-400">Loading students...</p>;
+  if (classesLoading || unassignedLoading) {
+    return <PageLoader text="Loading classes..." />;
   }
+
+  const totalAssigned = classes.reduce(
+    (sum, c) =>
+      sum +
+      (c.sections?.reduce((s, sec) => s + (sec.studentCount ?? 0), 0) ?? 0),
+    0,
+  );
+
+  const isSearching = debouncedSearch.length > 0;
+
+  const filteredClasses = isSearching
+    ? classes.filter((cls) => {
+        const classMatches = cls.name.toLowerCase().includes(debouncedSearch);
+        const sectionMatches = cls.sections?.some((sec) =>
+          `${cls.name} ${sec.name}`.toLowerCase().includes(debouncedSearch),
+        );
+        return classMatches || sectionMatches;
+      })
+    : classes;
+
+  const matchingStudents = isSearching
+    ? allStudents.filter((s) => {
+        const fullName = `${s.firstName} ${s.lastName ?? ""}`.toLowerCase();
+        return (
+          fullName.includes(debouncedSearch) ||
+          s.admissionNo.toLowerCase().includes(debouncedSearch)
+        );
+      })
+    : [];
+
+  const noResults =
+    isSearching &&
+    filteredClasses.length === 0 &&
+    matchingStudents.length === 0;
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="mb-1 text-sm font-medium text-blue-600">Students</p>
+          <p className="mb-1 text-sm font-medium text-primary">Students</p>
 
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-3xl font-bold tracking-tight text-text-primary">
             Students
           </h1>
 
-          <p className="mt-2 text-sm text-slate-500">
-            Manage student profiles and enrollment information.
+          <p className="mt-2 text-sm text-text-secondary">
+            Browse students by class and section.
           </p>
         </div>
 
         <Link
           href="/dashboard/students/new"
-          className="inline-flex h-10 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700"
+          className="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-md shadow-primary/20 transition hover:bg-primary-hover"
         >
           + Add Student
         </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">Total Students</p>
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
 
-          <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
-            {students.length}
-          </p>
+        <input
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="Search by student name, admission no., class or section"
+          className="h-11 w-full rounded-lg border border-border bg-surface pl-10 pr-10 text-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+        />
 
-          <p className="mt-1 text-xs text-slate-400">
-            Students registered in your school
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">Active Students</p>
-
-          <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
-            {students.filter((s) => s.isActive).length}
-          </p>
-
-          <p className="mt-1 text-xs text-blue-600">
-            Currently active students
-          </p>
-        </div>
+        {searchInput && (
+          <button
+            type="button"
+            onClick={() => setSearchInput("")}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex flex-col justify-between gap-3 border-b border-slate-100 px-6 py-4 sm:flex-row sm:items-center">
-          <div>
-            <h2 className="font-semibold text-slate-900">All Students</h2>
+      {!isSearching && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
+            <p className="text-sm font-medium text-text-secondary">
+              Enrolled Students
+            </p>
 
-            <p className="mt-1 text-xs text-slate-500">
-              View all students registered in your school
+            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+              {totalAssigned}
+            </p>
+
+            <p className="mt-1 text-xs text-text-muted">
+              Across all classes and sections
             </p>
           </div>
 
-          <span className="text-sm text-slate-400">
-            {students.length} {students.length === 1 ? "student" : "students"}
-          </span>
+          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
+            <p className="text-sm font-medium text-text-secondary">
+              Unassigned Students
+            </p>
+
+            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+              {unassignedLoading ? "—" : unassigned.length}
+            </p>
+
+            <p className="mt-1 text-xs text-text-muted">
+              Not yet enrolled in a section
+            </p>
+          </div>
         </div>
+      )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="border-b border-slate-100 bg-slate-50/70 text-left">
-              <tr>
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Admission No.
-                </th>
+      {isSearching && matchingStudents.length > 0 && (
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+          <div className="border-b border-border bg-surface-secondary/40 px-6 py-4">
+            <h2 className="font-semibold text-text-primary">
+              Matching Students
+            </h2>
 
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Student
-                </th>
+            <p className="mt-1 text-xs text-text-secondary">
+              Students whose name or admission no. match &quot;{searchInput}
+              &quot;.
+            </p>
+          </div>
 
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Gender
-                </th>
+          <div className="divide-y divide-border">
+            {matchingStudents.map((s) => (
+              <Link
+                key={s.id}
+                href={`/dashboard/students/${s.id}`}
+                className="flex items-center justify-between px-6 py-3 text-sm transition hover:bg-surface-secondary/70"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-soft text-xs font-semibold text-primary">
+                    {s.firstName.slice(0, 1).toUpperCase()}
+                    {s.lastName?.slice(0, 1).toUpperCase() ?? ""}
+                  </div>
 
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Blood Group
-                </th>
+                  <span className="font-medium text-text-primary">
+                    {s.firstName} {s.lastName ?? ""}
+                  </span>
+                </div>
 
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Status
-                </th>
-                <th className="px-6 py-3.5 font-medium text-slate-500 text-right">
-                  Actions
-                </th>
-              </tr>
-            </thead>
+                <span className="rounded-md bg-surface-secondary px-2.5 py-1 text-xs font-medium text-text-secondary">
+                  {s.admissionNo}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
-            <tbody className="divide-y divide-slate-100">
-              {students.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
-                    <div className="mx-auto flex max-w-sm flex-col items-center">
-                      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                        <span className="text-lg font-semibold">+</span>
-                      </div>
+      {noResults ? (
+        <div className="rounded-xl border border-border bg-surface p-8 text-center shadow-sm">
+          <p className="text-sm text-text-muted">
+            No students, classes or sections match &quot;{searchInput}&quot;.
+          </p>
+        </div>
+      ) : (
+        filteredClasses.length > 0 && (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredClasses.map((cls) => (
+              <div
+                key={cls.id}
+                className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm"
+              >
+                <div className="border-b border-border bg-surface-secondary/40 px-5 py-3">
+                  <h2 className="font-semibold text-text-primary">
+                    {cls.name}
+                  </h2>
+                </div>
 
-                      <p className="font-medium text-slate-700">
-                        No students yet
-                      </p>
+                <div className="p-5">
+                  {!cls.sections || cls.sections.length === 0 ? (
+                    <p className="text-sm text-text-muted">
+                      No sections yet for this class.
+                    </p>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {cls.sections
+                        .filter((section) =>
+                          isSearching
+                            ? `${cls.name} ${section.name}`
+                                .toLowerCase()
+                                .includes(debouncedSearch) ||
+                              cls.name.toLowerCase().includes(debouncedSearch)
+                            : true,
+                        )
+                        .map((section) => (
+                          <Link
+                            key={section.id}
+                            href={`/dashboard/students/section/${section.id}`}
+                            className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-secondary/50 px-3 py-2 text-sm transition hover:border-primary hover:bg-primary-soft"
+                          >
+                            <Users className="h-3.5 w-3.5 text-text-muted" />
 
-                      <p className="mt-1 text-sm text-slate-400">
-                        Add your first student to get started.
-                      </p>
+                            <span className="font-medium text-text-primary">
+                              {section.name}
+                            </span>
 
-                      <Link
-                        href="/dashboard/students/new"
-                        className="mt-4 text-sm font-medium text-blue-600 hover:text-blue-700"
-                      >
-                        Add Student →
-                      </Link>
+                            <span className="text-xs text-text-muted">
+                              ({section.studentCount ?? 0})
+                            </span>
+                          </Link>
+                        ))}
                     </div>
-                  </td>
-                </tr>
-              ) : (
-                students.map((s) => (
-                  <tr key={s.id} className="transition hover:bg-slate-50/70">
-                    <td className="px-6 py-4">
-                      <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
-                        {s.admissionNo}
-                      </span>
-                    </td>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      )}
 
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-xs font-semibold text-blue-700">
-                          {s.firstName.slice(0, 1).toUpperCase()}
-                          {s.lastName?.slice(0, 1).toUpperCase() ?? ""}
-                        </div>
+      {!isSearching && !unassignedLoading && unassigned.length > 0 && (
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+          <div className="border-b border-border bg-surface-secondary/40 px-6 py-4">
+            <h2 className="font-semibold text-text-primary">
+              Unassigned Students
+            </h2>
 
-                        <div>
-                          <p className="font-medium text-slate-800">
-                            {s.firstName} {s.lastName ?? ""}
-                          </p>
+            <p className="mt-1 text-xs text-text-secondary">
+              Students not yet enrolled in a class or section.
+            </p>
+          </div>
 
-                          <p className="text-xs text-slate-400">Student</p>
-                        </div>
-                      </div>
-                    </td>
+          <div className="divide-y divide-border">
+            {unassigned.map((s) => (
+              <Link
+                key={s.id}
+                href={`/dashboard/students/${s.id}`}
+                className="flex items-center justify-between px-6 py-3 text-sm transition hover:bg-surface-secondary/70"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-soft text-xs font-semibold text-primary">
+                    {s.firstName.slice(0, 1).toUpperCase()}
+                    {s.lastName?.slice(0, 1).toUpperCase() ?? ""}
+                  </div>
 
-                    <td className="px-6 py-4 text-slate-600">
-                      {s.gender ?? "—"}
-                    </td>
+                  <span className="font-medium text-text-primary">
+                    {s.firstName} {s.lastName ?? ""}
+                  </span>
+                </div>
 
-                    <td className="px-6 py-4">
-                      {s.bloodGroup ? (
-                        <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
-                          {s.bloodGroup}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
-                          s.isActive
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-slate-100 text-slate-500"
-                        }`}
-                      >
-                        {s.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <StudentRowActions
-                        studentId={s.id}
-                        studentName={`${s.firstName} ${s.lastName ?? ""}`}
-                      />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                <span className="rounded-md bg-surface-secondary px-2.5 py-1 text-xs font-medium text-text-secondary">
+                  {s.admissionNo}
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

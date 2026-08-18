@@ -74,23 +74,23 @@ export default function DashboardPage() {
   ];
 
   if (isLoading) {
-    return <p className="text-sm text-slate-400">Loading dashboard...</p>;
+    return <p className="text-sm text-text-muted">Loading dashboard...</p>;
   }
 
   return (
     <div className="mx-auto max-w-7xl space-y-8">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="mb-1 text-sm font-medium text-blue-600">Overview</p>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+          <p className="mb-1 text-sm font-medium text-primary">Overview</p>
+          <h1 className="text-3xl font-bold tracking-tight text-text-primary">
             Dashboard
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-text-secondary">
             Welcome back. Here&apos;s what&apos;s happening in your school.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 shadow-sm">
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-secondary shadow-sm">
           <Clock3 className="h-4 w-4" />
           Academic Year 2026–27
         </div>
@@ -102,25 +102,25 @@ export default function DashboardPage() {
           return (
             <div
               key={stat.title}
-              className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="group rounded-xl border border-border bg-surface p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-500">
+                  <p className="text-sm font-medium text-text-secondary">
                     {stat.title}
                   </p>
-                  <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+                  <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
                     {stat.value}
                   </p>
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="mt-1 text-xs text-text-muted">
                     {stat.description}
                   </p>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-soft text-primary">
                   <Icon className="h-5 w-5" />
                 </div>
               </div>
-              <div className="mt-4 flex items-center gap-1 text-xs font-medium text-emerald-600">
+              <div className="mt-4 flex items-center gap-1 text-xs font-medium text-success">
                 <ArrowUpRight className="h-3.5 w-3.5" />
                 View details
               </div>
@@ -134,8 +134,10 @@ export default function DashboardPage() {
           <MiniCalendar />
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
-          <p className="text-sm font-medium text-slate-500">Quick Actions</p>
+        <div className="rounded-xl border border-border bg-surface p-5 shadow-sm lg:col-span-2">
+          <p className="text-sm font-medium text-text-secondary">
+            Quick Actions
+          </p>
 
           <div className="mt-4 space-y-2">
             {quickActions.map((action) => {
@@ -144,17 +146,17 @@ export default function DashboardPage() {
                 <Link
                   key={action.title}
                   href={action.href}
-                  className="group flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-3 transition hover:border-blue-300 hover:bg-blue-50"
+                  className="group flex items-center gap-3 rounded-lg border border-border bg-surface-secondary px-4 py-3 transition hover:border-primary/40 hover:bg-primary-soft"
                 >
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-blue-600 shadow-sm transition group-hover:bg-blue-600 group-hover:text-white">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface text-primary shadow-sm transition group-hover:bg-primary group-hover:text-primary-foreground">
                     <Icon className="h-4 w-4" />
                   </div>
 
-                  <p className="text-sm font-medium text-slate-700">
+                  <p className="text-sm font-medium text-text-secondary">
                     {action.title}
                   </p>
 
-                  <ArrowUpRight className="ml-auto h-4 w-4 text-slate-300 transition group-hover:text-blue-500" />
+                  <ArrowUpRight className="ml-auto h-4 w-4 text-text-muted transition group-hover:text-primary" />
                 </Link>
               );
             })}

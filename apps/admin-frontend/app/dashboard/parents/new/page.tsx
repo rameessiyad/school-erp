@@ -6,7 +6,7 @@ export default function NewParentPage() {
       <div>
         <p className="mb-1 text-sm font-medium text-blue-600">Parents</p>
 
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="mb-6 text-2xl font-semibold text-text-primary">
           Add Parent
         </h1>
 
@@ -15,7 +15,7 @@ export default function NewParentPage() {
         </p>
       </div>
 
-      <div className="max-w-4xl">
+      <div className="w-auto">
         <ParentForm />
       </div>
     </div>

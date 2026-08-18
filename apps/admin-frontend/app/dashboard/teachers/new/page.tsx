@@ -6,7 +6,7 @@ export default function NewTeacherPage() {
       <div>
         <p className="mb-1 text-sm font-medium text-blue-600">Academics</p>
 
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="mb-6 text-2xl font-semibold text-text-primary">
           Add Teacher
         </h1>
 
@@ -15,7 +15,7 @@ export default function NewTeacherPage() {
         </p>
       </div>
 
-      <div className="max-w-4xl">
+      <div className="w-auto">
         <TeacherForm />
       </div>
     </div>

@@ -1,12 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { sectionsApi } from "@/lib/api/sections";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
+import { Search, X } from "lucide-react";
+import { useDebouncedValue } from "@/hooks/use-debounzed-values";
+import { SectionStudentsTable } from "@/components/tables/section-student-list";
 
 export default function SectionDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebouncedValue(searchInput, 250)
+    .trim()
+    .toLowerCase();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["sectionDetails", params.id],
@@ -19,23 +28,37 @@ export default function SectionDetailPage() {
   }
 
   if (isLoading || !data) {
-    return <p className="text-sm text-slate-400">Loading section details...</p>;
+    return (
+      <p className="text-sm text-text-muted">Loading section details...</p>
+    );
   }
 
   const { section, academicYear, classTeacher, students } = data;
+  const isSearching = debouncedSearch.length > 0;
+
+  const filteredStudents = isSearching
+    ? students.filter((s) => {
+        const fullName = `${s.firstName} ${s.lastName ?? ""}`.toLowerCase();
+        return (
+          fullName.includes(debouncedSearch) ||
+          s.admissionNo.toLowerCase().includes(debouncedSearch) ||
+          (s.rollNo ?? "").toLowerCase().includes(debouncedSearch)
+        );
+      })
+    : students;
 
   return (
     <div className="space-y-8">
       <div>
-        <p className="mb-1 text-sm font-medium text-blue-600">
+        <p className="mb-1 text-sm font-medium text-primary">
           {section.class?.name ?? "Class"}
         </p>
 
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary">
           Section {section.name}
         </h1>
 
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-sm text-text-secondary">
           {academicYear
             ? `Academic Year: ${academicYear.label}`
             : "No academic year configured"}
@@ -43,121 +66,78 @@ export default function SectionDetailPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">Class Teacher</p>
+        <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
+          <p className="text-sm font-medium text-text-secondary">
+            Class Teacher
+          </p>
 
           {classTeacher ? (
             <>
-              <p className="mt-2 text-lg font-semibold text-slate-900">
+              <p className="mt-2 text-lg font-semibold text-text-primary">
                 {classTeacher.firstName} {classTeacher.lastName ?? ""}
               </p>
 
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-text-muted">
                 {classTeacher.email ?? classTeacher.phone ?? "No contact info"}
               </p>
             </>
           ) : (
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-text-muted">
               No class teacher assigned
             </p>
           )}
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">Total Students</p>
+        <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
+          <p className="text-sm font-medium text-text-secondary">
+            Total Students
+          </p>
 
-          <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+          <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
             {students.length}
           </p>
 
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-text-muted">
             Enrolled in this section for {academicYear?.label ?? "—"}
           </p>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="font-semibold text-slate-900">Students</h2>
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
 
-          <p className="mt-1 text-xs text-slate-500">
+        <input
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="Search by name, admission no. or roll no."
+          className="h-11 w-full rounded-lg border border-border bg-surface pl-10 pr-10 text-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+        />
+
+        {searchInput && (
+          <button
+            type="button"
+            onClick={() => setSearchInput("")}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+        <div className="border-b border-border px-6 py-4">
+          <h2 className="font-semibold text-text-primary">Students</h2>
+
+          <p className="mt-1 text-xs text-text-secondary">
             All students enrolled in this section
           </p>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="border-b border-slate-100 bg-slate-50/70 text-left">
-              <tr>
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Roll No
-                </th>
-
-                <th className="px-6 py-3.5 font-medium text-slate-500">Name</th>
-
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Admission No
-                </th>
-
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Status
-                </th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-slate-100">
-              {students.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="px-6 py-12 text-center text-sm text-slate-400"
-                  >
-                    No students enrolled in this section yet.
-                  </td>
-                </tr>
-              ) : (
-                students.map((s) => (
-                  <tr
-                    key={s.enrollmentId}
-                    className="transition hover:bg-slate-50/70"
-                  >
-                    <td className="px-6 py-4 text-slate-600">
-                      {s.rollNo ?? "—"}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-sm font-semibold text-blue-700">
-                          {s.firstName.slice(0, 1).toUpperCase()}
-                        </div>
-
-                        <p className="font-medium text-slate-800">
-                          {s.firstName} {s.lastName ?? ""}
-                        </p>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4 text-slate-600">
-                      {s.admissionNo}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <span
-                        className={`rounded-md px-2.5 py-1 text-xs font-medium ${
-                          s.isActive
-                            ? "bg-green-50 text-green-700"
-                            : "bg-slate-100 text-slate-500"
-                        }`}
-                      >
-                        {s.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        <SectionStudentsTable
+          students={filteredStudents}
+          isSearching={isSearching}
+          searchTerm={searchInput}
+        />
       </div>
     </div>
   );
