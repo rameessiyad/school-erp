@@ -19,6 +19,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { AxiosError } from "axios";
 
 interface AddAllocationModalProps {
   open: boolean;
@@ -65,7 +66,7 @@ export function AddAllocationModal({
       reset();
       onOpenChange(false);
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<{ message?: string }>) => {
       setError(err?.response?.data?.message ?? "Failed to add allocation");
     },
   });
@@ -103,7 +104,10 @@ export function AddAllocationModal({
             <label className="mb-1.5 block text-sm font-medium text-text-secondary">
               Subject
             </label>
-            <Select value={subjectId} onValueChange={setSubjectId}>
+            <Select
+              value={subjectId}
+              onValueChange={(value) => setSubjectId(value ?? "")}
+            >
               <SelectTrigger>
                 <SelectValue>
                   {(v) =>
@@ -125,7 +129,10 @@ export function AddAllocationModal({
             <label className="mb-1.5 block text-sm font-medium text-text-secondary">
               Teacher
             </label>
-            <Select value={teacherId} onValueChange={setTeacherId}>
+            <Select
+              value={teacherId}
+              onValueChange={(value) => setTeacherId(value ?? "")}
+            >
               <SelectTrigger>
                 <SelectValue>
                   {(v) => {
