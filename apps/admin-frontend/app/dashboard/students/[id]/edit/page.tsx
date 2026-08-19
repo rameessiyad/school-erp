@@ -5,6 +5,7 @@ import { StudentForm } from "@/components/students/student-form";
 import { studentsApi } from "@/lib/api/students";
 import { optionsApi } from "@/lib/api/options";
 import { useQuery } from "@tanstack/react-query";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function EditStudentPage() {
   const params = useParams<{ id: string }>();
@@ -40,7 +41,7 @@ export default function EditStudentPage() {
   }
 
   if (studentLoading || (activeYear && enrollmentLoading)) {
-    return <p className="text-sm text-text-muted">Loading student...</p>;
+    return <PageLoader text="Loading student..." />;
   }
 
   const defaultValues = student
@@ -72,7 +73,7 @@ export default function EditStudentPage() {
         studentId={params.id}
         initialEnrollmentEnabled={!!enrollment}
         defaultValues={defaultValues}
-        initialPhotoUrl={student?.photo ?? null}
+        initialPhotoUrl={student?.photoUrl ?? null}
       />
     </div>
   );

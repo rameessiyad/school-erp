@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 
 import {
   createParentSchema,
@@ -28,11 +29,18 @@ import {
 
 import { parentsApi } from "@/lib/api/parents";
 import { studentsApi } from "@/lib/api/students";
+import { optionsApi } from "@/lib/api/options";
 import { getErrorMessage } from "@/lib/api/error";
 
 interface ParentFormProps {
   parentId?: string;
   defaultValues?: Partial<CreateParentValues>;
+}
+
+interface Option {
+  id: string;
+  name?: string;
+  label?: string;
 }
 
 export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
@@ -43,15 +51,19 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
 
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => studentsApi.list(),
-  });
+  // Local-only filters — never registered with the form, never submitted.
+  const [classId, setClassId] = useState("");
+  const [sectionId, setSectionId] = useState("");
+  const [studentSearch, setStudentSearch] = useState("");
+
+  const [classes, setClasses] = useState<Option[]>([]);
+  const [sections, setSections] = useState<Option[]>([]);
 
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<CreateParentValues>({
     resolver: zodResolver(createParentSchema),
@@ -59,6 +71,50 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
       isPrimary: false,
       ...defaultValues,
     },
+  });
+
+  // Load classes once on mount.
+  useState(() => {
+    optionsApi.classes().then(setClasses);
+  });
+
+  async function handleClassChange(value: string | null) {
+    const nextValue = value ?? "";
+    setClassId(nextValue);
+    setSectionId("");
+    setSections([]);
+    setValue("studentId", "");
+
+    if (nextValue) {
+      const sectionsData = await optionsApi.sections(nextValue);
+      setSections(sectionsData);
+    }
+  }
+
+  function handleSectionChange(value: string | null) {
+    const nextValue = value ?? "";
+    setSectionId(nextValue);
+    setValue("studentId", "");
+  }
+
+  const canSelectStudent = !!classId && !!sectionId;
+
+  const { data: unassignedStudents = [], isFetching: loadingStudents } =
+    useQuery({
+      queryKey: ["students", "unassigned", classId, sectionId],
+      queryFn: () => studentsApi.listUnassigned({ classId, sectionId }),
+      enabled: canSelectStudent,
+    });
+
+  const filteredStudents = unassignedStudents.filter((student) => {
+    if (!studentSearch.trim()) return true;
+    const query = studentSearch.trim().toLowerCase();
+    const fullName =
+      `${student.firstName} ${student.lastName ?? ""}`.toLowerCase();
+    return (
+      fullName.includes(query) ||
+      student.admissionNo.toLowerCase().includes(query)
+    );
   });
 
   const saveParentMutation = useMutation({
@@ -104,10 +160,6 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
   return (
     <div className="w-full">
       <Card className="w-full overflow-hidden rounded-2xl border-border bg-surface shadow-sm">
-        {/* ========================================================= */}
-        {/* Form Header */}
-        {/* ========================================================= */}
-
         <div className="border-b border-border bg-surface px-6 py-5 lg:px-8">
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-semibold tracking-tight text-text-primary">
@@ -140,7 +192,6 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
               </div>
 
               <div className="grid gap-x-6 gap-y-5 md:grid-cols-2">
-                {/* First Name */}
                 <div className="space-y-2">
                   <Label htmlFor="firstName" className={labelClass}>
                     First Name
@@ -160,7 +211,6 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
                   )}
                 </div>
 
-                {/* Last Name */}
                 <div className="space-y-2">
                   <Label htmlFor="lastName" className={labelClass}>
                     Last Name
@@ -198,7 +248,6 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
               </div>
 
               <div className="grid gap-x-6 gap-y-5 md:grid-cols-2">
-                {/* Email */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className={labelClass}>
                     Email
@@ -217,7 +266,6 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
                   )}
                 </div>
 
-                {/* Phone */}
                 <div className="space-y-2">
                   <Label htmlFor="phone" className={labelClass}>
                     Phone
@@ -236,7 +284,6 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
                   )}
                 </div>
 
-                {/* Occupation */}
                 <div className="space-y-2">
                   <Label htmlFor="occupation" className={labelClass}>
                     Occupation
@@ -256,7 +303,6 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
                   )}
                 </div>
 
-                {/* Address */}
                 <div className="space-y-2">
                   <Label htmlFor="address" className={labelClass}>
                     Address
@@ -289,14 +335,80 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
                 </h3>
 
                 <p className="mt-1 text-xs text-text-muted">
-                  Link the parent to a student and define their relationship.
+                  Filter by class and section to find the right student to link.
                 </p>
               </div>
 
               <div className="rounded-xl border border-border bg-surface-secondary/50 p-5">
                 <div className="grid gap-5 md:grid-cols-2">
-                  {/* Student */}
+                  {/* Class (filter only, not submitted) */}
                   <div className="space-y-2">
+                    <Label className={labelClass}>Class</Label>
+
+                    <Select value={classId} onValueChange={handleClassChange}>
+                      <SelectTrigger className="h-11 w-full rounded-lg border-border bg-surface text-text-primary">
+                        <SelectValue placeholder="Select class">
+                          {(value: string) =>
+                            classes.find((c) => c.id === value)?.name ??
+                            "Select class"
+                          }
+                        </SelectValue>
+                      </SelectTrigger>
+
+                      <SelectContent className="border-border bg-surface text-text-primary">
+                        {classes.map((c) => (
+                          <SelectItem
+                            key={c.id}
+                            value={c.id}
+                            className="focus:bg-primary-soft focus:text-text-primary"
+                          >
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Section (filter only, not submitted) */}
+                  <div className="space-y-2">
+                    <Label className={labelClass}>Section</Label>
+
+                    <Select
+                      value={sectionId}
+                      onValueChange={handleSectionChange}
+                      disabled={!classId}
+                    >
+                      <SelectTrigger className="h-11 w-full rounded-lg border-border bg-surface text-text-primary disabled:cursor-not-allowed disabled:opacity-60">
+                        <SelectValue placeholder="Select section">
+                          {(value: string) =>
+                            sections.find((s) => s.id === value)?.name ??
+                            "Select section"
+                          }
+                        </SelectValue>
+                      </SelectTrigger>
+
+                      <SelectContent className="border-border bg-surface text-text-primary">
+                        {sections.map((s) => (
+                          <SelectItem
+                            key={s.id}
+                            value={s.id}
+                            className="focus:bg-primary-soft focus:text-text-primary"
+                          >
+                            {s.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {!classId && (
+                      <p className="text-xs text-text-muted">
+                        Select a class first.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Student (submitted field) */}
+                  <div className="space-y-2 md:col-span-2">
                     <Label className={labelClass}>Student</Label>
 
                     <Controller
@@ -306,11 +418,15 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
+                          disabled={!canSelectStudent}
+                          onOpenChange={(open) => {
+                            if (!open) setStudentSearch("");
+                          }}
                         >
-                          <SelectTrigger className="h-11 w-full rounded-lg border-border bg-surface text-text-primary">
+                          <SelectTrigger className="h-11 w-full rounded-lg border-border bg-surface text-text-primary disabled:cursor-not-allowed disabled:opacity-60">
                             <SelectValue placeholder="Select student">
                               {(value: string) => {
-                                const student = students.find(
+                                const student = unassignedStudents.find(
                                   (s) => s.id === value,
                                 );
 
@@ -324,20 +440,53 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
                           </SelectTrigger>
 
                           <SelectContent className="border-border bg-surface text-text-primary">
-                            {students.map((student) => (
-                              <SelectItem
-                                key={student.id}
-                                value={student.id}
-                                className="focus:bg-primary-soft focus:text-text-primary"
-                              >
-                                {student.firstName} {student.lastName ?? ""} (
-                                {student.admissionNo})
-                              </SelectItem>
-                            ))}
+                            <div className="sticky top-0 z-10 -mx-1 -mt-1 mb-1 border-b border-border bg-popover p-1.5">
+                              <div className="relative">
+                                <Search className="pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
+
+                                <Input
+                                  placeholder="Search name or admission no..."
+                                  value={studentSearch}
+                                  onChange={(e) =>
+                                    setStudentSearch(e.target.value)
+                                  }
+                                  onKeyDown={(e) => e.stopPropagation()}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="h-9 rounded-md border-border bg-surface-secondary pl-8 text-sm focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+                                />
+                              </div>
+                            </div>
+
+                            {loadingStudents ? (
+                              <p className="px-2 py-4 text-center text-sm text-text-muted">
+                                Loading students...
+                              </p>
+                            ) : filteredStudents.length === 0 ? (
+                              <p className="px-2 py-4 text-center text-sm text-text-muted">
+                                No unassigned students found in this section.
+                              </p>
+                            ) : (
+                              filteredStudents.map((student) => (
+                                <SelectItem
+                                  key={student.id}
+                                  value={student.id}
+                                  className="focus:bg-primary-soft focus:text-text-primary"
+                                >
+                                  {student.firstName} {student.lastName ?? ""} (
+                                  {student.admissionNo})
+                                </SelectItem>
+                              ))
+                            )}
                           </SelectContent>
                         </Select>
                       )}
                     />
+
+                    {!canSelectStudent && (
+                      <p className="text-xs text-text-muted">
+                        Select a class and section to choose a student.
+                      </p>
+                    )}
 
                     {errors.studentId && (
                       <p className="text-xs text-error">
@@ -414,19 +563,11 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
               </div>
             </section>
 
-            {/* ===================================================== */}
-            {/* Error */}
-            {/* ===================================================== */}
-
             {serverError && (
               <div className="mx-6 mb-6 rounded-lg border border-error/20 bg-error-soft px-4 py-3 lg:mx-8">
                 <p className="text-sm text-error">{serverError}</p>
               </div>
             )}
-
-            {/* ===================================================== */}
-            {/* Actions */}
-            {/* ===================================================== */}
 
             <div className="flex flex-col-reverse gap-3 border-t border-border bg-surface-secondary/30 px-6 py-4 sm:flex-row sm:justify-end lg:px-8">
               <Button

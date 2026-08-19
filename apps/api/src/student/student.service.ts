@@ -57,7 +57,7 @@ export class StudentService {
     return this.prisma.student.findMany({ where: { schoolId } });
   }
 
-  async findUnassigned(schoolId: string) {
+  async findUnassigned(schoolId: string, classId?: string, sectionId?: string) {
     const activeYear = await this.prisma.academicYear.findFirst({
       where: { schoolId, isActive: true },
     });
@@ -66,16 +66,25 @@ export class StudentService {
       where: {
         schoolId,
         isActive: true,
+        enrollments: {
+          none: {},
+        },
         ...(activeYear && {
           academicEnrollments: {
-            none: { academicYearId: activeYear.id },
+            some: {
+              academicYearId: activeYear.id,
+              ...(sectionId && { sectionId }),
+              ...(classId &&
+                !sectionId && {
+                  section: { classId },
+                }),
+            },
           },
         }),
       },
       orderBy: { firstName: 'asc' },
     });
   }
-
   async findOne(schoolId: string, id: string) {
     const student = await this.prisma.student.findFirst({
       where: { id, schoolId },

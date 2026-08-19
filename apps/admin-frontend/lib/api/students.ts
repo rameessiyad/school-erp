@@ -48,8 +48,11 @@ export const studentsApi = {
     return data;
   },
 
-  listUnassigned: async (): Promise<Student[]> => {
-    const { data } = await apiClient.get("/student/unassigned");
+  listUnassigned: async (params?: {
+    classId?: string;
+    sectionId?: string;
+  }): Promise<Student[]> => {
+    const { data } = await apiClient.get("/student/unassigned", { params });
     return data;
   },
 
