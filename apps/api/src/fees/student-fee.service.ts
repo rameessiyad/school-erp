@@ -16,28 +16,22 @@ export class StudentFeeService {
           ...(academicYearId && { academicYearId }),
           ...(classId && { classId }),
         },
-        ...(status && { status }),
-        // NOTE: adjust `enrollments` relation name / field names to match
-        // your actual StudentEnrollment relation on Student
-        ...(sectionId && {
-          student: {
-            enrollments: {
-              some: {
-                sectionId,
-                ...(academicYearId && { academicYearId }),
-              },
+        student: {
+          academicEnrollments: {
+            some: {
+              ...(sectionId && { sectionId }),
+              ...(academicYearId && { academicYearId }),
             },
           },
-        }),
-        ...(search && {
-          student: {
+          ...(search && {
             OR: [
               { firstName: { contains: search, mode: 'insensitive' } },
               { lastName: { contains: search, mode: 'insensitive' } },
               { admissionNo: { contains: search, mode: 'insensitive' } },
             ],
-          },
-        }),
+          }),
+        },
+        ...(status && { status }),
       },
       include: {
         student: {
@@ -46,23 +40,14 @@ export class StudentFeeService {
             firstName: true,
             lastName: true,
             admissionNo: true,
+            photoUrl: true,
           },
         },
         feeStructure: {
-          select: {
-            id: true,
-            name: true,
-            amount: true,
-            frequency: true,
-            dueDate: true,
-            class: { select: { id: true, name: true } },
-          },
+          include: { class: true, academicYear: true },
         },
-        payments: {
-          select: { amount: true },
-        },
+        payments: { select: { amount: true } },
       },
-      orderBy: { createdAt: 'desc' },
     });
   }
 

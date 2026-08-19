@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { classesApi } from "@/lib/api/classes";
 import { ClassListTable } from "@/components/tables/class-list-table";
 import { useDebouncedValue } from "@/hooks/use-debounzed-values";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function ClassesPage() {
   const [searchInput, setSearchInput] = useState("");
@@ -20,7 +21,7 @@ export default function ClassesPage() {
   });
 
   if (isLoading) {
-    return <p className="text-sm text-text-muted">Loading classes...</p>;
+    return <PageLoader text="Loading classes" />
   }
 
   const isSearching = debouncedSearch.length > 0;

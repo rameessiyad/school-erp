@@ -1,6 +1,7 @@
 "use client";
 
 import { ClassForm } from "@/components/classes/class-form";
+import { PageLoader } from "@/components/common/page-loader";
 import { classesApi } from "@/lib/api/classes";
 import { optionsApi } from "@/lib/api/options";
 import { useQuery } from "@tanstack/react-query";
@@ -32,7 +33,7 @@ export default function EditClassPage() {
   }
 
   if (isLoading || !schoolClass) {
-    return <p className="text-sm text-text-muted">Loading class...</p>;
+    return <PageLoader text="Loading class..." />;
   }
 
   return (

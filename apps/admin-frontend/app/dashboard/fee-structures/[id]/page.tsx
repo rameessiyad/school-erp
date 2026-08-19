@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DeactivateFeeStructureButton } from "@/components/fee-structures/deactivate-fee-structure-button";
 import { feeStructureApi } from "@/lib/api/fee-structures";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function FeeStructureDetailPage() {
   const params = useParams<{ id: string }>();
@@ -27,7 +28,7 @@ export default function FeeStructureDetailPage() {
   }
 
   if (isLoading || !fs) {
-    return <p className="text-sm text-slate-400">Loading fee structure...</p>;
+    return <PageLoader text="Loading fee structure..." />;
   }
 
   return (
@@ -36,18 +37,23 @@ export default function FeeStructureDetailPage() {
         <div>
           <Link
             href="/dashboard/fee-structures"
-            className="mb-3 inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800"
+            className="mb-3 inline-flex items-center gap-2 text-sm text-text-secondary hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Fee Structures
           </Link>
 
-          <h1 className="text-2xl font-semibold text-slate-900">{fs.name}</h1>
+          <h1 className="text-2xl font-semibold text-text-primary">
+            {fs.name}
+          </h1>
         </div>
 
         <div className="flex items-center gap-2">
           <Link href={`/dashboard/fee-structures/${params.id}/edit`}>
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              className="border-border text-text-secondary hover:bg-surface-secondary"
+            >
               <Pencil className="mr-2 h-4 w-4" />
               Edit
             </Button>
@@ -62,13 +68,13 @@ export default function FeeStructureDetailPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+      <div className="rounded-xl border border-border bg-surface shadow-sm">
+        <div className="flex items-center justify-between border-b border-border px-6 py-5">
           <div>
-            <h2 className="font-medium text-slate-900">
+            <h2 className="font-medium text-text-primary">
               Fee Structure Details
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-text-secondary">
               Information about this fee structure.
             </p>
           </div>
@@ -77,7 +83,7 @@ export default function FeeStructureDetailPage() {
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               fs.isActive
                 ? "bg-emerald-50 text-emerald-700"
-                : "bg-slate-100 text-slate-500"
+                : "bg-surface-secondary text-text-muted"
             }`}
           >
             {fs.isActive ? "Active" : "Inactive"}
@@ -86,44 +92,44 @@ export default function FeeStructureDetailPage() {
 
         <div className="grid grid-cols-2 gap-x-8 gap-y-6 p-6">
           <div>
-            <p className="text-xs font-medium text-slate-400">Class</p>
-            <p className="mt-1 text-sm text-slate-800">
+            <p className="text-xs font-medium text-text-muted">Class</p>
+            <p className="mt-1 text-sm text-text-primary">
               {fs.class?.name ?? "—"}
             </p>
           </div>
 
           <div>
-            <p className="text-xs font-medium text-slate-400">Academic Year</p>
-            <p className="mt-1 text-sm text-slate-800">
+            <p className="text-xs font-medium text-text-muted">Academic Year</p>
+            <p className="mt-1 text-sm text-text-primary">
               {fs.academicYear?.label ?? "—"}
             </p>
           </div>
 
           <div>
-            <p className="text-xs font-medium text-slate-400">Amount</p>
-            <p className="mt-1 text-sm font-medium text-slate-800">
+            <p className="text-xs font-medium text-text-muted">Amount</p>
+            <p className="mt-1 text-sm font-medium text-text-primary">
               ₹{Number(fs.amount).toLocaleString("en-IN")}
             </p>
           </div>
 
           <div>
-            <p className="text-xs font-medium text-slate-400">Frequency</p>
-            <p className="mt-1 text-sm capitalize text-slate-800">
+            <p className="text-xs font-medium text-text-muted">Frequency</p>
+            <p className="mt-1 text-sm capitalize text-text-primary">
               {fs.frequency.replace(/_/g, " ").toLowerCase()}
             </p>
           </div>
 
           <div>
-            <p className="text-xs font-medium text-slate-400">Due Date</p>
-            <p className="mt-1 text-sm text-slate-800">
+            <p className="text-xs font-medium text-text-muted">Due Date</p>
+            <p className="mt-1 text-sm text-text-primary">
               {new Date(fs.dueDate).toLocaleDateString("en-IN")}
             </p>
           </div>
 
           {fs.description && (
-            <div className="col-span-2 border-t border-slate-100 pt-6">
-              <p className="text-xs font-medium text-slate-400">Description</p>
-              <p className="mt-1 text-sm leading-6 text-slate-800">
+            <div className="col-span-2 border-t border-border pt-6">
+              <p className="text-xs font-medium text-text-muted">Description</p>
+              <p className="mt-1 text-sm leading-6 text-text-primary">
                 {fs.description}
               </p>
             </div>

@@ -15,7 +15,7 @@ export default function NewClassPage() {
         </p>
       </div>
 
-      <div className="max-w-3xl">
+      <div className="w-auto">
         <ClassForm />
       </div>
     </div>

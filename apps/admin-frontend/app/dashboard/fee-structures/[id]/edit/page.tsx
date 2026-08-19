@@ -5,6 +5,7 @@ import { feeStructureApi } from "@/lib/api/fee-structures";
 import { CreateFeeStructureValues } from "@/lib/validations/fee-structure";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function EditFeeStructurePage() {
   const params = useParams<{ id: string }>();
@@ -25,13 +26,13 @@ export default function EditFeeStructurePage() {
   }
 
   if (isLoading || !feeStructure) {
-    return <p className="text-sm text-slate-400">Loading fee structure...</p>;
+    return <PageLoader text="Loading fee structure..." />;
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="w-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">
+        <h1 className="text-2xl font-semibold text-text-primary">
           Edit Fee Structure
         </h1>
       </div>

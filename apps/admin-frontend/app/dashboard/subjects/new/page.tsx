@@ -6,16 +6,16 @@ export default function NewSubjectPage() {
       <div>
         <p className="mb-1 text-sm font-medium text-blue-600">Academics</p>
 
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary">
           Add Subject
         </h1>
 
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-sm text-text-secondary">
           Create a new subject for your school.
         </p>
       </div>
 
-      <div className="max-w-3xl">
+      <div className="w-auto">
         <SubjectForm />
       </div>
     </div>

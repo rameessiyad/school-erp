@@ -1,5 +1,6 @@
 "use client";
 
+import { PageLoader } from "@/components/common/page-loader";
 import { SubjectForm } from "@/components/subjects/subject-form";
 import { subjectsApi } from "@/lib/api/subjects";
 import { useQuery } from "@tanstack/react-query";
@@ -24,7 +25,7 @@ export default function EditSubjectPage() {
   }
 
   if (isLoading) {
-    return <p className="text-sm text-slate-400">Loading subject...</p>;
+    return <PageLoader text="Loading subject..." />;
   }
 
   const defaultValues = subject
@@ -35,10 +36,13 @@ export default function EditSubjectPage() {
     : undefined;
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="mb-6 text-2xl font-semibold text-slate-900">
-        Edit Subject
-      </h1>
+    <div className="w-auto">
+      <div className="mb-6">
+        <p className="mb-1 text-sm font-medium text-blue-600">Academics</p>
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary">
+          Edit Subject
+        </h1>
+      </div>
       <SubjectForm subjectId={params.id} defaultValues={defaultValues} />
     </div>
   );

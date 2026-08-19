@@ -1,42 +1,57 @@
 "use client";
 
 import {
-  GraduationCap,
-  UserRound,
-  Users,
-  Wallet,
   ArrowUpRight,
-  Clock3,
+  BookOpen,
+  GraduationCap,
   ReceiptText,
+  UserRound,
+  Wallet,
+  ClipboardCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { DashboardCharts } from "@/components/dashboard/dashboard-charts";
+
 import { dashboardApi } from "@/lib/api/dashboard";
 import { MiniCalendar } from "@/components/dashboard/mini-calendar";
+import { PageLoader } from "@/components/common/page-loader";
+import { FeeCollectionChart } from "@/components/dashboard/fee-collection-chart";
+import { FeeOverview } from "@/components/dashboard/fee-overview";
+import { StudentDistribution } from "@/components/dashboard/student-distribution";
+import { DashboardActivity } from "@/components/dashboard/dashboard-activity";
 
 function formatCurrency(amount: number) {
   if (amount >= 100000) {
     return `₹${(amount / 100000).toFixed(2)}L`;
   }
+
+  if (amount >= 1000) {
+    return `₹${(amount / 1000).toFixed(1)}K`;
+  }
+
   return `₹${amount.toLocaleString("en-IN")}`;
 }
 
 const quickActions = [
-  {
-    title: "Add Teacher",
-    href: "/dashboard/teachers/new",
-    icon: UserRound,
-  },
   {
     title: "Add Student",
     href: "/dashboard/students/new",
     icon: GraduationCap,
   },
   {
+    title: "Add Teacher",
+    href: "/dashboard/teachers/new",
+    icon: UserRound,
+  },
+  {
     title: "Add Fee Structure",
     href: "/dashboard/fee-structures/new",
     icon: ReceiptText,
+  },
+  {
+    title: "Mark Attendance",
+    href: "/dashboard/attendance",
+    icon: ClipboardCheck,
   },
 ];
 
@@ -45,6 +60,10 @@ export default function DashboardPage() {
     queryKey: ["dashboardStats"],
     queryFn: dashboardApi.getStats,
   });
+
+  if (isLoading) {
+    return <PageLoader text="Loading dashboard..." />;
+  }
 
   const statCards = [
     {
@@ -60,45 +79,54 @@ export default function DashboardPage() {
       icon: UserRound,
     },
     {
-      title: "Parents",
-      value: stats?.parentCount ?? 0,
-      description: "Registered parents",
-      icon: Users,
+      title: "Classes",
+      value: stats?.classCount ?? 0,
+      description: "Active classes",
+      icon: BookOpen,
     },
     {
       title: "Fees Collected",
       value: formatCurrency(stats?.totalFeesCollected ?? 0),
-      description: "This academic year",
+      description: `${stats?.feeCollectionPercentage ?? 0}% collected`,
       icon: Wallet,
     },
   ];
 
-  if (isLoading) {
-    return <p className="text-sm text-text-muted">Loading dashboard...</p>;
-  }
-
   return (
-    <div className="mx-auto max-w-7xl space-y-8">
+    <div className="mx-auto max-w-7xl space-y-6">
+      {/* Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <p className="mb-1 text-sm font-medium text-primary">Overview</p>
+
           <h1 className="text-3xl font-bold tracking-tight text-text-primary">
             Dashboard
           </h1>
+
           <p className="mt-2 text-sm text-text-secondary">
             Welcome back. Here&apos;s what&apos;s happening in your school.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-secondary shadow-sm">
-          <Clock3 className="h-4 w-4" />
-          Academic Year 2026–27
-        </div>
+        {stats?.academicYear && (
+          <div className="flex w-fit items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-secondary shadow-sm">
+            <BookOpen className="h-4 w-4 text-primary" />
+
+            <span>
+              Academic Year{" "}
+              <span className="font-medium text-text-primary">
+                {stats.academicYear.label}
+              </span>
+            </span>
+          </div>
+        )}
       </div>
 
+      {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((stat) => {
           const Icon = stat.icon;
+
           return (
             <div
               key={stat.title}
@@ -109,52 +137,72 @@ export default function DashboardPage() {
                   <p className="text-sm font-medium text-text-secondary">
                     {stat.title}
                   </p>
+
                   <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
                     {stat.value}
                   </p>
+
                   <p className="mt-1 text-xs text-text-muted">
                     {stat.description}
                   </p>
                 </div>
+
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-soft text-primary">
                   <Icon className="h-5 w-5" />
                 </div>
-              </div>
-              <div className="mt-4 flex items-center gap-1 text-xs font-medium text-success">
-                <ArrowUpRight className="h-3.5 w-3.5" />
-                View details
               </div>
             </div>
           );
         })}
       </div>
 
+      {/* Fees */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-1">
-          <MiniCalendar />
+        <div className="lg:col-span-2">
+          <FeeCollectionChart data={stats?.feeTrend ?? []} />
         </div>
 
-        <div className="rounded-xl border border-border bg-surface p-5 shadow-sm lg:col-span-2">
-          <p className="text-sm font-medium text-text-secondary">
-            Quick Actions
-          </p>
+        <div className="lg:col-span-1">
+          <FeeOverview
+            collected={stats?.totalFeesCollected ?? 0}
+            pending={stats?.totalFeesPending ?? 0}
+            percentage={stats?.feeCollectionPercentage ?? 0}
+          />
+        </div>
+      </div>
 
-          <div className="mt-4 space-y-2">
+      {/* Calendar + Quick Actions */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <MiniCalendar />
+
+        <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
+          <div>
+            <h2 className="text-base font-semibold text-text-primary">
+              Quick Actions
+            </h2>
+
+            <p className="mt-1 text-sm text-text-secondary">
+              Common tasks you can access quickly.
+            </p>
+          </div>
+
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {quickActions.map((action) => {
               const Icon = action.icon;
+
               return (
                 <Link
                   key={action.title}
                   href={action.href}
-                  className="group flex items-center gap-3 rounded-lg border border-border bg-surface-secondary px-4 py-3 transition hover:border-primary/40 hover:bg-primary-soft"
+                  className="group flex items-center gap-3 rounded-lg border border-border bg-surface-secondary px-3 py-3 transition hover:border-primary/40 hover:bg-primary-soft"
                 >
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface text-primary shadow-sm transition group-hover:bg-primary group-hover:text-primary-foreground">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface text-primary shadow-sm transition group-hover:bg-primary group-hover:text-primary-foreground">
                     <Icon className="h-4 w-4" />
                   </div>
 
-                  <p className="text-sm font-medium text-text-secondary">
+                  <span className="text-sm font-medium text-text-secondary transition group-hover:text-text-primary">
                     {action.title}
-                  </p>
+                  </span>
 
                   <ArrowUpRight className="ml-auto h-4 w-4 text-text-muted transition group-hover:text-primary" />
                 </Link>
@@ -164,10 +212,13 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <DashboardCharts
-        studentCount={stats?.studentCount ?? 0}
-        teacherCount={stats?.teacherCount ?? 0}
-        parentCount={stats?.parentCount ?? 0}
+      {/* Student Distribution */}
+      <StudentDistribution data={stats?.studentDistribution ?? []} />
+
+      {/* Activity */}
+      <DashboardActivity
+        recentActivities={stats?.recentActivities ?? []}
+        upcomingItems={stats?.upcomingItems ?? []}
       />
     </div>
   );

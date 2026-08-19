@@ -1,262 +1,129 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { feeApi } from "@/lib/api/fee";
+import { Search, Wallet, X } from "lucide-react";
 import { classesApi } from "@/lib/api/classes";
-import { sectionsApi } from "@/lib/api/sections";
-import { FeeRowActions } from "@/components/fees/fee-row-actions";
-import { FeeStatusBadge } from "@/components/fees/fee-status-badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { feeStatuses } from "@/lib/validations/fee";
-
-// NOTE: adjust these imports/shapes to match your actual Class/Section types
-interface ClassOption {
-  id: string;
-  name: string;
-}
-
-interface SectionOption {
-  id: string;
-  name: string;
-  classId: string;
-}
-
-type FeeStatusValue = (typeof feeStatuses)[number];
+import { useQuery } from "@tanstack/react-query";
+import { useDebouncedValue } from "@/hooks/use-debounzed-values";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function FeesPage() {
-  const [classId, setClassId] = useState("");
-  const [sectionId, setSectionId] = useState("");
-  const [status, setStatus] = useState<FeeStatusValue | "">("");
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebouncedValue(searchInput, 250)
+    .trim()
+    .toLowerCase();
 
-  const { data: classes = [] } = useQuery<ClassOption[]>({
-    queryKey: ["classes"],
+  const { data: classes = [], isLoading } = useQuery({
+    queryKey: ["schoolClasses"],
     queryFn: classesApi.list,
   });
 
-  const { data: allSections = [] } = useQuery<SectionOption[]>({
-    queryKey: ["sections"],
-    queryFn: sectionsApi.list,
-  });
+  if (isLoading) {
+    return <PageLoader text="Loading classes..." />;
+  }
 
-  const sections = useMemo(
-    () => allSections.filter((s) => s.classId === classId),
-    [allSections, classId],
-  );
+  const isSearching = debouncedSearch.length > 0;
 
-  const { data: studentFees = [], isLoading } = useQuery({
-    queryKey: ["student-fees", { classId, sectionId, status, search }],
-    queryFn: () =>
-      feeApi.list({
-        classId: classId || undefined,
-        sectionId: sectionId || undefined,
-        status: status || undefined,
-        search: search || undefined,
-      }),
-  });
-
-  const balanceOf = (fee: (typeof studentFees)[number]) => {
-    const paid = fee.payments?.reduce((s, p) => s + Number(p.amount), 0) ?? 0;
-    return Number(fee.totalAmount) - Number(fee.discountAmount) - paid;
-  };
+  const filteredClasses = isSearching
+    ? classes.filter((cls) => {
+        const classMatches = cls.name.toLowerCase().includes(debouncedSearch);
+        const sectionMatches = cls.sections?.some((sec) =>
+          `${cls.name} ${sec.name}`.toLowerCase().includes(debouncedSearch),
+        );
+        return classMatches || sectionMatches;
+      })
+    : classes;
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <p className="mb-1 text-sm font-medium text-blue-600">Finance</p>
+      <div>
+        <p className="mb-1 text-sm font-medium text-primary">Finance</p>
 
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Fees
-          </h1>
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary">
+          Fees
+        </h1>
 
-          <p className="mt-2 text-sm text-slate-500">
-            Track student fee balances and record offline payments.
-          </p>
-        </div>
-
-        <Link
-          href="/dashboard/fees/new"
-          className="inline-flex h-10 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700"
-        >
-          + Record Payment
-        </Link>
+        <p className="mt-2 text-sm text-text-secondary">
+          Browse by class and section to track balances and record payments.
+        </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <Select
-          value={classId}
-          onValueChange={(v) => {
-            setClassId(v ?? "");
-            setSectionId("");
-          }}
-        >
-          <SelectTrigger className="h-10 w-40 rounded-lg border-slate-200 bg-slate-50/50">
-            <SelectValue>
-              {(v) => classes.find((c) => c.id === v)?.name ?? "All Classes"}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Classes</SelectItem>
-            {classes.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={sectionId}
-          onValueChange={(v) => setSectionId(v ?? "")}
-          disabled={!classId}
-        >
-          <SelectTrigger className="h-10 w-40 rounded-lg border-slate-200 bg-slate-50/50">
-            <SelectValue>
-              {(v) => sections.find((s) => s.id === v)?.name ?? "All Sections"}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Sections</SelectItem>
-            {sections.map((s) => (
-              <SelectItem key={s.id} value={s.id}>
-                {s.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={status}
-          onValueChange={(v) => setStatus((v ?? "") as FeeStatusValue | "")}
-        >
-          <SelectTrigger className="h-10 w-44 rounded-lg border-slate-200 bg-slate-50/50">
-            <SelectValue>
-              {(v) => (v ? v.replace("_", " ") : "All Statuses")}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
-            {feeStatuses.map((s) => (
-              <SelectItem key={s} value={s}>
-                {s.replace("_", " ")}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Input
-          placeholder="Search student name or admission no."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="h-10 max-w-xs rounded-lg border-slate-200 bg-slate-50/50"
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+        <input
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="Search classes or sections (e.g. 8, 7A)"
+          className="h-11 w-full rounded-lg border border-border bg-surface pl-10 pr-10 text-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
         />
+        {searchInput && (
+          <button
+            type="button"
+            onClick={() => setSearchInput("")}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-          <h2 className="font-semibold text-slate-900">Student Fees</h2>
-          <span className="text-sm text-slate-400">
-            {studentFees.length}{" "}
-            {studentFees.length === 1 ? "record" : "records"}
-          </span>
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {filteredClasses.length === 0 ? (
+          <div className="col-span-full rounded-xl border border-border bg-surface p-8 text-center shadow-sm">
+            <p className="text-sm text-text-muted">
+              {isSearching
+                ? `No classes or sections match "${searchInput}".`
+                : "No classes yet."}
+            </p>
+          </div>
+        ) : (
+          filteredClasses.map((cls) => (
+            <div
+              key={cls.id}
+              className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm"
+            >
+              <div className="border-b border-border bg-surface-secondary/40 px-5 py-3">
+                <h2 className="font-semibold text-text-primary">{cls.name}</h2>
+              </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="border-b border-slate-100 bg-slate-50/70 text-left">
-              <tr>
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Student
-                </th>
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Class
-                </th>
-                <th className="px-6 py-3.5 font-medium text-slate-500">Fee</th>
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Total
-                </th>
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Balance
-                </th>
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Status
-                </th>
-                <th className="px-6 py-3.5 font-medium text-slate-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-slate-100">
-              {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-6 py-12 text-center text-slate-400"
-                  >
-                    Loading fees...
-                  </td>
-                </tr>
-              ) : studentFees.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-6 py-12 text-center text-slate-400"
-                  >
-                    No fee records match these filters.
-                  </td>
-                </tr>
-              ) : (
-                studentFees.map((fee) => (
-                  <tr key={fee.id} className="transition hover:bg-slate-50/70">
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-slate-800">
-                        {fee.student?.firstName} {fee.student?.lastName}
-                      </p>
-                      <p className="text-xs text-slate-400">
-                        {fee.student?.admissionNumber}
-                      </p>
-                    </td>
-
-                    <td className="px-6 py-4 text-slate-600">
-                      {fee.feeStructure?.class?.name ?? "—"}
-                    </td>
-
-                    <td className="px-6 py-4 text-slate-600">
-                      {fee.feeStructure?.name}
-                    </td>
-
-                    <td className="px-6 py-4 text-slate-600">
-                      ₹{fee.totalAmount}
-                    </td>
-
-                    <td className="px-6 py-4 font-medium text-slate-800">
-                      ₹{balanceOf(fee)}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <FeeStatusBadge status={fee.status} />
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <FeeRowActions studentFeeId={fee.id} />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              <div className="p-5">
+                {!cls.sections || cls.sections.length === 0 ? (
+                  <p className="text-sm text-text-muted">
+                    No sections yet for this class.
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {cls.sections
+                      .filter((section) =>
+                        isSearching
+                          ? `${cls.name} ${section.name}`
+                              .toLowerCase()
+                              .includes(debouncedSearch) ||
+                            cls.name.toLowerCase().includes(debouncedSearch)
+                          : true,
+                      )
+                      .map((section) => (
+                        <Link
+                          key={section.id}
+                          href={`/dashboard/fees/section/${section.id}`}
+                          className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-secondary/50 px-3 py-2 text-sm transition hover:border-primary hover:bg-primary-soft"
+                        >
+                          <Wallet className="h-3.5 w-3.5 text-text-muted" />
+                          <span className="font-medium text-text-primary">
+                            {section.name}
+                          </span>
+                          <span className="text-xs text-text-muted">
+                            ({section.studentCount ?? 0})
+                          </span>
+                        </Link>
+                      ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

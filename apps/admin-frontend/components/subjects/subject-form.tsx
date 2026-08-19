@@ -68,13 +68,13 @@ export function SubjectForm({ subjectId, defaultValues }: SubjectFormProps) {
   };
 
   return (
-    <Card className="rounded-xl border-slate-200 bg-white shadow-sm">
-      <CardHeader className="border-b border-slate-100 px-6 py-5">
-        <CardTitle className="text-lg font-semibold text-slate-900">
+    <Card className="rounded-xl border-border bg-surface shadow-sm">
+      <CardHeader className="border-b border-border px-6 py-5">
+        <CardTitle className="text-lg font-semibold text-text-primary">
           Subject Information
         </CardTitle>
 
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-text-secondary">
           Enter the details of the subject you want to add.
         </p>
       </CardHeader>
@@ -84,7 +84,7 @@ export function SubjectForm({ subjectId, defaultValues }: SubjectFormProps) {
           <div className="space-y-2">
             <Label
               htmlFor="name"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-text-secondary"
             >
               Subject Name
             </Label>
@@ -93,7 +93,7 @@ export function SubjectForm({ subjectId, defaultValues }: SubjectFormProps) {
               id="name"
               placeholder="e.g. Mathematics"
               {...register("name")}
-              className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+              className="h-11 rounded-lg border-border bg-surface-secondary transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
             />
 
             {errors.name && (
@@ -104,7 +104,7 @@ export function SubjectForm({ subjectId, defaultValues }: SubjectFormProps) {
           <div className="space-y-2">
             <Label
               htmlFor="code"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-text-secondary"
             >
               Subject Code
             </Label>
@@ -113,7 +113,7 @@ export function SubjectForm({ subjectId, defaultValues }: SubjectFormProps) {
               id="code"
               placeholder="e.g. MATH101"
               {...register("code")}
-              className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+              className="h-11 rounded-lg border-border bg-surface-secondary transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
             />
 
             {errors.code && (
@@ -127,13 +127,13 @@ export function SubjectForm({ subjectId, defaultValues }: SubjectFormProps) {
             </div>
           )}
 
-          <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
               disabled={saveSubjectMutation.isPending}
-              className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
+              className="h-11 rounded-lg border-border px-5 text-text-secondary hover:bg-surface-secondary"
             >
               Cancel
             </Button>
@@ -141,7 +141,7 @@ export function SubjectForm({ subjectId, defaultValues }: SubjectFormProps) {
             <Button
               type="submit"
               disabled={saveSubjectMutation.isPending}
-              className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-11 rounded-lg bg-primary px-6 font-medium text-primary-foreground shadow-md shadow-primary/20 transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saveSubjectMutation.isPending
                 ? isEditMode

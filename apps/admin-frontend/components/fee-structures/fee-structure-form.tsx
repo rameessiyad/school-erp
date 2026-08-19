@@ -30,11 +30,13 @@ import { getErrorMessage } from "@/lib/api/error";
 interface FeeStructureFormProps {
   feeStructureId?: string;
   defaultValues?: Partial<CreateFeeStructureValues>;
+  lockClass?: boolean;
 }
 
 export function FeeStructureForm({
   feeStructureId,
   defaultValues,
+  lockClass,
 }: FeeStructureFormProps) {
   const isEditMode = !!feeStructureId;
   const router = useRouter();
@@ -97,13 +99,13 @@ export function FeeStructureForm({
   };
 
   return (
-    <Card className="border-slate-200 shadow-sm">
-      <CardHeader className="border-b border-slate-100 px-6 py-5">
-        <CardTitle className="text-lg font-semibold text-slate-900">
+    <Card className="border-border bg-surface shadow-sm">
+      <CardHeader className="border-b border-border px-6 py-5">
+        <CardTitle className="text-lg font-semibold text-text-primary">
           {isEditMode ? "Edit Fee Structure" : "Fee Structure Information"}
         </CardTitle>
 
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-text-secondary">
           {isEditMode
             ? "Update the fee structure details for this class."
             : "Enter the details of the fee structure you want to add."}
@@ -115,7 +117,7 @@ export function FeeStructureForm({
           <div className="space-y-2">
             <Label
               htmlFor="name"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-text-secondary"
             >
               Fee Name
             </Label>
@@ -124,7 +126,7 @@ export function FeeStructureForm({
               id="name"
               placeholder="e.g. Tuition Fee - Term 1"
               {...register("name")}
-              className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+              className="h-11 rounded-lg border-border bg-surface-secondary transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
             />
 
             {errors.name && (
@@ -134,38 +136,45 @@ export function FeeStructureForm({
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-slate-700">
+              <Label className="text-sm font-medium text-text-secondary">
                 Class
               </Label>
 
-              <Controller
-                control={control}
-                name="classId"
-                render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={isEditMode}
-                  >
-                    <SelectTrigger className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20">
-                      <SelectValue placeholder="Select class">
-                        {(value: string) =>
-                          classes.find((c) => c.id === value)?.name ??
-                          "Select class"
-                        }
-                      </SelectValue>
-                    </SelectTrigger>
+              {lockClass ? (
+                <div className="flex h-11 w-full items-center rounded-lg border border-border bg-surface-secondary px-3 text-sm text-text-primary">
+                  {classes.find((c) => c.id === defaultValues?.classId)?.name ??
+                    "Loading..."}
+                </div>
+              ) : (
+                <Controller
+                  control={control}
+                  name="classId"
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={isEditMode}
+                    >
+                      <SelectTrigger className="h-11 w-full rounded-lg border-border bg-surface-secondary transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20">
+                        <SelectValue placeholder="Select class">
+                          {(value: string) =>
+                            classes.find((c) => c.id === value)?.name ??
+                            "Select class"
+                          }
+                        </SelectValue>
+                      </SelectTrigger>
 
-                    <SelectContent>
-                      {classes.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+                      <SelectContent>
+                        {classes.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              )}
 
               {errors.classId && (
                 <p className="text-xs text-red-500">{errors.classId.message}</p>
@@ -173,7 +182,7 @@ export function FeeStructureForm({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-slate-700">
+              <Label className="text-sm font-medium text-text-secondary">
                 Academic Year
               </Label>
 
@@ -186,7 +195,7 @@ export function FeeStructureForm({
                     value={field.value}
                     disabled={isEditMode}
                   >
-                    <SelectTrigger className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20">
+                    <SelectTrigger className="h-11 w-full rounded-lg border-border bg-surface-secondary transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20">
                       <SelectValue placeholder="Select academic year">
                         {(value: string) =>
                           academicYears.find((y) => y.id === value)?.label ??
@@ -218,7 +227,7 @@ export function FeeStructureForm({
             <div className="space-y-2">
               <Label
                 htmlFor="amount"
-                className="text-sm font-medium text-slate-700"
+                className="text-sm font-medium text-text-secondary"
               >
                 Amount (₹)
               </Label>
@@ -229,7 +238,7 @@ export function FeeStructureForm({
                 step="0.01"
                 placeholder="e.g. 5000"
                 {...register("amount")}
-                className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                className="h-11 rounded-lg border-border bg-surface-secondary transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
               />
 
               {errors.amount && (
@@ -240,7 +249,7 @@ export function FeeStructureForm({
             <div className="space-y-2">
               <Label
                 htmlFor="dueDate"
-                className="text-sm font-medium text-slate-700"
+                className="text-sm font-medium text-text-secondary"
               >
                 Due Date
               </Label>
@@ -249,7 +258,7 @@ export function FeeStructureForm({
                 id="dueDate"
                 type="date"
                 {...register("dueDate")}
-                className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                className="h-11 rounded-lg border-border bg-surface-secondary transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
               />
 
               {errors.dueDate && (
@@ -259,7 +268,7 @@ export function FeeStructureForm({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700">
+            <Label className="text-sm font-medium text-text-secondary">
               Frequency
             </Label>
 
@@ -268,7 +277,7 @@ export function FeeStructureForm({
               name="frequency"
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20">
+                  <SelectTrigger className="h-11 w-full rounded-lg border-border bg-surface-secondary transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20">
                     <SelectValue placeholder="Select frequency">
                       {(value: string) =>
                         value ? value.replace(/_/g, " ") : "Select frequency"
@@ -295,7 +304,7 @@ export function FeeStructureForm({
           <div className="space-y-2">
             <Label
               htmlFor="description"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-text-secondary"
             >
               Description
             </Label>
@@ -304,7 +313,7 @@ export function FeeStructureForm({
               id="description"
               placeholder="Add any additional information about this fee..."
               {...register("description")}
-              className="min-h-24 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+              className="min-h-24 rounded-lg border-border bg-surface-secondary transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -314,13 +323,13 @@ export function FeeStructureForm({
             </div>
           )}
 
-          <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
               disabled={saveFeeStructureMutation.isPending}
-              className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
+              className="h-11 rounded-lg border-border px-5 text-text-secondary hover:bg-surface-secondary"
             >
               Cancel
             </Button>
@@ -328,7 +337,7 @@ export function FeeStructureForm({
             <Button
               type="submit"
               disabled={saveFeeStructureMutation.isPending}
-              className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-11 rounded-lg bg-primary px-6 font-medium text-primary-foreground shadow-md shadow-primary/20 transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saveFeeStructureMutation.isPending
                 ? isEditMode
