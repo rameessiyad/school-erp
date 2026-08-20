@@ -164,3 +164,22 @@ export const PaymentMethod = {
 } as const
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+
+export const TeacherAttendanceStatus = {
+  PRESENT: 'PRESENT',
+  ABSENT: 'ABSENT',
+  HALF_DAY: 'HALF_DAY',
+  ON_LEAVE: 'ON_LEAVE'
+} as const
+
+export type TeacherAttendanceStatus = (typeof TeacherAttendanceStatus)[keyof typeof TeacherAttendanceStatus]
+
+
+export const LeaveStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type LeaveStatus = (typeof LeaveStatus)[keyof typeof LeaveStatus]

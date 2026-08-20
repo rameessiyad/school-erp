@@ -23,13 +23,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
+import { Calendar } from "@/components/ui/calendar";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import {
   Select,
@@ -78,9 +82,7 @@ function SectionHeading({
       </div>
 
       <div className="min-w-0">
-        <h3 className="text-sm font-semibold text-text-primary">
-          {title}
-        </h3>
+        <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
 
         <p className="mt-0.5 text-xs leading-5 text-text-muted">
           {description}
@@ -121,6 +123,7 @@ export function StudentForm({
   const [classes, setClasses] = useState<Option[]>([]);
   const [sections, setSections] = useState<Option[]>([]);
   const [academicYears, setAcademicYears] = useState<Option[]>([]);
+  const [sectionsLoading, setSectionsLoading] = useState(false);
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(
@@ -142,11 +145,37 @@ export function StudentForm({
       setAcademicYears(yearsData);
 
       if (defaultValues?.classId) {
-        const sectionsData = await optionsApi.sections(
-          defaultValues.classId,
-        );
+        const sectionsData = await optionsApi.sections(defaultValues.classId);
 
         setSections(sectionsData);
+      }
+    }
+
+    loadOptions();
+  }, [defaultValues?.classId]);
+
+  /* ---------------------------------------------------------------------- */
+  /* sections loading                                                            */
+  /* ---------------------------------------------------------------------- */
+
+  useEffect(() => {
+    async function loadOptions() {
+      const [classesData, yearsData] = await Promise.all([
+        optionsApi.classes(),
+        optionsApi.academicYears(),
+      ]);
+
+      setClasses(classesData);
+      setAcademicYears(yearsData);
+
+      if (defaultValues?.classId) {
+        setSectionsLoading(true);
+        try {
+          const sectionsData = await optionsApi.sections(defaultValues.classId);
+          setSections(sectionsData);
+        } finally {
+          setSectionsLoading(false);
+        }
       }
     }
 
@@ -186,15 +215,18 @@ export function StudentForm({
 
   async function handleClassChange(classId: string) {
     setValue("sectionId", "");
+    setSections([]);
+    setSectionsLoading(true);
 
-    const sectionsData = await optionsApi.sections(classId);
-
-    setSections(sectionsData);
+    try {
+      const sectionsData = await optionsApi.sections(classId);
+      setSections(sectionsData);
+    } finally {
+      setSectionsLoading(false);
+    }
   }
 
-  function handlePhotoChange(
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) {
+  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
 
     if (!file) return;
@@ -228,27 +260,13 @@ export function StudentForm({
 
   const saveStudentMutation = useMutation({
     mutationFn: async (values: CreateStudentValues) => {
-      const {
-        sectionId,
-        academicYearId,
-        rollNo,
-        ...studentPayload
-      } = values;
+      const { sectionId, academicYearId, rollNo, ...studentPayload } = values;
 
       const student = isEditMode
-        ? await studentsApi.update(
-            studentId!,
-            studentPayload,
-            photoFile,
-          )
+        ? await studentsApi.update(studentId!, studentPayload, photoFile)
         : await studentsApi.create(studentPayload, photoFile);
 
-      if (
-        !isEditMode &&
-        enableEnrollment &&
-        sectionId &&
-        academicYearId
-      ) {
+      if (!isEditMode && enableEnrollment && sectionId && academicYearId) {
         try {
           await studentsApi.createEnrollment(student.id, {
             sectionId,
@@ -326,10 +344,7 @@ export function StudentForm({
       </CardHeader>
 
       <CardContent className="p-6 lg:p-7">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-8"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* ============================================================ */}
           {/* Photo                                                         */}
           {/* ============================================================ */}
@@ -531,18 +546,13 @@ export function StudentForm({
                         >
                           <SelectTrigger className="h-11 w-full min-w-0 rounded-lg border-border bg-surface text-sm text-text-primary focus:border-primary focus:ring-2 focus:ring-primary/20">
                             <SelectValue placeholder="Select gender">
-                              {(value: string) =>
-                                value || "Select gender"
-                              }
+                              {(value: string) => value || "Select gender"}
                             </SelectValue>
                           </SelectTrigger>
 
                           <SelectContent>
                             {genders.map((gender) => (
-                              <SelectItem
-                                key={gender}
-                                value={gender}
-                              >
+                              <SelectItem key={gender} value={gender}>
                                 {gender}
                               </SelectItem>
                             ))}
@@ -555,19 +565,64 @@ export function StudentForm({
                   {/* Date of Birth */}
 
                   <div className="min-w-0 space-y-2">
-                    <Label
-                      htmlFor="dob"
-                      className="text-sm font-medium text-text-secondary"
-                    >
+                    <Label className="text-sm font-medium text-text-secondary">
                       Date of Birth
                     </Label>
 
-                    <Input
-                      id="dob"
-                      type="date"
-                      {...register("dob")}
-                      className={inputClassName}
+                    <Controller
+                      control={control}
+                      name="dob"
+                      render={({ field }) => {
+                        const selectedDate = field.value
+                          ? new Date(`${field.value}T00:00:00`)
+                          : undefined;
+
+                        return (
+                          <Popover>
+                            <PopoverTrigger>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className={`h-11 w-full justify-between rounded-lg border-border bg-surface px-3 text-sm font-normal shadow-none transition hover:bg-surface ${
+                                  field.value
+                                    ? "text-text-primary"
+                                    : "text-text-muted"
+                                } focus:border-primary focus:ring-2 focus:ring-primary/20`}
+                              >
+                                {selectedDate
+                                  ? format(selectedDate, "dd MMM yyyy")
+                                  : "Select date of birth"}
+
+                                <CalendarIcon className="h-4 w-4 text-text-muted" />
+                              </Button>
+                            </PopoverTrigger>
+
+                            <PopoverContent
+                              align="start"
+                              className="w-auto p-0"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={selectedDate}
+                                onSelect={(date) => {
+                                  field.onChange(
+                                    date ? format(date, "yyyy-MM-dd") : "",
+                                  );
+                                }}
+                                captionLayout="dropdown"
+                                startMonth={new Date(1950, 0)}
+                                endMonth={new Date()}
+                                disabled={(date) => date > new Date()}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        );
+                      }}
                     />
+
+                    {errors.dob && (
+                      <p className="text-xs text-error">{errors.dob.message}</p>
+                    )}
                   </div>
 
                   {/* Blood Group */}
@@ -608,9 +663,7 @@ export function StudentForm({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() =>
-                  setEnableEnrollment((prev) => !prev)
-                }
+                onClick={() => setEnableEnrollment((prev) => !prev)}
                 className="h-10 shrink-0 rounded-lg border-border text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
               >
                 {enableEnrollment ? (
@@ -630,8 +683,8 @@ export function StudentForm({
             {!enableEnrollment && (
               <div className="rounded-xl border border-info/20 bg-info-soft px-4 py-3.5">
                 <p className="text-sm leading-5 text-info">
-                  Enrollment is optional. You can enroll this student
-                  into a class or section later.
+                  Enrollment is optional. You can enroll this student into a
+                  class or section later.
                 </p>
               </div>
             )}
@@ -663,19 +716,15 @@ export function StudentForm({
                           <SelectTrigger className="h-11 w-full min-w-0 rounded-lg border-border bg-surface text-sm text-text-primary focus:border-primary focus:ring-2 focus:ring-primary/20">
                             <SelectValue placeholder="Select class">
                               {(value: string) =>
-                                classes.find(
-                                  (item) => item.id === value,
-                                )?.name ?? "Select class"
+                                classes.find((item) => item.id === value)
+                                  ?.name ?? "Select class"
                               }
                             </SelectValue>
                           </SelectTrigger>
 
                           <SelectContent>
                             {classes.map((item) => (
-                              <SelectItem
-                                key={item.id}
-                                value={item.id}
-                              >
+                              <SelectItem key={item.id} value={item.id}>
                                 {item.name}
                               </SelectItem>
                             ))}
@@ -699,26 +748,34 @@ export function StudentForm({
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
+                          disabled={sectionsLoading}
                         >
-                          <SelectTrigger className="h-11 w-full min-w-0 rounded-lg border-border bg-surface text-sm text-text-primary focus:border-primary focus:ring-2 focus:ring-primary/20">
+                          <SelectTrigger className="h-11 w-full min-w-0 rounded-lg border-border bg-surface text-sm text-text-primary focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60">
                             <SelectValue placeholder="Select section">
-                              {(value: string) =>
-                                sections.find(
-                                  (item) => item.id === value,
-                                )?.name ?? "Select section"
-                              }
+                              {(value: string) => {
+                                if (sectionsLoading)
+                                  return "Loading sections...";
+                                return (
+                                  sections.find((item) => item.id === value)
+                                    ?.name ?? "Select section"
+                                );
+                              }}
                             </SelectValue>
                           </SelectTrigger>
 
                           <SelectContent>
-                            {sections.map((item) => (
-                              <SelectItem
-                                key={item.id}
-                                value={item.id}
-                              >
-                                {item.name}
-                              </SelectItem>
-                            ))}
+                            {sectionsLoading ? (
+                              <div className="flex items-center justify-center gap-2 px-3 py-4 text-sm text-text-muted">
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                Loading sections...
+                              </div>
+                            ) : (
+                              sections.map((item) => (
+                                <SelectItem key={item.id} value={item.id}>
+                                  {item.name}
+                                </SelectItem>
+                              ))
+                            )}
                           </SelectContent>
                         </Select>
                       )}
@@ -743,20 +800,15 @@ export function StudentForm({
                           <SelectTrigger className="h-11 w-full min-w-0 rounded-lg border-border bg-surface text-sm text-text-primary focus:border-primary focus:ring-2 focus:ring-primary/20">
                             <SelectValue placeholder="Select academic year">
                               {(value: string) =>
-                                academicYears.find(
-                                  (item) => item.id === value,
-                                )?.label ??
-                                "Select academic year"
+                                academicYears.find((item) => item.id === value)
+                                  ?.label ?? "Select academic year"
                               }
                             </SelectValue>
                           </SelectTrigger>
 
                           <SelectContent>
                             {academicYears.map((item) => (
-                              <SelectItem
-                                key={item.id}
-                                value={item.id}
-                              >
+                              <SelectItem key={item.id} value={item.id}>
                                 {item.label}
                               </SelectItem>
                             ))}
@@ -794,9 +846,7 @@ export function StudentForm({
 
           {serverError && (
             <div className="rounded-xl border border-error/20 bg-error-soft px-4 py-3.5">
-              <p className="text-center text-sm text-error">
-                {serverError}
-              </p>
+              <p className="text-center text-sm text-error">{serverError}</p>
             </div>
           )}
 

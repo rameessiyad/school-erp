@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { staffApi } from "@/lib/api/staff";
 import { getErrorMessage } from "@/lib/api/error";
+import { MobileInput } from "../ui/mobile-input";
 
 interface StaffFormProps {
   staffId?: string;
@@ -212,7 +213,7 @@ export function StaffForm({
               Phone
             </Label>
 
-            <Input
+            <MobileInput
               id="phone"
               type="tel"
               placeholder="Enter phone number"

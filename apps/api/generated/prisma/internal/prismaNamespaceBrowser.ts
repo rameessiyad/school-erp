@@ -80,7 +80,9 @@ export const ModelName = {
   SubjectMark: 'SubjectMark',
   FeeStructure: 'FeeStructure',
   StudentFee: 'StudentFee',
-  FeePayment: 'FeePayment'
+  FeePayment: 'FeePayment',
+  TeacherAttendance: 'TeacherAttendance',
+  TeacherLeaveApplication: 'TeacherLeaveApplication'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -538,6 +540,38 @@ export const FeePaymentScalarFieldEnum = {
 } as const
 
 export type FeePaymentScalarFieldEnum = (typeof FeePaymentScalarFieldEnum)[keyof typeof FeePaymentScalarFieldEnum]
+
+
+export const TeacherAttendanceScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  teacherId: 'teacherId',
+  date: 'date',
+  status: 'status',
+  markedAt: 'markedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TeacherAttendanceScalarFieldEnum = (typeof TeacherAttendanceScalarFieldEnum)[keyof typeof TeacherAttendanceScalarFieldEnum]
+
+
+export const TeacherLeaveApplicationScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  teacherId: 'teacherId',
+  fromDate: 'fromDate',
+  toDate: 'toDate',
+  reason: 'reason',
+  status: 'status',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  appliedAt: 'appliedAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TeacherLeaveApplicationScalarFieldEnum = (typeof TeacherLeaveApplicationScalarFieldEnum)[keyof typeof TeacherLeaveApplicationScalarFieldEnum]
 
 
 export const SortOrder = {

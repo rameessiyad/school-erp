@@ -189,3 +189,13 @@ export type StudentFee = Prisma.StudentFeeModel
  * 
  */
 export type FeePayment = Prisma.FeePaymentModel
+/**
+ * Model TeacherAttendance
+ * 
+ */
+export type TeacherAttendance = Prisma.TeacherAttendanceModel
+/**
+ * Model TeacherLeaveApplication
+ * 
+ */
+export type TeacherLeaveApplication = Prisma.TeacherLeaveApplicationModel

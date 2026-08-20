@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,6 +31,7 @@ import { parentsApi } from "@/lib/api/parents";
 import { studentsApi } from "@/lib/api/students";
 import { optionsApi } from "@/lib/api/options";
 import { getErrorMessage } from "@/lib/api/error";
+import { MobileInput } from "../ui/mobile-input";
 
 interface ParentFormProps {
   parentId?: string;
@@ -58,6 +59,7 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
 
   const [classes, setClasses] = useState<Option[]>([]);
   const [sections, setSections] = useState<Option[]>([]);
+  const [sectionsLoading, setSectionsLoading] = useState(false);
 
   const {
     register,
@@ -78,16 +80,27 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
     optionsApi.classes().then(setClasses);
   });
 
+  useEffect(() => {
+    async function loadOptions() {
+      const [classesData] = await Promise.all([optionsApi.classes()]);
+      setClasses(classesData);
+    }
+
+    loadOptions();
+  }, []);
+
   async function handleClassChange(value: string | null) {
     const nextValue = value ?? "";
     setClassId(nextValue);
     setSectionId("");
     setSections([]);
     setValue("studentId", "");
+    setSectionsLoading(true);
 
     if (nextValue) {
       const sectionsData = await optionsApi.sections(nextValue);
       setSections(sectionsData);
+      setSectionsLoading(false);
     }
   }
 
@@ -271,7 +284,7 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
                     Phone
                   </Label>
 
-                  <Input
+                  <MobileInput
                     id="phone"
                     type="tel"
                     placeholder="Enter phone number"
@@ -380,10 +393,13 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
                     >
                       <SelectTrigger className="h-11 w-full rounded-lg border-border bg-surface text-text-primary disabled:cursor-not-allowed disabled:opacity-60">
                         <SelectValue placeholder="Select section">
-                          {(value: string) =>
-                            sections.find((s) => s.id === value)?.name ??
-                            "Select section"
-                          }
+                          {(value: string) => {
+                            if (sectionsLoading) return "Loading sections...";
+                            return (
+                              sections.find((s) => s.id === value)?.name ??
+                              "Select section"
+                            );
+                          }}
                         </SelectValue>
                       </SelectTrigger>
 

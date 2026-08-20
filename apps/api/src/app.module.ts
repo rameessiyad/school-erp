@@ -18,6 +18,8 @@ import { RedisModule } from './redis/redis.module';
 import { FeesModule } from './fees/fees.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
+import { TeacherAttendanceModule } from './teacher-attendance/teacher-attendance.module';
+import { TeacherLeaveModule } from './teacher-leave/teacher-leave.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { FileUploadModule } from './file-upload/file-upload.module';
     FeesModule,
     DashboardModule,
     FileUploadModule,
+    TeacherAttendanceModule,
+    TeacherLeaveModule,
   ],
   controllers: [AppController],
   providers: [AppService],

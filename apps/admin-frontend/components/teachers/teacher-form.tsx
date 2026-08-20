@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  createTeacherSchema,
   CreateTeacherValues,
   genders,
   getTeacherSchema,
@@ -27,6 +26,7 @@ import { optionsApi } from "@/lib/api/options";
 import { teachersApi } from "@/lib/api/teachers";
 import { getErrorMessage } from "@/lib/api/error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { MobileInput } from "../ui/mobile-input";
 
 interface Option {
   id: string;
@@ -68,6 +68,7 @@ export function TeacherForm({
 
   const [academicYears, setAcademicYears] = useState<Option[]>([]);
   const [classes, setClasses] = useState<Option[]>([]);
+  const [sectionsLoading, setSectionsLoading] = useState(false);
 
   const [selectedClassByRow, setSelectedClassByRow] = useState<
     Record<number, string | null>
@@ -113,6 +114,20 @@ export function TeacherForm({
     loadOptions();
   }, []);
 
+  useEffect(() => {
+    async function loadOptions() {
+      const [classesData, yearsData] = await Promise.all([
+        optionsApi.classes(),
+        optionsApi.academicYears(),
+      ]);
+
+      setClasses(classesData);
+      setAcademicYears(yearsData);
+    }
+
+    loadOptions();
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -133,12 +148,18 @@ export function TeacherForm({
   });
 
   async function handleClassChange(index: number, classId: string) {
-    const sections = await optionsApi.sections(classId);
+    setSectionsLoading(true);
 
-    setSectionsByRow((prev) => ({
-      ...prev,
-      [index]: sections,
-    }));
+    try {
+      const sections = await optionsApi.sections(classId);
+
+      setSectionsByRow((prev) => ({
+        ...prev,
+        [index]: sections,
+      }));
+    } finally {
+      setSectionsLoading(false);
+    }
   }
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -401,7 +422,7 @@ export function TeacherForm({
                     Phone
                   </Label>
 
-                  <Input
+                  <MobileInput
                     id="phone"
                     type="tel"
                     placeholder="Enter phone number"
@@ -791,14 +812,19 @@ export function TeacherForm({
                               <Select
                                 onValueChange={field.onChange}
                                 value={field.value}
+                                disabled={sectionsLoading}
                               >
                                 <SelectTrigger className="h-11 w-full rounded-lg border-border bg-surface text-text-primary">
                                   <SelectValue placeholder="Select section">
-                                    {(value: string) =>
-                                      (sectionsByRow[index] ?? []).find(
-                                        (section) => section.id === value,
-                                      )?.name ?? "Select section"
-                                    }
+                                    {(value: string) => {
+                                      if (sectionsLoading)
+                                        return "Loading sections...";
+                                      return (
+                                        (sectionsByRow[index] ?? []).find(
+                                          (section) => section.id === value,
+                                        )?.name ?? "Select section"
+                                      );
+                                    }}
                                   </SelectValue>
                                 </SelectTrigger>
 
