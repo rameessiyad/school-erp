@@ -22,7 +22,7 @@ export default function StudentsPage() {
 
   const { data: unassigned = [], isLoading: unassignedLoading } = useQuery({
     queryKey: ["students", "unassigned"],
-    queryFn: studentsApi.listUnassigned,
+    queryFn: () => studentsApi.listUnassigned(),
   });
 
   const { data: allStudents = [], isLoading: allStudentsLoading } = useQuery({

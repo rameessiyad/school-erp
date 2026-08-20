@@ -13,3 +13,23 @@ export interface Subject {
   code: string | null;
   createdAt: string;
 }
+
+export interface SubjectTeacherAllocation {
+  id: string;
+  teacher: {
+    id: string;
+    firstName: string;
+    lastName: string | null;
+    photoUrl: string | null;
+  };
+  section: {
+    id: string;
+    name: string;
+    class: { id: string; name: string };
+  };
+  academicYear: { id: string; label: string };
+}
+
+export interface SubjectDetail extends Subject {
+  teacherAllocations: SubjectTeacherAllocation[];
+}

@@ -36,6 +36,35 @@ export class SubjectService {
     return subject;
   }
 
+  async findOneWithDetails(schoolId: string, id: string) {
+    const subject = await this.prisma.subject.findFirst({
+      where: { id, schoolId },
+      include: {
+        teacherAllocations: {
+          include: {
+            teacher: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                photoUrl: true,
+              },
+            },
+            section: {
+              include: {
+                class: true,
+              },
+            },
+            academicYear: true,
+          },
+        },
+      },
+    });
+
+    if (!subject) throw new NotFoundException('Subject not found');
+    return subject;
+  }
+
   async update(schoolId: string, id: string, dto: UpdateSubjectDto) {
     await this.findOne(schoolId, id);
     return this.prisma.subject.update({

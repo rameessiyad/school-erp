@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,13 +28,22 @@ import { getErrorMessage } from "@/lib/api/error";
 interface StaffFormProps {
   staffId?: string;
   defaultValues?: Partial<CreateStaffValues>;
+  photoUrl?: string | null;
 }
 
-export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
+export function StaffForm({
+  staffId,
+  defaultValues,
+  photoUrl,
+}: StaffFormProps) {
   const isEditMode = !!staffId;
   const router = useRouter();
   const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(
+    photoUrl ?? null,
+  );
 
   const {
     register,
@@ -45,14 +55,22 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
     defaultValues,
   });
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPhotoFile(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  };
+
   const saveStaffMutation = useMutation({
     mutationFn: (values: CreateStaffValues) => {
       const { password, ...rest } = values;
       const payload = isEditMode && !password ? rest : values;
 
       return isEditMode
-        ? staffApi.update(staffId!, payload)
-        : staffApi.create(payload);
+        ? staffApi.update(staffId!, payload, photoFile)
+        : staffApi.create(values, photoFile);
     },
 
     onSuccess: () => {
@@ -82,24 +100,54 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
   };
 
   return (
-    <Card className="rounded-xl border-slate-200 bg-white shadow-sm">
-      <CardHeader className="border-b border-slate-100 px-6 py-5">
-        <CardTitle className="text-lg font-semibold text-slate-900">
+    <Card className="rounded-xl border-border bg-surface shadow-sm">
+      <CardHeader className="border-b border-border px-6 py-5">
+        <CardTitle className="text-lg font-semibold text-text-primary">
           Staff Information
         </CardTitle>
 
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-text-secondary">
           Enter the details of the staff member you want to add.
         </p>
       </CardHeader>
 
       <CardContent className="p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-text-primary">
+              Photo
+            </Label>
+
+            <div className="flex items-center gap-4">
+              {photoPreview ? (
+                <Image
+                  src={photoPreview}
+                  alt="Staff photo preview"
+                  width={64}
+                  height={64}
+                  className="h-16 w-16 rounded-lg object-cover"
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary-soft text-lg font-semibold text-primary">
+                  ?
+                </div>
+              )}
+
+              <Input
+                id="photo"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                className="h-11 max-w-xs rounded-lg border-border bg-surface-secondary/50"
+              />
+            </div>
+          </div>
+
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
               <Label
                 htmlFor="firstName"
-                className="text-sm font-medium text-slate-700"
+                className="text-sm font-medium text-text-primary"
               >
                 First Name
               </Label>
@@ -108,7 +156,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
                 id="firstName"
                 placeholder="Enter first name"
                 {...register("firstName")}
-                className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
               />
 
               {errors.firstName && (
@@ -121,7 +169,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
             <div className="space-y-2">
               <Label
                 htmlFor="lastName"
-                className="text-sm font-medium text-slate-700"
+                className="text-sm font-medium text-text-primary"
               >
                 Last Name
               </Label>
@@ -130,7 +178,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
                 id="lastName"
                 placeholder="Enter last name"
                 {...register("lastName")}
-                className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -138,7 +186,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
           <div className="space-y-2">
             <Label
               htmlFor="email"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-text-primary"
             >
               Email
             </Label>
@@ -148,7 +196,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
               type="email"
               placeholder="staff@school.com"
               {...register("email")}
-              className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+              className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
             />
 
             {errors.email && (
@@ -159,7 +207,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
           <div className="space-y-2">
             <Label
               htmlFor="phone"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-text-primary"
             >
               Phone
             </Label>
@@ -169,14 +217,14 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
               type="tel"
               placeholder="Enter phone number"
               {...register("phone")}
-              className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+              className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
           <div className="space-y-2">
             <Label
               htmlFor="password"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-text-primary"
             >
               Password
             </Label>
@@ -190,7 +238,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
                   : "Create a secure password"
               }
               {...register("password")}
-              className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+              className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
             />
 
             {errors.password && (
@@ -201,7 +249,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
           <div className="space-y-2">
             <Label
               htmlFor="designation"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-text-primary"
             >
               Designation
             </Label>
@@ -213,7 +261,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
                 <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger
                     id="designation"
-                    className="h-11 rounded-lg border-slate-200 bg-slate-50/50 transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                    className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
                   >
                     <SelectValue placeholder="Select designation" />
                   </SelectTrigger>
@@ -246,13 +294,13 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
             </div>
           )}
 
-          <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
               disabled={saveStaffMutation.isPending}
-              className="h-11 rounded-lg border-slate-200 px-5 text-slate-600 hover:bg-slate-50"
+              className="h-11 rounded-lg border-border px-5 text-text-secondary hover:bg-surface-secondary"
             >
               Cancel
             </Button>
@@ -260,7 +308,7 @@ export function StaffForm({ staffId, defaultValues }: StaffFormProps) {
             <Button
               type="submit"
               disabled={saveStaffMutation.isPending}
-              className="h-11 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-11 rounded-lg bg-primary px-6 font-medium text-primary-foreground shadow-md shadow-primary/20 transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saveStaffMutation.isPending
                 ? staffId

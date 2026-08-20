@@ -31,14 +31,14 @@ export default function EditSubjectPage() {
   const defaultValues = subject
     ? {
         name: subject.name,
-        code: subject.code,
+        code: subject.code ?? undefined,
       }
     : undefined;
 
   return (
     <div className="w-auto">
       <div className="mb-6">
-        <p className="mb-1 text-sm font-medium text-blue-600">Academics</p>
+        <p className="mb-1 text-sm font-medium text-primary">Academics</p>
         <h1 className="text-3xl font-bold tracking-tight text-text-primary">
           Edit Subject
         </h1>

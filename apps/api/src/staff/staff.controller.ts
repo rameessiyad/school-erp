@@ -9,6 +9,7 @@ import {
   Request,
   UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Role } from 'generated/prisma/enums';
 import { UploadedFile as UploadedFileType } from 'src/file-upload/file-upload.service';
@@ -18,6 +19,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { StaffService } from './staff.service';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.SCHOOL_ADMIN)
@@ -26,6 +28,7 @@ export class StaffController {
   constructor(private staffService: StaffService) {}
 
   @Post('create')
+  @UseInterceptors(FileInterceptor('photo'))
   create(
     @Request() req,
     @Body() dto: CreateStaffDto,
@@ -45,6 +48,7 @@ export class StaffController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('photo'))
   update(
     @Request() req,
     @Param('id') id: string,

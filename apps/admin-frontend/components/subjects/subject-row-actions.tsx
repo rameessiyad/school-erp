@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Pencil } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DeleteEntityDialog } from "../shared/delete-entity-dialog";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,6 +17,11 @@ export function SubjectRowActions({
   const queryClient = useQueryClient();
   return (
     <div className="flex items-center justify-end gap-1">
+      <Link href={`/dashboard/subjects/${subjectId}`}>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Eye className="h-4 w-4 text-slate-500" />
+        </Button>
+      </Link>
       <Link href={`/dashboard/subjects/${subjectId}/edit`}>
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Pencil className="h-4 w-4 text-slate-500" />

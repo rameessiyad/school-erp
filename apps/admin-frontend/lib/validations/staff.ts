@@ -15,6 +15,7 @@ export const staffSchema = z.object({
   designation: z.enum(staffDesignations, {
     errorMap: () => ({ message: "Select a designation" }),
   }),
+  photo: z.string().optional(),
 });
 
 export function getStaffSchema(isEditMode: boolean) {
@@ -54,5 +55,6 @@ export interface Staff {
   phone: string | null;
   designation: (typeof staffDesignations)[number];
   isActive: boolean;
+  photoUrl?: string | null;
   createdAt: string;
 }

@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { StaffForm } from "@/components/staff/staff-form";
 import { staffApi } from "@/lib/api/staff";
+import { PageLoader } from "@/components/common/page-loader";
 import { useQuery } from "@tanstack/react-query";
 
 export default function EditStaffPage() {
@@ -24,7 +25,7 @@ export default function EditStaffPage() {
   }
 
   if (isLoading || !staff) {
-    return <p className="text-sm text-slate-400">Loading staff...</p>;
+    return <PageLoader text="Loading staff..." />;
   }
 
   const defaultValues = {
@@ -36,9 +37,22 @@ export default function EditStaffPage() {
   };
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="mb-6 text-2xl font-semibold text-slate-900">Edit Staff</h1>
-      <StaffForm staffId={params.id} defaultValues={defaultValues} />
+    <div className="w-auto space-y-8">
+      <div>
+        <p className="mb-1 text-sm font-medium text-primary">Administration</p>
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary">
+          Edit Staff
+        </h1>
+        <p className="mt-2 text-sm text-text-secondary">
+          Update this staff member&apos;s details.
+        </p>
+      </div>
+
+      <StaffForm
+        staffId={params.id}
+        defaultValues={defaultValues}
+        photoUrl={staff.photoUrl}
+      />
     </div>
   );
 }

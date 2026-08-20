@@ -1,5 +1,9 @@
 import { apiClient } from "../axios/client";
-import { CreateSubjectValues, Subject } from "../validations/subject";
+import {
+  CreateSubjectValues,
+  Subject,
+  SubjectDetail,
+} from "../validations/subject";
 
 export const subjectsApi = {
   list: async (): Promise<Subject[]> => {
@@ -7,8 +11,13 @@ export const subjectsApi = {
     return data;
   },
 
-  get: async (id: string) => {
+  get: async (id: string): Promise<Subject> => {
     const { data } = await apiClient.get(`/subject/${id}`);
+    return data;
+  },
+
+  getDetails: async (id: string): Promise<SubjectDetail> => {
+    const { data } = await apiClient.get(`/subject/${id}/details`);
     return data;
   },
 

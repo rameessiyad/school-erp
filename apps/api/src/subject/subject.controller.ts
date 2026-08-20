@@ -37,6 +37,11 @@ export class SubjectController {
     return this.subjectService.findOne(req.user.schoolId, id);
   }
 
+  @Get(':id/details')
+  findOneWithDetails(@Request() req, @Param('id') id: string) {
+    return this.subjectService.findOneWithDetails(req.user.schoolId, id);
+  }
+
   @Patch(':id')
   update(
     @Request() req,

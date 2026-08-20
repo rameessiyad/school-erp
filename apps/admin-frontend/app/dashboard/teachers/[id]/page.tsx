@@ -16,6 +16,7 @@ import {
 
 import { teachersApi } from "@/lib/api/teachers";
 import { Button } from "@/components/ui/button";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function TeacherDetailPage() {
   const params = useParams<{ id: string }>();
@@ -66,11 +67,7 @@ export default function TeacherDetailPage() {
   }, [isImageOpen]);
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <p className="text-sm text-text-muted">Loading Teacher...</p>
-      </div>
-    );
+    return <PageLoader text="Loading teacher details..." />;
   }
 
   if (isError || !teacher) {
