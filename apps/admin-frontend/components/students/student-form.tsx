@@ -48,6 +48,7 @@ import { getErrorMessage } from "@/lib/api/error";
 import { studentsApi } from "@/lib/api/students";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
+import { DatePicker } from "../ui/date-picker";
 
 interface Option {
   id: string;
@@ -449,19 +450,29 @@ export function StudentForm({
                 {/* Admission Date */}
 
                 <div className="min-w-0 space-y-2">
-                  <Label
-                    htmlFor="admissionDate"
-                    className="text-sm font-medium text-text-secondary"
-                  >
+                  <Label className="text-sm font-medium text-text-secondary">
                     Admission Date
                   </Label>
 
-                  <Input
-                    id="admissionDate"
-                    type="date"
-                    {...register("admissionDate")}
-                    className={inputClassName}
+                  <Controller
+                    control={control}
+                    name="admissionDate"
+                    render={({ field }) => (
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Select admission date"
+                        minDate={new Date(2000, 0, 1)}
+                        maxDate={new Date()}
+                      />
+                    )}
                   />
+
+                  {errors.admissionDate && (
+                    <p className="text-xs text-error">
+                      {errors.admissionDate.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -572,52 +583,15 @@ export function StudentForm({
                     <Controller
                       control={control}
                       name="dob"
-                      render={({ field }) => {
-                        const selectedDate = field.value
-                          ? new Date(`${field.value}T00:00:00`)
-                          : undefined;
-
-                        return (
-                          <Popover>
-                            <PopoverTrigger>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                className={`h-11 w-full justify-between rounded-lg border-border bg-surface px-3 text-sm font-normal shadow-none transition hover:bg-surface ${
-                                  field.value
-                                    ? "text-text-primary"
-                                    : "text-text-muted"
-                                } focus:border-primary focus:ring-2 focus:ring-primary/20`}
-                              >
-                                {selectedDate
-                                  ? format(selectedDate, "dd MMM yyyy")
-                                  : "Select date of birth"}
-
-                                <CalendarIcon className="h-4 w-4 text-text-muted" />
-                              </Button>
-                            </PopoverTrigger>
-
-                            <PopoverContent
-                              align="start"
-                              className="w-auto p-0"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={selectedDate}
-                                onSelect={(date) => {
-                                  field.onChange(
-                                    date ? format(date, "yyyy-MM-dd") : "",
-                                  );
-                                }}
-                                captionLayout="dropdown"
-                                startMonth={new Date(1950, 0)}
-                                endMonth={new Date()}
-                                disabled={(date) => date > new Date()}
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        );
-                      }}
+                      render={({ field }) => (
+                        <DatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="Select date of birth"
+                          minDate={new Date(1950, 0, 1)}
+                          maxDate={new Date()}
+                        />
+                      )}
                     />
 
                     {errors.dob && (

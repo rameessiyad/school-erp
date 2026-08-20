@@ -27,6 +27,7 @@ import { teachersApi } from "@/lib/api/teachers";
 import { getErrorMessage } from "@/lib/api/error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileInput } from "../ui/mobile-input";
+import { DatePicker } from "../ui/date-picker";
 
 interface Option {
   id: string;
@@ -362,16 +363,23 @@ export function TeacherForm({
                 </div>
 
                 {/* Date of Birth */}
-                <div className="space-y-2">
+                <div className="min-w-0 space-y-2">
                   <Label htmlFor="dob" className={labelClass}>
                     Date of Birth
                   </Label>
 
-                  <Input
-                    id="dob"
-                    type="date"
-                    {...register("dob")}
-                    className={inputClass}
+                  <Controller
+                    control={control}
+                    name="dob"
+                    render={({ field }) => (
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Select date of birth"
+                        minDate={new Date(1960, 0, 1)}
+                        maxDate={new Date()}
+                      />
+                    )}
                   />
 
                   {errors.dob && (
