@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import { useTheme } from "../../../src/theme/ThemeProvider";
 import { useAuthStore } from "../../../src/store/auth.store";
 import { useMyLeaveApplications } from "../../../src/hooks/useTeacherLeave";
+import { useTeacherProfile } from "../../../src/hooks/useTeacherProfile";
 import { Card } from "../../../src/components/ui/Card";
 import { Button } from "../../../src/components/ui/Button";
 import { TopBar } from "../../../src/components/dashboard/TopBar";
@@ -13,7 +14,6 @@ import { AttendanceCard } from "../../../src/components/dashboard/AttendanceCard
 import { StatCard } from "../../../src/components/dashboard/StatCard";
 import { ClassSubjectRow } from "../../../src/components/dashboard/ClassSubjectRow";
 import { QuickAction } from "../../../src/components/dashboard/QuickAction";
-import { mockClassSubjects } from "../../../src/data/mockDashboard";
 import { IconBox } from "../../../src/components/ui/IconBox";
 
 function PlainSectionHeader({
@@ -69,8 +69,10 @@ export default function HomeScreen() {
   const { colors, spacing } = useTheme();
   const { user } = useAuthStore();
   const { data: leaveApplications } = useMyLeaveApplications();
+  const { data: profile } = useTeacherProfile();
 
-  const displayName = user?.email ? user.email.split("@")[0] : "Teacher";
+  const displayName =
+    profile?.firstName ?? (user?.email ? user.email.split("@")[0] : "Teacher");
 
   const leaveSummary = {
     pending:
@@ -106,8 +108,17 @@ export default function HomeScreen() {
             subtitle="What you're teaching this year"
           />
           <View style={{ gap: spacing[2] }}>
-            {mockClassSubjects.map((item) => (
-              <ClassSubjectRow key={item.id} item={item} />
+            {profile?.teacherSubjectAllocations.map((item) => (
+              <ClassSubjectRow
+                key={item.id}
+                item={{
+                  id: item.id,
+                  subjectName: item.subject.name,
+                  className: item.section.class.name,
+                  sectionName: item.section.name,
+                  isClassTeacher: false, // no isClassTeacher signal in this payload — flagged earlier
+                }}
+              />
             ))}
           </View>
         </View>

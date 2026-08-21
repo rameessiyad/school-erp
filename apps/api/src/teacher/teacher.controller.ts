@@ -43,6 +43,12 @@ export class TeacherController {
     return this.teacherService.findAll(req.user.schoolId);
   }
 
+  @Get('me')
+  @Roles(Role.TEACHER)
+  findMe(@Request() req) {
+    return this.teacherService.findOne(req.user.schoolId, req.user.teacherId);
+  }
+
   @Get(':id')
   findOne(@Request() req, @Param('id') id: string) {
     return this.teacherService.findOne(req.user.schoolId, id);
