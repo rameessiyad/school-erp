@@ -10,22 +10,68 @@ import { Card } from "../../../src/components/ui/Card";
 import { Button } from "../../../src/components/ui/Button";
 import { TopBar } from "../../../src/components/dashboard/TopBar";
 import { AttendanceCard } from "../../../src/components/dashboard/AttendanceCard";
-import { SectionHeader } from "../../../src/components/dashboard/SectionHeader";
 import { StatCard } from "../../../src/components/dashboard/StatCard";
 import { ClassSubjectRow } from "../../../src/components/dashboard/ClassSubjectRow";
 import { QuickAction } from "../../../src/components/dashboard/QuickAction";
 import { mockClassSubjects } from "../../../src/data/mockDashboard";
+import { IconBox } from "../../../src/components/ui/IconBox";
+
+function PlainSectionHeader({
+  icon,
+  title,
+  subtitle,
+  variant = "primary",
+}: {
+  icon: React.ComponentProps<typeof IconBox>["name"];
+  title: string;
+  subtitle?: string;
+  variant?: "primary" | "success" | "error" | "info" | "warning";
+}) {
+  const { colors, spacing, fontFamily } = useTheme();
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: spacing[3],
+        marginBottom: spacing[3],
+      }}
+    >
+      <IconBox name={icon} variant={variant} />
+      <View style={{ flex: 1 }}>
+        <Text
+          style={{
+            fontFamily: fontFamily.semibold,
+            fontSize: 15,
+            color: colors.textPrimary,
+          }}
+        >
+          {title}
+        </Text>
+        {subtitle && (
+          <Text
+            style={{
+              fontFamily: fontFamily.regular,
+              fontSize: 12,
+              color: colors.textMuted,
+              marginTop: 2,
+            }}
+          >
+            {subtitle}
+          </Text>
+        )}
+      </View>
+    </View>
+  );
+}
 
 export default function HomeScreen() {
   const { colors, spacing } = useTheme();
   const { user } = useAuthStore();
   const { data: leaveApplications } = useMyLeaveApplications();
 
-  // TODO: swap for real teacher profile (firstName) once a /teachers/me
-  // endpoint exists. For now we derive a readable name from the login email.
   const displayName = user?.email ? user.email.split("@")[0] : "Teacher";
 
-  // Real data — computed from the actual leave applications response
   const leaveSummary = {
     pending:
       leaveApplications?.filter((l) => l.status === "PENDING").length ?? 0,
@@ -42,7 +88,8 @@ export default function HomeScreen() {
     >
       <ScrollView
         contentContainerStyle={{
-          padding: spacing[6],
+          paddingHorizontal: spacing[5],
+          paddingTop: spacing[5],
           paddingBottom: spacing[12],
         }}
         showsVerticalScrollIndicator={false}
@@ -51,9 +98,9 @@ export default function HomeScreen() {
 
         <AttendanceCard />
 
-        {/* My Classes & Subjects — TODO: mock data, swap once classes/subjects backend is shared */}
-        <Card style={{ marginBottom: spacing[5] }}>
-          <SectionHeader
+        {/* Classes & Subjects — plain section, no outer Card box */}
+        <View style={{ marginBottom: spacing[6] }}>
+          <PlainSectionHeader
             icon="book-outline"
             title="My classes & subjects"
             subtitle="What you're teaching this year"
@@ -63,11 +110,11 @@ export default function HomeScreen() {
               <ClassSubjectRow key={item.id} item={item} />
             ))}
           </View>
-        </Card>
+        </View>
 
-        {/* Leave — real data from useMyLeaveApplications */}
-        <Card style={{ marginBottom: spacing[5] }}>
-          <SectionHeader
+        {/* Leave — kept as Card since it has actionable buttons + stats */}
+        <Card style={{ marginBottom: spacing[6] }}>
+          <PlainSectionHeader
             icon="calendar-outline"
             title="Leave applications"
             subtitle="Your request status"
@@ -78,7 +125,7 @@ export default function HomeScreen() {
             style={{
               flexDirection: "row",
               gap: spacing[3],
-              marginBottom: spacing[5],
+              marginBottom: spacing[4],
             }}
           >
             <StatCard
@@ -115,15 +162,14 @@ export default function HomeScreen() {
           </View>
         </Card>
 
-        {/* Homework & Assignments — stub screens, backend not built yet */}
-        <Card>
-          <SectionHeader
+        {/* Homework & Assignments — plain section, QuickAction cards carry their own elevation */}
+        <View>
+          <PlainSectionHeader
             icon="clipboard-outline"
             title="Homework & assignments"
             subtitle="Post work and track submissions"
             variant="success"
           />
-
           <View
             style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing[3] }}
           >
@@ -148,7 +194,7 @@ export default function HomeScreen() {
               onPress={() => router.push("/(app)/assignment/status")}
             />
           </View>
-        </Card>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

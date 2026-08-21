@@ -1,8 +1,8 @@
-// app/_layout.tsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   useFonts,
@@ -12,16 +12,13 @@ import {
   Inter_700Bold,
 } from "@expo-google-fonts/inter";
 import { ThemeProvider, useTheme } from "../src/theme/ThemeProvider";
+import { useAuthStore } from "../src/store/auth.store";
+import { AnimatedSplash } from "../src/components/AnimatedSplash";
 
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      staleTime: 1000 * 30, // 30s — tune per screen later with staleTime overrides
-    },
-  },
+  defaultOptions: { queries: { retry: 1, staleTime: 1000 * 30 } },
 });
 
 function RootStack() {
@@ -44,6 +41,34 @@ function RootStack() {
   );
 }
 
+function AppShell() {
+  const isHydrating = useAuthStore((s) => s.isHydrating);
+  const hydrate = useAuthStore((s) => s.hydrate);
+  const [splashVisible, setSplashVisible] = useState(true);
+
+  useEffect(() => {
+    hydrate();
+  }, []);
+
+  const appReady = !isHydrating;
+
+  useEffect(() => {
+    if (appReady) SplashScreen.hideAsync();
+  }, [appReady]);
+
+  return (
+    <>
+      <RootStack />
+      {splashVisible && (
+        <AnimatedSplash
+          appReady={appReady}
+          onHidden={() => setSplashVisible(false)}
+        />
+      )}
+    </>
+  );
+}
+
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -52,19 +77,15 @@ export default function RootLayout() {
     Inter_700Bold,
   });
 
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
   if (!fontsLoaded) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <RootStack />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AppShell />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }
