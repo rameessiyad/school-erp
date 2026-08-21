@@ -26,7 +26,7 @@ export class TeacherLeaveController {
   @Post('apply')
   @Roles(Role.TEACHER)
   apply(@Request() req, @Body() dto: ApplyLeaveDto) {
-    return this.leaveService.apply(req.user.schoolId, req.user.userId, dto);
+    return this.leaveService.apply(req.user.schoolId, req.user.teacherId, dto);
   }
 
   @Get()
@@ -38,7 +38,7 @@ export class TeacherLeaveController {
   @Get('me')
   @Roles(Role.TEACHER)
   findMine(@Request() req) {
-    return this.leaveService.findMine(req.user.schoolId, req.user.userId);
+    return this.leaveService.findMine(req.user.schoolId, req.user.teacherId);
   }
 
   @Patch(':id/review')
@@ -47,7 +47,7 @@ export class TeacherLeaveController {
     return this.leaveService.review(
       req.user.schoolId,
       id,
-      req.user.userId,
+      req.user.teacherId,
       dto,
     );
   }

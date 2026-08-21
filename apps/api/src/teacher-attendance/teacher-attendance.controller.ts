@@ -22,7 +22,11 @@ export class TeacherAttendanceController {
   @Post('mark')
   @Roles(Role.TEACHER)
   mark(@Request() req, @Body() dto: MarkAttendanceDto) {
-    return this.attendanceService.mark(req.user.schoolId, req.user.userId, dto);
+    return this.attendanceService.mark(
+      req.user.schoolId,
+      req.user.teacherId,
+      dto,
+    );
   }
 
   @Get()
@@ -47,9 +51,13 @@ export class TeacherAttendanceController {
     @Query('from') from?: string,
     @Query('to') to?: string,
   ) {
-    return this.attendanceService.findMine(req.user.schoolId, req.user.userId, {
-      from,
-      to,
-    });
+    return this.attendanceService.findMine(
+      req.user.schoolId,
+      req.user.teacherId,
+      {
+        from,
+        to,
+      },
+    );
   }
 }

@@ -30,6 +30,7 @@ export class AuthService {
     if (!user.isActive) throw new UnauthorizedException('Account inactive');
 
     let allowedModules: Module[] = [];
+    let teacherId: string | undefined;
 
     if (user.role === Role.STAFF) {
       const staff = await this.prisma.staff.findUnique({
@@ -41,11 +42,20 @@ export class AuthService {
       allowedModules = getAllowedModules(staff.designation);
     }
 
+    if (user.role === Role.TEACHER) {
+      const teacher = await this.prisma.teacher.findUnique({
+        where: { userId: user.id },
+      });
+      if (!teacher) throw new UnauthorizedException('Teacher record not found');
+      teacherId = teacher.id;
+    }
+
     const payload = {
       sub: user.id,
       schoolId: user.schoolId,
       role: user.role,
       allowedModules,
+      teacherId,
     };
 
     return {
