@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "teacher-app",
-    "slug": "teacher-app",
+    "slug": "skola-deck-parent",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,7 +17,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.rameessiyadsteam.schoolerp.teacher"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,6 +38,13 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fa928fca-b3fa-4c4c-bc10-b2e9412f6bb4"
+      }
+    },
+    "owner": "rameessiyads-team"
   }
 }

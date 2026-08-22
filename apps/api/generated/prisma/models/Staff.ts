@@ -240,6 +240,8 @@ export type StaffWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Staff"> | Date | string
   school?: Prisma.XOR<Prisma.SchoolScalarRelationFilter, Prisma.SchoolWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationListRelationFilter
+  staffAttendances?: Prisma.StaffAttendanceListRelationFilter
 }
 
 export type StaffOrderByWithRelationInput = {
@@ -257,6 +259,8 @@ export type StaffOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   school?: Prisma.SchoolOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationOrderByRelationAggregateInput
+  staffAttendances?: Prisma.StaffAttendanceOrderByRelationAggregateInput
 }
 
 export type StaffWhereUniqueInput = Prisma.AtLeast<{
@@ -277,6 +281,8 @@ export type StaffWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Staff"> | Date | string
   school?: Prisma.XOR<Prisma.SchoolScalarRelationFilter, Prisma.SchoolWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationListRelationFilter
+  staffAttendances?: Prisma.StaffAttendanceListRelationFilter
 }, "id" | "userId">
 
 export type StaffOrderByWithAggregationInput = {
@@ -328,6 +334,8 @@ export type StaffCreateInput = {
   updatedAt?: Date | string
   school: Prisma.SchoolCreateNestedOneWithoutStaffsInput
   user: Prisma.UserCreateNestedOneWithoutStaffInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutStaffInput
+  staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutStaffInput
 }
 
 export type StaffUncheckedCreateInput = {
@@ -343,6 +351,8 @@ export type StaffUncheckedCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutStaffInput
+  staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutStaffInput
 }
 
 export type StaffUpdateInput = {
@@ -358,6 +368,8 @@ export type StaffUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   school?: Prisma.SchoolUpdateOneRequiredWithoutStaffsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutStaffNestedInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutStaffNestedInput
+  staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutStaffNestedInput
 }
 
 export type StaffUncheckedUpdateInput = {
@@ -373,6 +385,8 @@ export type StaffUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutStaffNestedInput
+  staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutStaffNestedInput
 }
 
 export type StaffCreateManyInput = {
@@ -478,6 +492,11 @@ export type StaffMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type StaffScalarRelationFilter = {
+  is?: Prisma.StaffWhereInput
+  isNot?: Prisma.StaffWhereInput
+}
+
 export type StaffCreateNestedManyWithoutSchoolInput = {
   create?: Prisma.XOR<Prisma.StaffCreateWithoutSchoolInput, Prisma.StaffUncheckedCreateWithoutSchoolInput> | Prisma.StaffCreateWithoutSchoolInput[] | Prisma.StaffUncheckedCreateWithoutSchoolInput[]
   connectOrCreate?: Prisma.StaffCreateOrConnectWithoutSchoolInput | Prisma.StaffCreateOrConnectWithoutSchoolInput[]
@@ -556,6 +575,34 @@ export type EnumStaffDesignationFieldUpdateOperationsInput = {
   set?: $Enums.StaffDesignation
 }
 
+export type StaffCreateNestedOneWithoutStaffAttendancesInput = {
+  create?: Prisma.XOR<Prisma.StaffCreateWithoutStaffAttendancesInput, Prisma.StaffUncheckedCreateWithoutStaffAttendancesInput>
+  connectOrCreate?: Prisma.StaffCreateOrConnectWithoutStaffAttendancesInput
+  connect?: Prisma.StaffWhereUniqueInput
+}
+
+export type StaffUpdateOneRequiredWithoutStaffAttendancesNestedInput = {
+  create?: Prisma.XOR<Prisma.StaffCreateWithoutStaffAttendancesInput, Prisma.StaffUncheckedCreateWithoutStaffAttendancesInput>
+  connectOrCreate?: Prisma.StaffCreateOrConnectWithoutStaffAttendancesInput
+  upsert?: Prisma.StaffUpsertWithoutStaffAttendancesInput
+  connect?: Prisma.StaffWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StaffUpdateToOneWithWhereWithoutStaffAttendancesInput, Prisma.StaffUpdateWithoutStaffAttendancesInput>, Prisma.StaffUncheckedUpdateWithoutStaffAttendancesInput>
+}
+
+export type StaffCreateNestedOneWithoutStaffLeaveApplicationsInput = {
+  create?: Prisma.XOR<Prisma.StaffCreateWithoutStaffLeaveApplicationsInput, Prisma.StaffUncheckedCreateWithoutStaffLeaveApplicationsInput>
+  connectOrCreate?: Prisma.StaffCreateOrConnectWithoutStaffLeaveApplicationsInput
+  connect?: Prisma.StaffWhereUniqueInput
+}
+
+export type StaffUpdateOneRequiredWithoutStaffLeaveApplicationsNestedInput = {
+  create?: Prisma.XOR<Prisma.StaffCreateWithoutStaffLeaveApplicationsInput, Prisma.StaffUncheckedCreateWithoutStaffLeaveApplicationsInput>
+  connectOrCreate?: Prisma.StaffCreateOrConnectWithoutStaffLeaveApplicationsInput
+  upsert?: Prisma.StaffUpsertWithoutStaffLeaveApplicationsInput
+  connect?: Prisma.StaffWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StaffUpdateToOneWithWhereWithoutStaffLeaveApplicationsInput, Prisma.StaffUpdateWithoutStaffLeaveApplicationsInput>, Prisma.StaffUncheckedUpdateWithoutStaffLeaveApplicationsInput>
+}
+
 export type StaffCreateWithoutSchoolInput = {
   id?: string
   firstName: string
@@ -568,6 +615,8 @@ export type StaffCreateWithoutSchoolInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutStaffInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutStaffInput
+  staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutStaffInput
 }
 
 export type StaffUncheckedCreateWithoutSchoolInput = {
@@ -582,6 +631,8 @@ export type StaffUncheckedCreateWithoutSchoolInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutStaffInput
+  staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutStaffInput
 }
 
 export type StaffCreateOrConnectWithoutSchoolInput = {
@@ -640,6 +691,8 @@ export type StaffCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   school: Prisma.SchoolCreateNestedOneWithoutStaffsInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutStaffInput
+  staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutStaffInput
 }
 
 export type StaffUncheckedCreateWithoutUserInput = {
@@ -654,6 +707,8 @@ export type StaffUncheckedCreateWithoutUserInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutStaffInput
+  staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutStaffInput
 }
 
 export type StaffCreateOrConnectWithoutUserInput = {
@@ -684,6 +739,8 @@ export type StaffUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   school?: Prisma.SchoolUpdateOneRequiredWithoutStaffsNestedInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutStaffNestedInput
+  staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutStaffNestedInput
 }
 
 export type StaffUncheckedUpdateWithoutUserInput = {
@@ -698,6 +755,168 @@ export type StaffUncheckedUpdateWithoutUserInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutStaffNestedInput
+  staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutStaffNestedInput
+}
+
+export type StaffCreateWithoutStaffAttendancesInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  phone?: string | null
+  email?: string | null
+  designation: $Enums.StaffDesignation
+  photoUrl?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  school: Prisma.SchoolCreateNestedOneWithoutStaffsInput
+  user: Prisma.UserCreateNestedOneWithoutStaffInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutStaffInput
+}
+
+export type StaffUncheckedCreateWithoutStaffAttendancesInput = {
+  id?: string
+  schoolId: string
+  userId: string
+  firstName: string
+  lastName?: string | null
+  phone?: string | null
+  email?: string | null
+  designation: $Enums.StaffDesignation
+  photoUrl?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutStaffInput
+}
+
+export type StaffCreateOrConnectWithoutStaffAttendancesInput = {
+  where: Prisma.StaffWhereUniqueInput
+  create: Prisma.XOR<Prisma.StaffCreateWithoutStaffAttendancesInput, Prisma.StaffUncheckedCreateWithoutStaffAttendancesInput>
+}
+
+export type StaffUpsertWithoutStaffAttendancesInput = {
+  update: Prisma.XOR<Prisma.StaffUpdateWithoutStaffAttendancesInput, Prisma.StaffUncheckedUpdateWithoutStaffAttendancesInput>
+  create: Prisma.XOR<Prisma.StaffCreateWithoutStaffAttendancesInput, Prisma.StaffUncheckedCreateWithoutStaffAttendancesInput>
+  where?: Prisma.StaffWhereInput
+}
+
+export type StaffUpdateToOneWithWhereWithoutStaffAttendancesInput = {
+  where?: Prisma.StaffWhereInput
+  data: Prisma.XOR<Prisma.StaffUpdateWithoutStaffAttendancesInput, Prisma.StaffUncheckedUpdateWithoutStaffAttendancesInput>
+}
+
+export type StaffUpdateWithoutStaffAttendancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  school?: Prisma.SchoolUpdateOneRequiredWithoutStaffsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutStaffNestedInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutStaffNestedInput
+}
+
+export type StaffUncheckedUpdateWithoutStaffAttendancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  schoolId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutStaffNestedInput
+}
+
+export type StaffCreateWithoutStaffLeaveApplicationsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  phone?: string | null
+  email?: string | null
+  designation: $Enums.StaffDesignation
+  photoUrl?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  school: Prisma.SchoolCreateNestedOneWithoutStaffsInput
+  user: Prisma.UserCreateNestedOneWithoutStaffInput
+  staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutStaffInput
+}
+
+export type StaffUncheckedCreateWithoutStaffLeaveApplicationsInput = {
+  id?: string
+  schoolId: string
+  userId: string
+  firstName: string
+  lastName?: string | null
+  phone?: string | null
+  email?: string | null
+  designation: $Enums.StaffDesignation
+  photoUrl?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutStaffInput
+}
+
+export type StaffCreateOrConnectWithoutStaffLeaveApplicationsInput = {
+  where: Prisma.StaffWhereUniqueInput
+  create: Prisma.XOR<Prisma.StaffCreateWithoutStaffLeaveApplicationsInput, Prisma.StaffUncheckedCreateWithoutStaffLeaveApplicationsInput>
+}
+
+export type StaffUpsertWithoutStaffLeaveApplicationsInput = {
+  update: Prisma.XOR<Prisma.StaffUpdateWithoutStaffLeaveApplicationsInput, Prisma.StaffUncheckedUpdateWithoutStaffLeaveApplicationsInput>
+  create: Prisma.XOR<Prisma.StaffCreateWithoutStaffLeaveApplicationsInput, Prisma.StaffUncheckedCreateWithoutStaffLeaveApplicationsInput>
+  where?: Prisma.StaffWhereInput
+}
+
+export type StaffUpdateToOneWithWhereWithoutStaffLeaveApplicationsInput = {
+  where?: Prisma.StaffWhereInput
+  data: Prisma.XOR<Prisma.StaffUpdateWithoutStaffLeaveApplicationsInput, Prisma.StaffUncheckedUpdateWithoutStaffLeaveApplicationsInput>
+}
+
+export type StaffUpdateWithoutStaffLeaveApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  school?: Prisma.SchoolUpdateOneRequiredWithoutStaffsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutStaffNestedInput
+  staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutStaffNestedInput
+}
+
+export type StaffUncheckedUpdateWithoutStaffLeaveApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  schoolId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designation?: Prisma.EnumStaffDesignationFieldUpdateOperationsInput | $Enums.StaffDesignation
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutStaffNestedInput
 }
 
 export type StaffCreateManySchoolInput = {
@@ -726,6 +945,8 @@ export type StaffUpdateWithoutSchoolInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutStaffNestedInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutStaffNestedInput
+  staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutStaffNestedInput
 }
 
 export type StaffUncheckedUpdateWithoutSchoolInput = {
@@ -740,6 +961,8 @@ export type StaffUncheckedUpdateWithoutSchoolInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutStaffNestedInput
+  staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutStaffNestedInput
 }
 
 export type StaffUncheckedUpdateManyWithoutSchoolInput = {
@@ -757,6 +980,44 @@ export type StaffUncheckedUpdateManyWithoutSchoolInput = {
 }
 
 
+/**
+ * Count Type StaffCountOutputType
+ */
+
+export type StaffCountOutputType = {
+  staffLeaveApplications: number
+  staffAttendances: number
+}
+
+export type StaffCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  staffLeaveApplications?: boolean | StaffCountOutputTypeCountStaffLeaveApplicationsArgs
+  staffAttendances?: boolean | StaffCountOutputTypeCountStaffAttendancesArgs
+}
+
+/**
+ * StaffCountOutputType without action
+ */
+export type StaffCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StaffCountOutputType
+   */
+  select?: Prisma.StaffCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * StaffCountOutputType without action
+ */
+export type StaffCountOutputTypeCountStaffLeaveApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StaffLeaveApplicationWhereInput
+}
+
+/**
+ * StaffCountOutputType without action
+ */
+export type StaffCountOutputTypeCountStaffAttendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StaffAttendanceWhereInput
+}
+
 
 export type StaffSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -773,6 +1034,9 @@ export type StaffSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   updatedAt?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  staffLeaveApplications?: boolean | Prisma.Staff$staffLeaveApplicationsArgs<ExtArgs>
+  staffAttendances?: boolean | Prisma.Staff$staffAttendancesArgs<ExtArgs>
+  _count?: boolean | Prisma.StaffCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["staff"]>
 
 export type StaffSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -828,6 +1092,9 @@ export type StaffOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
 export type StaffInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  staffLeaveApplications?: boolean | Prisma.Staff$staffLeaveApplicationsArgs<ExtArgs>
+  staffAttendances?: boolean | Prisma.Staff$staffAttendancesArgs<ExtArgs>
+  _count?: boolean | Prisma.StaffCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StaffIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
@@ -843,6 +1110,8 @@ export type $StaffPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     school: Prisma.$SchoolPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
+    staffLeaveApplications: Prisma.$StaffLeaveApplicationPayload<ExtArgs>[]
+    staffAttendances: Prisma.$StaffAttendancePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1253,6 +1522,8 @@ export interface Prisma__StaffClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   school<T extends Prisma.SchoolDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SchoolDefaultArgs<ExtArgs>>): Prisma.Prisma__SchoolClient<runtime.Types.Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  staffLeaveApplications<T extends Prisma.Staff$staffLeaveApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Staff$staffLeaveApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StaffLeaveApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  staffAttendances<T extends Prisma.Staff$staffAttendancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Staff$staffAttendancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StaffAttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1692,6 +1963,54 @@ export type StaffDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Staff to delete.
    */
   limit?: number
+}
+
+/**
+ * Staff.staffLeaveApplications
+ */
+export type Staff$staffLeaveApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StaffLeaveApplication
+   */
+  select?: Prisma.StaffLeaveApplicationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StaffLeaveApplication
+   */
+  omit?: Prisma.StaffLeaveApplicationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StaffLeaveApplicationInclude<ExtArgs> | null
+  where?: Prisma.StaffLeaveApplicationWhereInput
+  orderBy?: Prisma.StaffLeaveApplicationOrderByWithRelationInput | Prisma.StaffLeaveApplicationOrderByWithRelationInput[]
+  cursor?: Prisma.StaffLeaveApplicationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StaffLeaveApplicationScalarFieldEnum | Prisma.StaffLeaveApplicationScalarFieldEnum[]
+}
+
+/**
+ * Staff.staffAttendances
+ */
+export type Staff$staffAttendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StaffAttendance
+   */
+  select?: Prisma.StaffAttendanceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StaffAttendance
+   */
+  omit?: Prisma.StaffAttendanceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StaffAttendanceInclude<ExtArgs> | null
+  where?: Prisma.StaffAttendanceWhereInput
+  orderBy?: Prisma.StaffAttendanceOrderByWithRelationInput | Prisma.StaffAttendanceOrderByWithRelationInput[]
+  cursor?: Prisma.StaffAttendanceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StaffAttendanceScalarFieldEnum | Prisma.StaffAttendanceScalarFieldEnum[]
 }
 
 /**

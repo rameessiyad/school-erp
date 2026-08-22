@@ -177,3 +177,13 @@ export type TeacherAttendance = Prisma.TeacherAttendanceModel
  * 
  */
 export type TeacherLeaveApplication = Prisma.TeacherLeaveApplicationModel
+/**
+ * Model StaffAttendance
+ * 
+ */
+export type StaffAttendance = Prisma.StaffAttendanceModel
+/**
+ * Model StaffLeaveApplication
+ * 
+ */
+export type StaffLeaveApplication = Prisma.StaffLeaveApplicationModel

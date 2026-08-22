@@ -13,9 +13,9 @@ import {
   Briefcase,
   BookOpen,
   Layers,
-  LayoutGrid,
   Receipt,
   ClipboardList,
+  School2,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -102,6 +102,20 @@ const navigation = [
     icon: Receipt,
     requiredModules: [Module.STUDENT_FEES, Module.PAYMENT_HISTORY],
   },
+  {
+    label: "Leave Applications",
+    href: "/dashboard/leave-applications",
+    icon: School2,
+    requiredModules: undefined,
+    adminOnly: true, // NEW
+  },
+  {
+    label: "Apply Leave",
+    href: "/dashboard/apply-leave",
+    icon: ClipboardList,
+    requiredModules: undefined,
+    staffOnly: true,
+  },
 ];
 
 export function DashboardSidebar({ user }: DashboardSidebarProps) {
@@ -113,6 +127,8 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const allowedModules = user.allowedModules ?? [];
 
   const visibleNavigation = navigation.filter((item) => {
+    if (item.adminOnly) return isAdmin;
+    if (item.staffOnly) return user.role === "STAFF";
     if (isAdmin) return true;
     if (!item.requiredModules) return true;
     return item.requiredModules.some((m) => allowedModules.includes(m));
@@ -132,7 +148,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   return (
     <aside className="hidden h-full w-64 shrink-0 border-r border-border bg-surface lg:flex lg:flex-col">
       {/* Logo */}
-      <div className="flex h-16 items-center gap-3 border-b border-border px-5">
+      <div className="flex h-16 shrink-0 items-center gap-3 border-b border-border px-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md shadow-primary/20">
           <School className="h-5 w-5" />
         </div>
@@ -144,7 +160,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 px-3 py-5">
+      <div className="scrollbar-thin min-h-0 flex-1 overflow-y-auto px-3 py-5">
         <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
           Main Menu
         </p>
@@ -196,7 +212,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
       </div>
 
       {/* User */}
-      <div className="border-t border-border p-3">
+      <div className="shrink-0 border-t border-border p-3">
         <div className="flex items-center gap-3 rounded-lg bg-surface-secondary p-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary">
             {(user.email?.[0] ?? "A").toUpperCase()}

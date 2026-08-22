@@ -1,0 +1,6 @@
+apps/api/.agents
+apps/api/.claude
+**/.claude
+**/.agents
+node_modules
+.git
