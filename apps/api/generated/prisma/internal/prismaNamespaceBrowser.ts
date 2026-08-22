@@ -84,7 +84,8 @@ export const ModelName = {
   TeacherAttendance: 'TeacherAttendance',
   TeacherLeaveApplication: 'TeacherLeaveApplication',
   StaffAttendance: 'StaffAttendance',
-  StaffLeaveApplication: 'StaffLeaveApplication'
+  StaffLeaveApplication: 'StaffLeaveApplication',
+  StudentAttendance: 'StudentAttendance'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -251,6 +252,7 @@ export const SectionScalarFieldEnum = {
   schoolId: 'schoolId',
   academicYearId: 'academicYearId',
   classId: 'classId',
+  classTeacherId: 'classTeacherId',
   name: 'name',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -606,6 +608,21 @@ export const StaffLeaveApplicationScalarFieldEnum = {
 } as const
 
 export type StaffLeaveApplicationScalarFieldEnum = (typeof StaffLeaveApplicationScalarFieldEnum)[keyof typeof StaffLeaveApplicationScalarFieldEnum]
+
+
+export const StudentAttendanceScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  studentId: 'studentId',
+  sectionId: 'sectionId',
+  markedByTeacherId: 'markedByTeacherId',
+  date: 'date',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StudentAttendanceScalarFieldEnum = (typeof StudentAttendanceScalarFieldEnum)[keyof typeof StudentAttendanceScalarFieldEnum]
 
 
 export const SortOrder = {

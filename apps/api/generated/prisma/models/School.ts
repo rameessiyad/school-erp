@@ -209,6 +209,7 @@ export type SchoolWhereInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationListRelationFilter
   staffLeaveApplications?: Prisma.StaffLeaveApplicationListRelationFilter
   staffAttendances?: Prisma.StaffAttendanceListRelationFilter
+  studentAttendances?: Prisma.StudentAttendanceListRelationFilter
 }
 
 export type SchoolOrderByWithRelationInput = {
@@ -237,6 +238,7 @@ export type SchoolOrderByWithRelationInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationOrderByRelationAggregateInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationOrderByRelationAggregateInput
   staffAttendances?: Prisma.StaffAttendanceOrderByRelationAggregateInput
+  studentAttendances?: Prisma.StudentAttendanceOrderByRelationAggregateInput
 }
 
 export type SchoolWhereUniqueInput = Prisma.AtLeast<{
@@ -268,6 +270,7 @@ export type SchoolWhereUniqueInput = Prisma.AtLeast<{
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationListRelationFilter
   staffLeaveApplications?: Prisma.StaffLeaveApplicationListRelationFilter
   staffAttendances?: Prisma.StaffAttendanceListRelationFilter
+  studentAttendances?: Prisma.StudentAttendanceListRelationFilter
 }, "id" | "subdomain">
 
 export type SchoolOrderByWithAggregationInput = {
@@ -320,6 +323,7 @@ export type SchoolCreateInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateInput = {
@@ -348,6 +352,7 @@ export type SchoolUncheckedCreateInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUpdateInput = {
@@ -376,6 +381,7 @@ export type SchoolUpdateInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateInput = {
@@ -404,6 +410,7 @@ export type SchoolUncheckedUpdateInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateManyInput = {
@@ -750,6 +757,20 @@ export type SchoolUpdateOneRequiredWithoutStaffLeaveApplicationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SchoolUpdateToOneWithWhereWithoutStaffLeaveApplicationsInput, Prisma.SchoolUpdateWithoutStaffLeaveApplicationsInput>, Prisma.SchoolUncheckedUpdateWithoutStaffLeaveApplicationsInput>
 }
 
+export type SchoolCreateNestedOneWithoutStudentAttendancesInput = {
+  create?: Prisma.XOR<Prisma.SchoolCreateWithoutStudentAttendancesInput, Prisma.SchoolUncheckedCreateWithoutStudentAttendancesInput>
+  connectOrCreate?: Prisma.SchoolCreateOrConnectWithoutStudentAttendancesInput
+  connect?: Prisma.SchoolWhereUniqueInput
+}
+
+export type SchoolUpdateOneRequiredWithoutStudentAttendancesNestedInput = {
+  create?: Prisma.XOR<Prisma.SchoolCreateWithoutStudentAttendancesInput, Prisma.SchoolUncheckedCreateWithoutStudentAttendancesInput>
+  connectOrCreate?: Prisma.SchoolCreateOrConnectWithoutStudentAttendancesInput
+  upsert?: Prisma.SchoolUpsertWithoutStudentAttendancesInput
+  connect?: Prisma.SchoolWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SchoolUpdateToOneWithWhereWithoutStudentAttendancesInput, Prisma.SchoolUpdateWithoutStudentAttendancesInput>, Prisma.SchoolUncheckedUpdateWithoutStudentAttendancesInput>
+}
+
 export type SchoolCreateWithoutAcademicYearsInput = {
   id?: string
   name: string
@@ -775,6 +796,7 @@ export type SchoolCreateWithoutAcademicYearsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutAcademicYearsInput = {
@@ -802,6 +824,7 @@ export type SchoolUncheckedCreateWithoutAcademicYearsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutAcademicYearsInput = {
@@ -845,6 +868,7 @@ export type SchoolUpdateWithoutAcademicYearsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutAcademicYearsInput = {
@@ -872,6 +896,7 @@ export type SchoolUncheckedUpdateWithoutAcademicYearsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutUsersInput = {
@@ -899,6 +924,7 @@ export type SchoolCreateWithoutUsersInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutUsersInput = {
@@ -926,6 +952,7 @@ export type SchoolUncheckedCreateWithoutUsersInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutUsersInput = {
@@ -969,6 +996,7 @@ export type SchoolUpdateWithoutUsersInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutUsersInput = {
@@ -996,6 +1024,7 @@ export type SchoolUncheckedUpdateWithoutUsersInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStaffsInput = {
@@ -1023,6 +1052,7 @@ export type SchoolCreateWithoutStaffsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStaffsInput = {
@@ -1050,6 +1080,7 @@ export type SchoolUncheckedCreateWithoutStaffsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStaffsInput = {
@@ -1093,6 +1124,7 @@ export type SchoolUpdateWithoutStaffsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStaffsInput = {
@@ -1120,6 +1152,7 @@ export type SchoolUncheckedUpdateWithoutStaffsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTeachersInput = {
@@ -1147,6 +1180,7 @@ export type SchoolCreateWithoutTeachersInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTeachersInput = {
@@ -1174,6 +1208,7 @@ export type SchoolUncheckedCreateWithoutTeachersInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTeachersInput = {
@@ -1217,6 +1252,7 @@ export type SchoolUpdateWithoutTeachersInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTeachersInput = {
@@ -1244,6 +1280,7 @@ export type SchoolUncheckedUpdateWithoutTeachersInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutParentsInput = {
@@ -1271,6 +1308,7 @@ export type SchoolCreateWithoutParentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutParentsInput = {
@@ -1298,6 +1336,7 @@ export type SchoolUncheckedCreateWithoutParentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutParentsInput = {
@@ -1341,6 +1380,7 @@ export type SchoolUpdateWithoutParentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutParentsInput = {
@@ -1368,6 +1408,7 @@ export type SchoolUncheckedUpdateWithoutParentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStudentsInput = {
@@ -1395,6 +1436,7 @@ export type SchoolCreateWithoutStudentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStudentsInput = {
@@ -1422,6 +1464,7 @@ export type SchoolUncheckedCreateWithoutStudentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStudentsInput = {
@@ -1465,6 +1508,7 @@ export type SchoolUpdateWithoutStudentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStudentsInput = {
@@ -1492,6 +1536,7 @@ export type SchoolUncheckedUpdateWithoutStudentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutClassesInput = {
@@ -1519,6 +1564,7 @@ export type SchoolCreateWithoutClassesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutClassesInput = {
@@ -1546,6 +1592,7 @@ export type SchoolUncheckedCreateWithoutClassesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutClassesInput = {
@@ -1589,6 +1636,7 @@ export type SchoolUpdateWithoutClassesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutClassesInput = {
@@ -1616,6 +1664,7 @@ export type SchoolUncheckedUpdateWithoutClassesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutSectionsInput = {
@@ -1643,6 +1692,7 @@ export type SchoolCreateWithoutSectionsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutSectionsInput = {
@@ -1670,6 +1720,7 @@ export type SchoolUncheckedCreateWithoutSectionsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutSectionsInput = {
@@ -1713,6 +1764,7 @@ export type SchoolUpdateWithoutSectionsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutSectionsInput = {
@@ -1740,6 +1792,7 @@ export type SchoolUncheckedUpdateWithoutSectionsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutSubjectsInput = {
@@ -1767,6 +1820,7 @@ export type SchoolCreateWithoutSubjectsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutSubjectsInput = {
@@ -1794,6 +1848,7 @@ export type SchoolUncheckedCreateWithoutSubjectsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutSubjectsInput = {
@@ -1837,6 +1892,7 @@ export type SchoolUpdateWithoutSubjectsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutSubjectsInput = {
@@ -1864,6 +1920,7 @@ export type SchoolUncheckedUpdateWithoutSubjectsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStudentEnrollmentsInput = {
@@ -1891,6 +1948,7 @@ export type SchoolCreateWithoutStudentEnrollmentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStudentEnrollmentsInput = {
@@ -1918,6 +1976,7 @@ export type SchoolUncheckedCreateWithoutStudentEnrollmentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStudentEnrollmentsInput = {
@@ -1961,6 +2020,7 @@ export type SchoolUpdateWithoutStudentEnrollmentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStudentEnrollmentsInput = {
@@ -1988,6 +2048,7 @@ export type SchoolUncheckedUpdateWithoutStudentEnrollmentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTeacherSubjectAllocationsInput = {
@@ -2015,6 +2076,7 @@ export type SchoolCreateWithoutTeacherSubjectAllocationsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTeacherSubjectAllocationsInput = {
@@ -2042,6 +2104,7 @@ export type SchoolUncheckedCreateWithoutTeacherSubjectAllocationsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTeacherSubjectAllocationsInput = {
@@ -2085,6 +2148,7 @@ export type SchoolUpdateWithoutTeacherSubjectAllocationsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTeacherSubjectAllocationsInput = {
@@ -2112,6 +2176,7 @@ export type SchoolUncheckedUpdateWithoutTeacherSubjectAllocationsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutClassTeacherAssignmentsInput = {
@@ -2139,6 +2204,7 @@ export type SchoolCreateWithoutClassTeacherAssignmentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutClassTeacherAssignmentsInput = {
@@ -2166,6 +2232,7 @@ export type SchoolUncheckedCreateWithoutClassTeacherAssignmentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutClassTeacherAssignmentsInput = {
@@ -2209,6 +2276,7 @@ export type SchoolUpdateWithoutClassTeacherAssignmentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutClassTeacherAssignmentsInput = {
@@ -2236,6 +2304,7 @@ export type SchoolUncheckedUpdateWithoutClassTeacherAssignmentsInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTimetablesInput = {
@@ -2263,6 +2332,7 @@ export type SchoolCreateWithoutTimetablesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTimetablesInput = {
@@ -2290,6 +2360,7 @@ export type SchoolUncheckedCreateWithoutTimetablesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTimetablesInput = {
@@ -2333,6 +2404,7 @@ export type SchoolUpdateWithoutTimetablesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTimetablesInput = {
@@ -2360,6 +2432,7 @@ export type SchoolUncheckedUpdateWithoutTimetablesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutAttendancesInput = {
@@ -2387,6 +2460,7 @@ export type SchoolCreateWithoutAttendancesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutAttendancesInput = {
@@ -2414,6 +2488,7 @@ export type SchoolUncheckedCreateWithoutAttendancesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutAttendancesInput = {
@@ -2457,6 +2532,7 @@ export type SchoolUpdateWithoutAttendancesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutAttendancesInput = {
@@ -2484,6 +2560,7 @@ export type SchoolUncheckedUpdateWithoutAttendancesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutFeeStructuresInput = {
@@ -2511,6 +2588,7 @@ export type SchoolCreateWithoutFeeStructuresInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutFeeStructuresInput = {
@@ -2538,6 +2616,7 @@ export type SchoolUncheckedCreateWithoutFeeStructuresInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutFeeStructuresInput = {
@@ -2581,6 +2660,7 @@ export type SchoolUpdateWithoutFeeStructuresInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutFeeStructuresInput = {
@@ -2608,6 +2688,7 @@ export type SchoolUncheckedUpdateWithoutFeeStructuresInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTeacherAttendancesInput = {
@@ -2635,6 +2716,7 @@ export type SchoolCreateWithoutTeacherAttendancesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTeacherAttendancesInput = {
@@ -2662,6 +2744,7 @@ export type SchoolUncheckedCreateWithoutTeacherAttendancesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTeacherAttendancesInput = {
@@ -2705,6 +2788,7 @@ export type SchoolUpdateWithoutTeacherAttendancesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTeacherAttendancesInput = {
@@ -2732,6 +2816,7 @@ export type SchoolUncheckedUpdateWithoutTeacherAttendancesInput = {
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTeacherLeaveApplicationsInput = {
@@ -2759,6 +2844,7 @@ export type SchoolCreateWithoutTeacherLeaveApplicationsInput = {
   teacherAttendances?: Prisma.TeacherAttendanceCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTeacherLeaveApplicationsInput = {
@@ -2786,6 +2872,7 @@ export type SchoolUncheckedCreateWithoutTeacherLeaveApplicationsInput = {
   teacherAttendances?: Prisma.TeacherAttendanceUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTeacherLeaveApplicationsInput = {
@@ -2829,6 +2916,7 @@ export type SchoolUpdateWithoutTeacherLeaveApplicationsInput = {
   teacherAttendances?: Prisma.TeacherAttendanceUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTeacherLeaveApplicationsInput = {
@@ -2856,6 +2944,7 @@ export type SchoolUncheckedUpdateWithoutTeacherLeaveApplicationsInput = {
   teacherAttendances?: Prisma.TeacherAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStaffAttendancesInput = {
@@ -2883,6 +2972,7 @@ export type SchoolCreateWithoutStaffAttendancesInput = {
   teacherAttendances?: Prisma.TeacherAttendanceCreateNestedManyWithoutSchoolInput
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStaffAttendancesInput = {
@@ -2910,6 +3000,7 @@ export type SchoolUncheckedCreateWithoutStaffAttendancesInput = {
   teacherAttendances?: Prisma.TeacherAttendanceUncheckedCreateNestedManyWithoutSchoolInput
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStaffAttendancesInput = {
@@ -2953,6 +3044,7 @@ export type SchoolUpdateWithoutStaffAttendancesInput = {
   teacherAttendances?: Prisma.TeacherAttendanceUpdateManyWithoutSchoolNestedInput
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStaffAttendancesInput = {
@@ -2980,6 +3072,7 @@ export type SchoolUncheckedUpdateWithoutStaffAttendancesInput = {
   teacherAttendances?: Prisma.TeacherAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStaffLeaveApplicationsInput = {
@@ -3007,6 +3100,7 @@ export type SchoolCreateWithoutStaffLeaveApplicationsInput = {
   teacherAttendances?: Prisma.TeacherAttendanceCreateNestedManyWithoutSchoolInput
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStaffLeaveApplicationsInput = {
@@ -3034,6 +3128,7 @@ export type SchoolUncheckedCreateWithoutStaffLeaveApplicationsInput = {
   teacherAttendances?: Prisma.TeacherAttendanceUncheckedCreateNestedManyWithoutSchoolInput
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStaffLeaveApplicationsInput = {
@@ -3077,6 +3172,7 @@ export type SchoolUpdateWithoutStaffLeaveApplicationsInput = {
   teacherAttendances?: Prisma.TeacherAttendanceUpdateManyWithoutSchoolNestedInput
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStaffLeaveApplicationsInput = {
@@ -3103,6 +3199,135 @@ export type SchoolUncheckedUpdateWithoutStaffLeaveApplicationsInput = {
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
   teacherAttendances?: Prisma.TeacherAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
   teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
+  staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  studentAttendances?: Prisma.StudentAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+}
+
+export type SchoolCreateWithoutStudentAttendancesInput = {
+  id?: string
+  name: string
+  subdomain: string
+  status?: $Enums.SchoolStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
+  users?: Prisma.UserCreateNestedManyWithoutSchoolInput
+  teachers?: Prisma.TeacherCreateNestedManyWithoutSchoolInput
+  parents?: Prisma.ParentCreateNestedManyWithoutSchoolInput
+  students?: Prisma.StudentCreateNestedManyWithoutSchoolInput
+  classes?: Prisma.ClassCreateNestedManyWithoutSchoolInput
+  sections?: Prisma.SectionCreateNestedManyWithoutSchoolInput
+  subjects?: Prisma.SubjectCreateNestedManyWithoutSchoolInput
+  studentEnrollments?: Prisma.StudentEnrollmentCreateNestedManyWithoutSchoolInput
+  teacherSubjectAllocations?: Prisma.TeacherSubjectAllocationCreateNestedManyWithoutSchoolInput
+  classTeacherAssignments?: Prisma.ClassTeacherAssignmentCreateNestedManyWithoutSchoolInput
+  timetables?: Prisma.TimetableCreateNestedManyWithoutSchoolInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutSchoolInput
+  staffs?: Prisma.StaffCreateNestedManyWithoutSchoolInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutSchoolInput
+  teacherAttendances?: Prisma.TeacherAttendanceCreateNestedManyWithoutSchoolInput
+  teacherLeaveApplications?: Prisma.TeacherLeaveApplicationCreateNestedManyWithoutSchoolInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationCreateNestedManyWithoutSchoolInput
+  staffAttendances?: Prisma.StaffAttendanceCreateNestedManyWithoutSchoolInput
+}
+
+export type SchoolUncheckedCreateWithoutStudentAttendancesInput = {
+  id?: string
+  name: string
+  subdomain: string
+  status?: $Enums.SchoolStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutSchoolInput
+  teachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutSchoolInput
+  parents?: Prisma.ParentUncheckedCreateNestedManyWithoutSchoolInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutSchoolInput
+  classes?: Prisma.ClassUncheckedCreateNestedManyWithoutSchoolInput
+  sections?: Prisma.SectionUncheckedCreateNestedManyWithoutSchoolInput
+  subjects?: Prisma.SubjectUncheckedCreateNestedManyWithoutSchoolInput
+  studentEnrollments?: Prisma.StudentEnrollmentUncheckedCreateNestedManyWithoutSchoolInput
+  teacherSubjectAllocations?: Prisma.TeacherSubjectAllocationUncheckedCreateNestedManyWithoutSchoolInput
+  classTeacherAssignments?: Prisma.ClassTeacherAssignmentUncheckedCreateNestedManyWithoutSchoolInput
+  timetables?: Prisma.TimetableUncheckedCreateNestedManyWithoutSchoolInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  staffs?: Prisma.StaffUncheckedCreateNestedManyWithoutSchoolInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+  teacherAttendances?: Prisma.TeacherAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+  teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedCreateNestedManyWithoutSchoolInput
+  staffAttendances?: Prisma.StaffAttendanceUncheckedCreateNestedManyWithoutSchoolInput
+}
+
+export type SchoolCreateOrConnectWithoutStudentAttendancesInput = {
+  where: Prisma.SchoolWhereUniqueInput
+  create: Prisma.XOR<Prisma.SchoolCreateWithoutStudentAttendancesInput, Prisma.SchoolUncheckedCreateWithoutStudentAttendancesInput>
+}
+
+export type SchoolUpsertWithoutStudentAttendancesInput = {
+  update: Prisma.XOR<Prisma.SchoolUpdateWithoutStudentAttendancesInput, Prisma.SchoolUncheckedUpdateWithoutStudentAttendancesInput>
+  create: Prisma.XOR<Prisma.SchoolCreateWithoutStudentAttendancesInput, Prisma.SchoolUncheckedCreateWithoutStudentAttendancesInput>
+  where?: Prisma.SchoolWhereInput
+}
+
+export type SchoolUpdateToOneWithWhereWithoutStudentAttendancesInput = {
+  where?: Prisma.SchoolWhereInput
+  data: Prisma.XOR<Prisma.SchoolUpdateWithoutStudentAttendancesInput, Prisma.SchoolUncheckedUpdateWithoutStudentAttendancesInput>
+}
+
+export type SchoolUpdateWithoutStudentAttendancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  subdomain?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
+  users?: Prisma.UserUpdateManyWithoutSchoolNestedInput
+  teachers?: Prisma.TeacherUpdateManyWithoutSchoolNestedInput
+  parents?: Prisma.ParentUpdateManyWithoutSchoolNestedInput
+  students?: Prisma.StudentUpdateManyWithoutSchoolNestedInput
+  classes?: Prisma.ClassUpdateManyWithoutSchoolNestedInput
+  sections?: Prisma.SectionUpdateManyWithoutSchoolNestedInput
+  subjects?: Prisma.SubjectUpdateManyWithoutSchoolNestedInput
+  studentEnrollments?: Prisma.StudentEnrollmentUpdateManyWithoutSchoolNestedInput
+  teacherSubjectAllocations?: Prisma.TeacherSubjectAllocationUpdateManyWithoutSchoolNestedInput
+  classTeacherAssignments?: Prisma.ClassTeacherAssignmentUpdateManyWithoutSchoolNestedInput
+  timetables?: Prisma.TimetableUpdateManyWithoutSchoolNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutSchoolNestedInput
+  staffs?: Prisma.StaffUpdateManyWithoutSchoolNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutSchoolNestedInput
+  teacherAttendances?: Prisma.TeacherAttendanceUpdateManyWithoutSchoolNestedInput
+  teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUpdateManyWithoutSchoolNestedInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUpdateManyWithoutSchoolNestedInput
+  staffAttendances?: Prisma.StaffAttendanceUpdateManyWithoutSchoolNestedInput
+}
+
+export type SchoolUncheckedUpdateWithoutStudentAttendancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  subdomain?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutSchoolNestedInput
+  teachers?: Prisma.TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+  parents?: Prisma.ParentUncheckedUpdateManyWithoutSchoolNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutSchoolNestedInput
+  classes?: Prisma.ClassUncheckedUpdateManyWithoutSchoolNestedInput
+  sections?: Prisma.SectionUncheckedUpdateManyWithoutSchoolNestedInput
+  subjects?: Prisma.SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+  studentEnrollments?: Prisma.StudentEnrollmentUncheckedUpdateManyWithoutSchoolNestedInput
+  teacherSubjectAllocations?: Prisma.TeacherSubjectAllocationUncheckedUpdateManyWithoutSchoolNestedInput
+  classTeacherAssignments?: Prisma.ClassTeacherAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+  timetables?: Prisma.TimetableUncheckedUpdateManyWithoutSchoolNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  staffs?: Prisma.StaffUncheckedUpdateManyWithoutSchoolNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+  teacherAttendances?: Prisma.TeacherAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+  teacherLeaveApplications?: Prisma.TeacherLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
+  staffLeaveApplications?: Prisma.StaffLeaveApplicationUncheckedUpdateManyWithoutSchoolNestedInput
   staffAttendances?: Prisma.StaffAttendanceUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
@@ -3131,6 +3356,7 @@ export type SchoolCountOutputType = {
   teacherLeaveApplications: number
   staffLeaveApplications: number
   staffAttendances: number
+  studentAttendances: number
 }
 
 export type SchoolCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3153,6 +3379,7 @@ export type SchoolCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   teacherLeaveApplications?: boolean | SchoolCountOutputTypeCountTeacherLeaveApplicationsArgs
   staffLeaveApplications?: boolean | SchoolCountOutputTypeCountStaffLeaveApplicationsArgs
   staffAttendances?: boolean | SchoolCountOutputTypeCountStaffAttendancesArgs
+  studentAttendances?: boolean | SchoolCountOutputTypeCountStudentAttendancesArgs
 }
 
 /**
@@ -3298,6 +3525,13 @@ export type SchoolCountOutputTypeCountStaffAttendancesArgs<ExtArgs extends runti
   where?: Prisma.StaffAttendanceWhereInput
 }
 
+/**
+ * SchoolCountOutputType without action
+ */
+export type SchoolCountOutputTypeCountStudentAttendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StudentAttendanceWhereInput
+}
+
 
 export type SchoolSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3325,6 +3559,7 @@ export type SchoolSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   teacherLeaveApplications?: boolean | Prisma.School$teacherLeaveApplicationsArgs<ExtArgs>
   staffLeaveApplications?: boolean | Prisma.School$staffLeaveApplicationsArgs<ExtArgs>
   staffAttendances?: boolean | Prisma.School$staffAttendancesArgs<ExtArgs>
+  studentAttendances?: boolean | Prisma.School$studentAttendancesArgs<ExtArgs>
   _count?: boolean | Prisma.SchoolCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["school"]>
 
@@ -3376,6 +3611,7 @@ export type SchoolInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   teacherLeaveApplications?: boolean | Prisma.School$teacherLeaveApplicationsArgs<ExtArgs>
   staffLeaveApplications?: boolean | Prisma.School$staffLeaveApplicationsArgs<ExtArgs>
   staffAttendances?: boolean | Prisma.School$staffAttendancesArgs<ExtArgs>
+  studentAttendances?: boolean | Prisma.School$studentAttendancesArgs<ExtArgs>
   _count?: boolean | Prisma.SchoolCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SchoolIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3403,6 +3639,7 @@ export type $SchoolPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     teacherLeaveApplications: Prisma.$TeacherLeaveApplicationPayload<ExtArgs>[]
     staffLeaveApplications: Prisma.$StaffLeaveApplicationPayload<ExtArgs>[]
     staffAttendances: Prisma.$StaffAttendancePayload<ExtArgs>[]
+    studentAttendances: Prisma.$StudentAttendancePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3824,6 +4061,7 @@ export interface Prisma__SchoolClient<T, Null = never, ExtArgs extends runtime.T
   teacherLeaveApplications<T extends Prisma.School$teacherLeaveApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.School$teacherLeaveApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherLeaveApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   staffLeaveApplications<T extends Prisma.School$staffLeaveApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.School$staffLeaveApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StaffLeaveApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   staffAttendances<T extends Prisma.School$staffAttendancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.School$staffAttendancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StaffAttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  studentAttendances<T extends Prisma.School$studentAttendancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.School$studentAttendancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudentAttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4705,6 +4943,30 @@ export type School$staffAttendancesArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.StaffAttendanceScalarFieldEnum | Prisma.StaffAttendanceScalarFieldEnum[]
+}
+
+/**
+ * School.studentAttendances
+ */
+export type School$studentAttendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StudentAttendance
+   */
+  select?: Prisma.StudentAttendanceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StudentAttendance
+   */
+  omit?: Prisma.StudentAttendanceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StudentAttendanceInclude<ExtArgs> | null
+  where?: Prisma.StudentAttendanceWhereInput
+  orderBy?: Prisma.StudentAttendanceOrderByWithRelationInput | Prisma.StudentAttendanceOrderByWithRelationInput[]
+  cursor?: Prisma.StudentAttendanceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StudentAttendanceScalarFieldEnum | Prisma.StudentAttendanceScalarFieldEnum[]
 }
 
 /**

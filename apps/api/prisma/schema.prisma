@@ -35,6 +35,7 @@ model School {
   teacherLeaveApplications  TeacherLeaveApplication[]
   staffLeaveApplications    StaffLeaveApplication[]
   staffAttendances          StaffAttendance[]
+  studentAttendances        StudentAttendance[]
 }
 
 enum SchoolStatus {
@@ -174,10 +175,12 @@ model Teacher {
   createdAt                 DateTime                   @default(now())
   updatedAt                 DateTime                   @updatedAt
   teacherSubjectAllocations TeacherSubjectAllocation[]
-  classTeacherAssignments   ClassTeacherAssignment[]
   attendances               Attendance[]
   teacherAttendances        TeacherAttendance[]
   teacherLeaveApplications  TeacherLeaveApplication[]
+  studentAttendances        StudentAttendance[]
+  classTeacherSections      Section[]                  @relation("ClassTeacherSections")
+  classTeacherAssignments   ClassTeacherAssignment[]
 
   @@index([schoolId])
 }
@@ -235,10 +238,11 @@ model Student {
   enrollments         ParentStudent[]
   academicEnrollments StudentEnrollment[]
 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  examResults ExamResult[]
-  studentFees StudentFee[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  examResults        ExamResult[]
+  studentFees        StudentFee[]
+  studentAttendances StudentAttendance[]
 
   @@unique([schoolId, admissionNo])
   @@index([schoolId])
@@ -307,14 +311,18 @@ model Section {
   classId String
   class   Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
 
+  classTeacherId String?
+  classTeacher   Teacher? @relation("ClassTeacherSections", fields: [classTeacherId], references: [id])
+
   name String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   studentEnrollments        StudentEnrollment[]
-  classTeacherAssignments   ClassTeacherAssignment[]
   teacherSubjectAllocations TeacherSubjectAllocation[]
+  studentAttendances        StudentAttendance[]
+  classTeacherAssignments   ClassTeacherAssignment[]
 
   @@unique([academicYearId, classId, name])
   @@index([schoolId])
@@ -957,4 +965,37 @@ model StaffLeaveApplication {
   @@index([schoolId])
   @@index([staffId])
   @@index([status])
+}
+
+enum StudentAttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  LATE
+}
+
+model StudentAttendance {
+  id String @id @default(uuid())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  sectionId String
+  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  markedByTeacherId String
+  markedByTeacher   Teacher @relation(fields: [markedByTeacherId], references: [id])
+
+  date   DateTime                @db.Date
+  status StudentAttendanceStatus
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, date])
+  @@index([schoolId])
+  @@index([sectionId, date])
 }

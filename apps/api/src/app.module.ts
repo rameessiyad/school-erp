@@ -21,6 +21,7 @@ import { FileUploadModule } from './file-upload/file-upload.module';
 import { TeacherAttendanceModule } from './teacher-attendance/teacher-attendance.module';
 import { TeacherLeaveModule } from './teacher-leave/teacher-leave.module';
 import { StaffLeaveModule } from './staff-leave/staff-leave.module';
+import { MyClassModule } from './my-class/my-class.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { StaffLeaveModule } from './staff-leave/staff-leave.module';
     TeacherAttendanceModule,
     TeacherLeaveModule,
     StaffLeaveModule,
+    MyClassModule,
   ],
   controllers: [AppController],
   providers: [AppService],
