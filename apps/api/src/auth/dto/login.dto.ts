@@ -2,12 +2,14 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
-  IsUUID,
+  // IsUUID,
   MinLength,
 } from 'class-validator';
 
 export class loginDto {
-  @IsUUID()
+  // @IsUUID()
+  @IsString()
+  @IsNotEmpty()
   schoolId: string;
 
   @IsEmail()
