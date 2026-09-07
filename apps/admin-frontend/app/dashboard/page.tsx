@@ -260,11 +260,6 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Student Distribution */}
-      {hasModule([Module.STUDENT_ADMISSIONS, Module.STUDENT_REGISTRATION]) && (
-        <StudentDistribution data={stats?.studentDistribution ?? []} />
-      )}
-
       {/* Activity */}
       <DashboardActivity
         recentActivities={stats?.recentActivities ?? []}
