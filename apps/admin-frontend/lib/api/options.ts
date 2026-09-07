@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/axios/client";
+import { sortByNumberInName } from "../utils/sort";
 
 interface Option {
   id: string;
@@ -18,7 +19,7 @@ export const optionsApi = {
 
   classes: async (): Promise<Option[]> => {
     const { data } = await apiClient.get("/class");
-    return data;
+    return sortByNumberInName<Option>(data);
   },
 
   academicYears: async (): Promise<AcademicYearOption[]> => {

@@ -7,6 +7,8 @@ import { useParams, useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { useDebouncedValue } from "@/hooks/use-debounzed-values";
 import { SectionStudentsTable } from "@/components/tables/section-student-list";
+import Link from "next/link";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function SectionDetailPage() {
   const params = useParams<{ id: string }>();
@@ -29,7 +31,7 @@ export default function SectionDetailPage() {
 
   if (isLoading || !data) {
     return (
-      <p className="text-sm text-text-muted">Loading section details...</p>
+      <PageLoader text="Loading section details" />
     );
   }
 
@@ -73,13 +75,29 @@ export default function SectionDetailPage() {
 
           {classTeacher ? (
             <>
-              <p className="mt-2 text-lg font-semibold text-text-primary">
+              <Link
+                href={`/dashboard/teachers/${classTeacher.id}`}
+                className="mt-2 inline-block text-lg font-semibold text-text-primary hover:text-primary hover:underline"
+              >
                 {classTeacher.firstName} {classTeacher.lastName ?? ""}
-              </p>
+              </Link>
 
               <p className="mt-1 text-xs text-text-muted">
                 {classTeacher.email ?? classTeacher.phone ?? "No contact info"}
               </p>
+
+              {classTeacher.subjects?.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {classTeacher.subjects.map((subject) => (
+                    <span
+                      key={subject.id}
+                      className="rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-primary"
+                    >
+                      {subject.name}
+                    </span>
+                  ))}
+                </div>
+              )}
             </>
           ) : (
             <p className="mt-2 text-sm text-text-muted">

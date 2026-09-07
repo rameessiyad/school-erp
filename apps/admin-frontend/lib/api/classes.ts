@@ -1,10 +1,11 @@
 import { apiClient } from "../axios/client";
+import { sortByNumberInName } from "../utils/sort";
 import { CreateClassValues, SchoolClass } from "../validations/class";
 
 export const classesApi = {
   list: async (): Promise<SchoolClass[]> => {
-    const { data } = await apiClient.get("/class");
-    return data;
+    const { data } = await apiClient.get<SchoolClass[]>("/class");
+    return sortByNumberInName(data);
   },
 
   get: async (id: string) => {

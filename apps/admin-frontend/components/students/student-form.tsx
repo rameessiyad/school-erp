@@ -23,15 +23,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -49,6 +40,9 @@ import { studentsApi } from "@/lib/api/students";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { DatePicker } from "../ui/date-picker";
+import { parentRelationships } from "@/lib/validations/student";
+import { parentsApi } from "@/lib/api/parents";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Option {
   id: string;
@@ -125,6 +119,7 @@ export function StudentForm({
   const [sections, setSections] = useState<Option[]>([]);
   const [academicYears, setAcademicYears] = useState<Option[]>([]);
   const [sectionsLoading, setSectionsLoading] = useState(false);
+  const [enableParent, setEnableParent] = useState(false);
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(
@@ -261,7 +256,20 @@ export function StudentForm({
 
   const saveStudentMutation = useMutation({
     mutationFn: async (values: CreateStudentValues) => {
-      const { sectionId, academicYearId, rollNo, ...studentPayload } = values;
+      const {
+        sectionId,
+        academicYearId,
+        rollNo,
+        parentFirstName,
+        parentLastName,
+        parentEmail,
+        parentPhone,
+        parentAddress,
+        parentOccupation,
+        parentRelationship,
+        parentIsPrimary,
+        ...studentPayload
+      } = values;
 
       const student = isEditMode
         ? await studentsApi.update(studentId!, studentPayload, photoFile)
@@ -278,6 +286,34 @@ export function StudentForm({
           throw new Error(
             `Student created, but enrollment failed: ${getErrorMessage(
               enrollError,
+            )}`,
+          );
+        }
+      }
+
+      if (
+        !isEditMode &&
+        enableParent &&
+        parentFirstName &&
+        parentPhone &&
+        parentRelationship
+      ) {
+        try {
+          await parentsApi.create({
+            firstName: parentFirstName,
+            lastName: parentLastName || undefined,
+            email: parentEmail || undefined,
+            phone: parentPhone,
+            address: parentAddress || undefined,
+            occupation: parentOccupation || undefined,
+            relationship: parentRelationship,
+            isPrimary: parentIsPrimary ?? true,
+            studentId: student.id,
+          });
+        } catch (parentError) {
+          throw new Error(
+            `Student created, but parent creation failed: ${getErrorMessage(
+              parentError,
             )}`,
           );
         }
@@ -346,70 +382,6 @@ export function StudentForm({
 
       <CardContent className="p-6 lg:p-7">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          {/* ============================================================ */}
-          {/* Photo                                                         */}
-          {/* ============================================================ */}
-
-          <section className="space-y-4">
-            <SectionHeading
-              icon={Camera}
-              title="Photo"
-              description="Upload a passport-size photo of the student (optional)."
-            />
-
-            <div className="flex flex-col gap-5 rounded-xl border border-border bg-surface-secondary/40 p-5 sm:flex-row sm:items-center">
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-surface">
-                {photoPreview ? (
-                  <Image
-                    src={photoPreview}
-                    alt="Student photo preview"
-                    width={80}
-                    height={80}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <UserRound className="h-8 w-8 text-text-muted" />
-                )}
-              </div>
-
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-3">
-                  <Label
-                    htmlFor="photo"
-                    className="inline-flex h-10 cursor-pointer items-center rounded-lg border border-border bg-surface px-4 text-sm font-medium text-text-secondary transition hover:bg-surface-secondary hover:text-text-primary"
-                  >
-                    {photoPreview ? "Change Photo" : "Upload Photo"}
-                  </Label>
-
-                  <input
-                    id="photo"
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoChange}
-                    className="hidden"
-                  />
-
-                  {photoPreview && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleRemovePhoto}
-                      className="h-10 rounded-lg border-border text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
-                    >
-                      <X className="mr-1.5 h-3.5 w-3.5" />
-                      Remove
-                    </Button>
-                  )}
-                </div>
-
-                <p className="mt-2 text-xs text-text-muted">
-                  JPG, PNG or WEBP. Use a clear passport-size photo.
-                </p>
-              </div>
-            </div>
-          </section>
-
           {/* ============================================================ */}
           {/* Admission Details                                             */}
           {/* ============================================================ */}
@@ -622,6 +594,70 @@ export function StudentForm({
           </section>
 
           {/* ============================================================ */}
+          {/* Photo                                                         */}
+          {/* ============================================================ */}
+
+          <section className="space-y-4">
+            <SectionHeading
+              icon={Camera}
+              title="Photo"
+              description="Upload a passport-size photo of the student (optional)."
+            />
+
+            <div className="flex flex-col gap-5 rounded-xl border border-border bg-surface-secondary/40 p-5 sm:flex-row sm:items-center">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-surface">
+                {photoPreview ? (
+                  <Image
+                    src={photoPreview}
+                    alt="Student photo preview"
+                    width={80}
+                    height={80}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <UserRound className="h-8 w-8 text-text-muted" />
+                )}
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Label
+                    htmlFor="photo"
+                    className="inline-flex h-10 cursor-pointer items-center rounded-lg border border-border bg-surface px-4 text-sm font-medium text-text-secondary transition hover:bg-surface-secondary hover:text-text-primary"
+                  >
+                    {photoPreview ? "Change Photo" : "Upload Photo"}
+                  </Label>
+
+                  <input
+                    id="photo"
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                  />
+
+                  {photoPreview && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleRemovePhoto}
+                      className="h-10 rounded-lg border-border text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                    >
+                      <X className="mr-1.5 h-3.5 w-3.5" />
+                      Remove
+                    </Button>
+                  )}
+                </div>
+
+                <p className="mt-2 text-xs text-text-muted">
+                  JPG, PNG or WEBP. Use a clear passport-size photo.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ============================================================ */}
           {/* Enrollment                                                     */}
           {/* ============================================================ */}
 
@@ -813,6 +849,217 @@ export function StudentForm({
               </div>
             )}
           </section>
+
+          {!isEditMode && (
+            <section className="space-y-4 border-t border-border pt-7">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <SectionHeading
+                  icon={UserRound}
+                  title="Parent / Guardian"
+                  description="Optionally add a parent or guardian for this student."
+                />
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEnableParent((prev) => !prev)}
+                  className="h-10 shrink-0 rounded-lg border-border text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                >
+                  {enableParent ? (
+                    <>
+                      <X className="mr-1.5 h-3.5 w-3.5" />
+                      Remove Parent
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="mr-1.5 h-3.5 w-3.5" />
+                      Add Parent
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {!enableParent && (
+                <div className="rounded-xl border border-info/20 bg-info-soft px-4 py-3.5">
+                  <p className="text-sm leading-5 text-info">
+                    Parent details are optional. You can link a parent to this
+                    student later.
+                  </p>
+                </div>
+              )}
+
+              {enableParent && (
+                <div className="rounded-xl border border-primary/20 bg-primary-soft/30 p-5 lg:p-6">
+                  <div className="grid min-w-0 gap-5 md:grid-cols-2">
+                    {/* First Name */}
+                    <div className="min-w-0 space-y-2">
+                      <Label
+                        htmlFor="parentFirstName"
+                        className="text-sm font-medium text-text-secondary"
+                      >
+                        First Name
+                      </Label>
+                      <Input
+                        id="parentFirstName"
+                        placeholder="Enter first name"
+                        {...register("parentFirstName")}
+                        className={inputClassName}
+                      />
+                      {errors.parentFirstName && (
+                        <p className="text-xs text-error">
+                          {errors.parentFirstName.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Last Name */}
+                    <div className="min-w-0 space-y-2">
+                      <Label
+                        htmlFor="parentLastName"
+                        className="text-sm font-medium text-text-secondary"
+                      >
+                        Last Name
+                      </Label>
+                      <Input
+                        id="parentLastName"
+                        placeholder="Enter last name"
+                        {...register("parentLastName")}
+                        className={inputClassName}
+                      />
+                    </div>
+
+                    {/* Phone */}
+                    <div className="min-w-0 space-y-2">
+                      <Label
+                        htmlFor="parentPhone"
+                        className="text-sm font-medium text-text-secondary"
+                      >
+                        Phone
+                      </Label>
+                      <Input
+                        id="parentPhone"
+                        placeholder="e.g. 9876543210"
+                        {...register("parentPhone")}
+                        className={inputClassName}
+                      />
+                      {errors.parentPhone && (
+                        <p className="text-xs text-error">
+                          {errors.parentPhone.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Email */}
+                    <div className="min-w-0 space-y-2">
+                      <Label
+                        htmlFor="parentEmail"
+                        className="text-sm font-medium text-text-secondary"
+                      >
+                        Email
+                      </Label>
+                      <Input
+                        id="parentEmail"
+                        placeholder="Enter email"
+                        {...register("parentEmail")}
+                        className={inputClassName}
+                      />
+                      {errors.parentEmail && (
+                        <p className="text-xs text-error">
+                          {errors.parentEmail.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Relationship */}
+                    <div className="min-w-0 space-y-2">
+                      <Label className="text-sm font-medium text-text-secondary">
+                        Relationship
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="parentRelationship"
+                        render={({ field }) => (
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <SelectTrigger className="h-11 w-full min-w-0 rounded-lg border-border bg-surface text-sm text-text-primary focus:border-primary focus:ring-2 focus:ring-primary/20">
+                              <SelectValue placeholder="Select relationship">
+                                {(value: string) =>
+                                  value || "Select relationship"
+                                }
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {parentRelationships.map((rel) => (
+                                <SelectItem key={rel} value={rel}>
+                                  {rel.charAt(0) + rel.slice(1).toLowerCase()}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+
+                    {/* Occupation */}
+                    <div className="min-w-0 space-y-2">
+                      <Label
+                        htmlFor="parentOccupation"
+                        className="text-sm font-medium text-text-secondary"
+                      >
+                        Occupation
+                      </Label>
+                      <Input
+                        id="parentOccupation"
+                        placeholder="e.g. Engineer"
+                        {...register("parentOccupation")}
+                        className={inputClassName}
+                      />
+                    </div>
+
+                    {/* Address */}
+                    <div className="min-w-0 space-y-2 md:col-span-2">
+                      <Label
+                        htmlFor="parentAddress"
+                        className="text-sm font-medium text-text-secondary"
+                      >
+                        Address
+                      </Label>
+                      <Input
+                        id="parentAddress"
+                        placeholder="Enter address"
+                        {...register("parentAddress")}
+                        className={inputClassName}
+                      />
+                    </div>
+
+                    {/* Is Primary */}
+                    <div className="flex items-center gap-2 md:col-span-2">
+                      <Controller
+                        control={control}
+                        name="parentIsPrimary"
+                        render={({ field }) => (
+                          <Checkbox
+                            id="parentIsPrimary"
+                            checked={field.value ?? true}
+                            onCheckedChange={field.onChange}
+                          />
+                        )}
+                      />
+                      <Label
+                        htmlFor="parentIsPrimary"
+                        className="text-sm font-medium text-text-secondary"
+                      >
+                        Set as primary contact
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
 
           {/* ============================================================ */}
           {/* Server Error                                                   */}

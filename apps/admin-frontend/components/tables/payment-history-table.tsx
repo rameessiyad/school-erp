@@ -9,12 +9,19 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { FeePayment } from "@/lib/validations/fee";
+import { ReceiptDialog } from "../receipts/receipt-dialog";
 
 interface PaymentHistoryTableProps {
   payments: FeePayment[];
+  studentName?: string;
+  feeStructureName?: string;
 }
 
-export function PaymentHistoryTable({ payments }: PaymentHistoryTableProps) {
+export function PaymentHistoryTable({
+  payments,
+  studentName,
+  feeStructureName,
+}: PaymentHistoryTableProps) {
   return (
     <Table>
       <TableHeader>
@@ -38,7 +45,14 @@ export function PaymentHistoryTable({ payments }: PaymentHistoryTableProps) {
           payments.map((p) => (
             <TableRow key={p.id}>
               <TableCell className="font-mono text-xs text-text-secondary">
-                {p.receiptNumber}
+                <div className="flex items-center gap-2">
+                  <ReceiptDialog
+                    payment={p}
+                    studentName={studentName}
+                    feeStructureName={feeStructureName}
+                  />
+                  {p.receiptNumber}
+                </div>
               </TableCell>
 
               <TableCell className="font-medium text-text-primary">

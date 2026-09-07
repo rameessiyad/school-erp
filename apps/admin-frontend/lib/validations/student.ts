@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const genders = ["MALE", "FEMALE", "OTHER"] as const;
+export const parentRelationships = ["FATHER", "MOTHER", "GUARDIAN"] as const;
 
 export const createStudentSchema = z.object({
   admissionNo: z.string().min(1, "Admission number is required"),
@@ -16,6 +17,15 @@ export const createStudentSchema = z.object({
   academicYearId: z.string().optional(),
   rollNo: z.string().optional(),
   photo: z.string().optional(),
+
+  parentFirstName: z.string().optional(),
+  parentLastName: z.string().optional(),
+  parentEmail: z.string().email("Invalid email").optional().or(z.literal("")),
+  parentPhone: z.string().optional(),
+  parentAddress: z.string().optional(),
+  parentOccupation: z.string().optional(),
+  parentRelationship: z.enum(parentRelationships).optional(),
+  parentIsPrimary: z.boolean().optional(),
 });
 
 export type CreateStudentValues = z.infer<typeof createStudentSchema>;

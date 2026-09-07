@@ -218,8 +218,8 @@ export default function DashboardPage() {
       )}
 
       {/* Calendar + Quick Actions */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <MiniCalendar />
+      <div className="w-full">
+        {/* <MiniCalendar /> */}
 
         {visibleQuickActions.length > 0 && (
           <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">

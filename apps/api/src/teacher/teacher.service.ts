@@ -68,6 +68,22 @@ export class TeacherService {
       });
 
       if (dto.allocations?.length) {
+        for (const a of dto.allocations) {
+          const existing = await tx.teacherSubjectAllocation.findFirst({
+            where: {
+              schoolId,
+              subjectId: a.subjectId,
+              sectionId: a.sectionId,
+              academicYearId: a.academicYearId,
+            },
+          });
+          if (existing) {
+            throw new ConflictException(
+              `Subject already assigned for one of the selected sections/years`,
+            );
+          }
+        }
+
         await tx.teacherSubjectAllocation.createMany({
           data: dto.allocations.map((a) => ({
             schoolId,
@@ -149,14 +165,19 @@ export class TeacherService {
 
     const existing = await this.prisma.teacherSubjectAllocation.findFirst({
       where: {
-        teacherId,
+        schoolId,
         subjectId: dto.subjectId,
         sectionId: dto.sectionId,
         academicYearId: dto.academicYearId,
       },
+      include: { teacher: true },
     });
 
-    if (existing) throw new ConflictException('This allocation already exists');
+    if (existing) {
+      throw new ConflictException(
+        `This subject is already assigned to ${existing.teacher.firstName} ${existing.teacher.lastName} for this section and academic year`,
+      );
+    }
 
     return this.prisma.teacherSubjectAllocation.create({
       data: {

@@ -92,12 +92,22 @@ export default function FeeDetailPage() {
           <h2 className="font-semibold text-text-primary">Payment History</h2>
         </div>
 
-        <PaymentHistoryTable payments={fee.payments ?? []} />
+        <PaymentHistoryTable
+          payments={fee.payments ?? []}
+          studentName={`${fee.student?.firstName ?? ""} ${fee.student?.lastName ?? ""}`.trim()}
+          feeStructureName={fee.feeStructure?.name}
+        />
       </div>
 
       {balance > 0 && (
         <div className="max-w-3xl mx-auto">
-          <PaymentForm studentFeeId={fee.id} remainingBalance={balance} />
+          <PaymentForm
+            studentFeeId={fee.id}
+            remainingBalance={balance}
+            onSuccess={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          />
         </div>
       )}
     </div>

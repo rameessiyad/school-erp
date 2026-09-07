@@ -19,12 +19,19 @@ export interface Section {
   createdAt: string;
 }
 
+export interface TeacherSubject {
+  id: string;
+  name: string;
+  code: string;
+}
+
 export interface ClassTeacher {
   id: string;
   firstName: string;
   lastName: string | null;
   email: string | null;
   phone: string | null;
+  subjects: TeacherSubject[];
 }
 
 export interface SectionStudent {

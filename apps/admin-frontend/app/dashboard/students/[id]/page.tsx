@@ -9,6 +9,7 @@ import { optionsApi } from "@/lib/api/options";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useState } from "react";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function StudentDetailPage() {
   const params = useParams<{ id: string }>();
@@ -44,7 +45,7 @@ export default function StudentDetailPage() {
   });
 
   if (isLoading) {
-    return <p className="text-sm text-text-muted">Loading Student...</p>;
+    return <PageLoader text="Loading student..." />;
   }
 
   if (isError || !student) {

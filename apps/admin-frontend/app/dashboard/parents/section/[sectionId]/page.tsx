@@ -43,11 +43,18 @@ export default function SectionParentsPage() {
   const filteredParents = isSearching
     ? parents.filter((p) => {
         const fullName = `${p.firstName} ${p.lastName ?? ""}`.toLowerCase();
-        return (
+        const matchesParent =
           fullName.includes(debouncedSearch) ||
           (p.email ?? "").toLowerCase().includes(debouncedSearch) ||
-          (p.phone ?? "").toLowerCase().includes(debouncedSearch)
-        );
+          (p.phone ?? "").toLowerCase().includes(debouncedSearch);
+
+        const matchesStudent = p.parentStudents?.some((ps) => {
+          const studentName =
+            `${ps.student.firstName} ${ps.student.lastName ?? ""}`.toLowerCase();
+          return studentName.includes(debouncedSearch);
+        });
+
+        return matchesParent || matchesStudent;
       })
     : parents;
 
@@ -78,7 +85,7 @@ export default function SectionParentsPage() {
         <input
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Search by name, email or phone"
+          placeholder="Search by parent, student, email or phone"
           className="h-11 w-full rounded-lg border border-border bg-surface pl-10 pr-10 text-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
         />
 

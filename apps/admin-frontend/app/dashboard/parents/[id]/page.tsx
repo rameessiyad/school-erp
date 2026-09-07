@@ -1,5 +1,6 @@
 "use client";
 
+import { PageLoader } from "@/components/common/page-loader";
 import { Button } from "@/components/ui/button";
 import { parentsApi } from "@/lib/api/parents";
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +31,7 @@ export default function ParentDetailPage() {
   });
 
   if (isLoading) {
-    return <p className="text-sm text-text-muted">Loading Parent...</p>;
+    return <PageLoader text="Loading parent..." />;
   }
 
   if (isError || !parent) {

@@ -150,10 +150,28 @@ export class SectionService {
       }),
     ]);
 
+    let classTeacherSubjects: { id: string; name: string; code: string }[] = [];
+
+    if (classTeacherAssignment?.teacher) {
+      const allocations = await this.prisma.teacherSubjectAllocation.findMany({
+        where: {
+          teacherId: classTeacherAssignment.teacher.id,
+          sectionId,
+          academicYearId: academicYear.id,
+          schoolId,
+        },
+        include: { subject: true },
+      });
+
+      classTeacherSubjects = allocations.map((a) => a.subject);
+    }
+
     return {
       section,
       academicYear,
-      classTeacher: classTeacherAssignment?.teacher ?? null,
+      classTeacher: classTeacherAssignment?.teacher
+        ? { ...classTeacherAssignment.teacher, subjects: classTeacherSubjects }
+        : null,
       students: enrollments.map((e) => ({
         enrollmentId: e.id,
         rollNo: e.rollNo,

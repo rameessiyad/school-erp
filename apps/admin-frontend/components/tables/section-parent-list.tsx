@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { ParentRowActions } from "@/components/parents/parent-row-actions";
 import { Parent } from "@/lib/validations/parent";
+import Link from "next/link";
 
 interface SectionParentsTableProps {
   parents: Parent[];
@@ -74,16 +75,17 @@ export function SectionParentsTable({
                 {p.parentStudents?.length ? (
                   <div className="flex flex-wrap gap-2">
                     {p.parentStudents.map((ps) => (
-                      <span
+                      <Link
                         key={ps.studentId}
-                        className="rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-primary"
+                        href={`/dashboard/students/${ps.studentId}`}
+                        className="rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary-soft/70"
                       >
                         {ps.student.firstName} {ps.student.lastName ?? ""}{" "}
                         <span className="opacity-70">
                           ({ps.relationship}
                           {ps.isPrimary ? ", primary" : ""})
                         </span>
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 ) : (

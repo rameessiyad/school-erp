@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 import { teachersApi } from "@/lib/api/teachers";
 import { subjectsApi } from "@/lib/api/subjects";
 import {
@@ -18,6 +19,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AxiosError } from "axios";
 
@@ -38,6 +40,7 @@ export function AddAllocationModal({
 
   const [subjectId, setSubjectId] = useState("");
   const [teacherId, setTeacherId] = useState("");
+  const [teacherSearch, setTeacherSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const { data: subjects = [] } = useQuery({
@@ -51,6 +54,14 @@ export function AddAllocationModal({
     queryFn: teachersApi.list,
     enabled: open,
   });
+
+  const filteredTeachers = useMemo(() => {
+    if (!teacherSearch.trim()) return teachers;
+    const query = teacherSearch.trim().toLowerCase();
+    return teachers.filter((t) =>
+      `${t.firstName} ${t.lastName ?? ""}`.toLowerCase().includes(query),
+    );
+  }, [teachers, teacherSearch]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: () =>
@@ -74,6 +85,7 @@ export function AddAllocationModal({
   function reset() {
     setSubjectId("");
     setTeacherId("");
+    setTeacherSearch("");
     setError(null);
   }
 
@@ -132,6 +144,9 @@ export function AddAllocationModal({
             <Select
               value={teacherId}
               onValueChange={(value) => setTeacherId(value ?? "")}
+              onOpenChange={(o) => {
+                if (!o) setTeacherSearch("");
+              }}
             >
               <SelectTrigger>
                 <SelectValue>
@@ -143,12 +158,32 @@ export function AddAllocationModal({
                   }}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent>
-                {teachers.map((t) => (
-                  <SelectItem key={t.id} value={t.id}>
-                    {t.firstName} {t.lastName ?? ""}
-                  </SelectItem>
-                ))}
+              <SelectContent alignItemWithTrigger={false}>
+                <div className="sticky top-0 z-10 -mx-1 -mt-1 mb-1 border-b border-border bg-popover p-1.5">
+                  <div className="relative">
+                    <Search className="pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
+                    <Input
+                      placeholder="Search teacher name..."
+                      value={teacherSearch}
+                      onChange={(e) => setTeacherSearch(e.target.value)}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
+                      className="h-9 rounded-md border-border bg-surface-secondary pl-8 text-sm focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                </div>
+
+                {filteredTeachers.length === 0 ? (
+                  <p className="px-2 py-4 text-center text-sm text-text-muted">
+                    No matching teachers found.
+                  </p>
+                ) : (
+                  filteredTeachers.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>
+                      {t.firstName} {t.lastName ?? ""}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
