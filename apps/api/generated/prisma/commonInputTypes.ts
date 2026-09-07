@@ -433,23 +433,6 @@ export type EnumExamStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumExamStatusFilter<$PrismaModel>
 }
 
-export type EnumFileTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.FileType | Prisma.EnumFileTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.FileType[] | Prisma.ListEnumFileTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.FileType[] | Prisma.ListEnumFileTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumFileTypeFilter<$PrismaModel> | $Enums.FileType
-}
-
-export type EnumFileTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.FileType | Prisma.EnumFileTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.FileType[] | Prisma.ListEnumFileTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.FileType[] | Prisma.ListEnumFileTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumFileTypeWithAggregatesFilter<$PrismaModel> | $Enums.FileType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumFileTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumFileTypeFilter<$PrismaModel>
-}
-
 export type DecimalFilter<$PrismaModel = never> = {
   equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
   in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel>
@@ -998,23 +981,6 @@ export type NestedEnumExamStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumExamStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumExamStatusFilter<$PrismaModel>
-}
-
-export type NestedEnumFileTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.FileType | Prisma.EnumFileTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.FileType[] | Prisma.ListEnumFileTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.FileType[] | Prisma.ListEnumFileTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumFileTypeFilter<$PrismaModel> | $Enums.FileType
-}
-
-export type NestedEnumFileTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.FileType | Prisma.EnumFileTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.FileType[] | Prisma.ListEnumFileTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.FileType[] | Prisma.ListEnumFileTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumFileTypeWithAggregatesFilter<$PrismaModel> | $Enums.FileType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumFileTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumFileTypeFilter<$PrismaModel>
 }
 
 export type NestedDecimalFilter<$PrismaModel = never> = {

@@ -160,11 +160,6 @@ export type Mark = Prisma.MarkModel
  */
 export type Exam = Prisma.ExamModel
 /**
- * Model ExamTimeTable
- * 
- */
-export type ExamTimeTable = Prisma.ExamTimeTableModel
-/**
  * Model ExamResult
  * 
  */

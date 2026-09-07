@@ -138,10 +138,10 @@ export function DatePicker({
   const selectedDate = value ? new Date(`${value}T00:00:00`) : undefined;
 
   const [viewYear, setViewYear] = useState(
-    selectedDate ? selectedDate.getFullYear() : maxDate.getFullYear(),
+    selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(),
   );
   const [viewMonth, setViewMonth] = useState(
-    selectedDate ? selectedDate.getMonth() : maxDate.getMonth(),
+    selectedDate ? selectedDate.getMonth() : new Date().getMonth(),
   );
 
   useEffect(() => {

@@ -233,7 +233,6 @@ export type UserWhereInput = {
   school?: Prisma.XOR<Prisma.SchoolNullableScalarRelationFilter, Prisma.SchoolWhereInput> | null
   teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   parent?: Prisma.XOR<Prisma.ParentNullableScalarRelationFilter, Prisma.ParentWhereInput> | null
-  examTimeTables?: Prisma.ExamTimeTableListRelationFilter
   staff?: Prisma.XOR<Prisma.StaffNullableScalarRelationFilter, Prisma.StaffWhereInput> | null
   feePayments?: Prisma.FeePaymentListRelationFilter
 }
@@ -253,7 +252,6 @@ export type UserOrderByWithRelationInput = {
   school?: Prisma.SchoolOrderByWithRelationInput
   teacher?: Prisma.TeacherOrderByWithRelationInput
   parent?: Prisma.ParentOrderByWithRelationInput
-  examTimeTables?: Prisma.ExamTimeTableOrderByRelationAggregateInput
   staff?: Prisma.StaffOrderByWithRelationInput
   feePayments?: Prisma.FeePaymentOrderByRelationAggregateInput
 }
@@ -278,7 +276,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   school?: Prisma.XOR<Prisma.SchoolNullableScalarRelationFilter, Prisma.SchoolWhereInput> | null
   teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   parent?: Prisma.XOR<Prisma.ParentNullableScalarRelationFilter, Prisma.ParentWhereInput> | null
-  examTimeTables?: Prisma.ExamTimeTableListRelationFilter
   staff?: Prisma.XOR<Prisma.StaffNullableScalarRelationFilter, Prisma.StaffWhereInput> | null
   feePayments?: Prisma.FeePaymentListRelationFilter
 }, "id" | "schoolId_email" | "schoolId_phone">
@@ -331,7 +328,6 @@ export type UserCreateInput = {
   school?: Prisma.SchoolCreateNestedOneWithoutUsersInput
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
 }
@@ -350,7 +346,6 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
 }
@@ -369,7 +364,6 @@ export type UserUpdateInput = {
   school?: Prisma.SchoolUpdateOneWithoutUsersNestedInput
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutUploadedByNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
 }
@@ -388,7 +382,6 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutUploadedByNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
 }
@@ -597,20 +590,6 @@ export type UserUpdateOneRequiredWithoutParentNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutParentInput, Prisma.UserUpdateWithoutParentInput>, Prisma.UserUncheckedUpdateWithoutParentInput>
 }
 
-export type UserCreateNestedOneWithoutExamTimeTablesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutExamTimeTablesInput, Prisma.UserUncheckedCreateWithoutExamTimeTablesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutExamTimeTablesInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutExamTimeTablesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutExamTimeTablesInput, Prisma.UserUncheckedCreateWithoutExamTimeTablesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutExamTimeTablesInput
-  upsert?: Prisma.UserUpsertWithoutExamTimeTablesInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutExamTimeTablesInput, Prisma.UserUpdateWithoutExamTimeTablesInput>, Prisma.UserUncheckedUpdateWithoutExamTimeTablesInput>
-}
-
 export type UserCreateNestedOneWithoutFeePaymentsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutFeePaymentsInput, Prisma.UserUncheckedCreateWithoutFeePaymentsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutFeePaymentsInput
@@ -638,7 +617,6 @@ export type UserCreateWithoutSchoolInput = {
   updatedAt?: Date | string
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
 }
@@ -656,7 +634,6 @@ export type UserUncheckedCreateWithoutSchoolInput = {
   updatedAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
 }
@@ -718,7 +695,6 @@ export type UserCreateWithoutStaffInput = {
   school?: Prisma.SchoolCreateNestedOneWithoutUsersInput
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutUploadedByInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
 }
 
@@ -736,7 +712,6 @@ export type UserUncheckedCreateWithoutStaffInput = {
   updatedAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutUploadedByInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
 }
 
@@ -770,7 +745,6 @@ export type UserUpdateWithoutStaffInput = {
   school?: Prisma.SchoolUpdateOneWithoutUsersNestedInput
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutUploadedByNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
 }
 
@@ -788,7 +762,6 @@ export type UserUncheckedUpdateWithoutStaffInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutUploadedByNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
 }
 
@@ -805,7 +778,6 @@ export type UserCreateWithoutTeacherInput = {
   updatedAt?: Date | string
   school?: Prisma.SchoolCreateNestedOneWithoutUsersInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
 }
@@ -823,7 +795,6 @@ export type UserUncheckedCreateWithoutTeacherInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
 }
@@ -857,7 +828,6 @@ export type UserUpdateWithoutTeacherInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   school?: Prisma.SchoolUpdateOneWithoutUsersNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutUploadedByNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
 }
@@ -875,7 +845,6 @@ export type UserUncheckedUpdateWithoutTeacherInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutUploadedByNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
 }
@@ -893,7 +862,6 @@ export type UserCreateWithoutParentInput = {
   updatedAt?: Date | string
   school?: Prisma.SchoolCreateNestedOneWithoutUsersInput
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
 }
@@ -911,7 +879,6 @@ export type UserUncheckedCreateWithoutParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
 }
@@ -945,7 +912,6 @@ export type UserUpdateWithoutParentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   school?: Prisma.SchoolUpdateOneWithoutUsersNestedInput
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutUploadedByNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
 }
@@ -963,95 +929,6 @@ export type UserUncheckedUpdateWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutUploadedByNestedInput
-  staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
-  feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
-}
-
-export type UserCreateWithoutExamTimeTablesInput = {
-  id?: string
-  role: $Enums.Role
-  email?: string | null
-  phone?: string | null
-  passwordHash?: string | null
-  refreshTokenHash?: string | null
-  isActive?: boolean
-  lastLogin?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  school?: Prisma.SchoolCreateNestedOneWithoutUsersInput
-  teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
-  parent?: Prisma.ParentCreateNestedOneWithoutUserInput
-  staff?: Prisma.StaffCreateNestedOneWithoutUserInput
-  feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
-}
-
-export type UserUncheckedCreateWithoutExamTimeTablesInput = {
-  id?: string
-  schoolId: string
-  role: $Enums.Role
-  email?: string | null
-  phone?: string | null
-  passwordHash?: string | null
-  refreshTokenHash?: string | null
-  isActive?: boolean
-  lastLogin?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
-  parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
-  staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
-  feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
-}
-
-export type UserCreateOrConnectWithoutExamTimeTablesInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutExamTimeTablesInput, Prisma.UserUncheckedCreateWithoutExamTimeTablesInput>
-}
-
-export type UserUpsertWithoutExamTimeTablesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutExamTimeTablesInput, Prisma.UserUncheckedUpdateWithoutExamTimeTablesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutExamTimeTablesInput, Prisma.UserUncheckedCreateWithoutExamTimeTablesInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutExamTimeTablesInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutExamTimeTablesInput, Prisma.UserUncheckedUpdateWithoutExamTimeTablesInput>
-}
-
-export type UserUpdateWithoutExamTimeTablesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  refreshTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  school?: Prisma.SchoolUpdateOneWithoutUsersNestedInput
-  teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
-  parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
-  staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
-  feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutExamTimeTablesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  schoolId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  refreshTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
-  parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
 }
@@ -1070,7 +947,6 @@ export type UserCreateWithoutFeePaymentsInput = {
   school?: Prisma.SchoolCreateNestedOneWithoutUsersInput
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
 }
 
@@ -1088,7 +964,6 @@ export type UserUncheckedCreateWithoutFeePaymentsInput = {
   updatedAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedCreateNestedManyWithoutUploadedByInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1122,7 +997,6 @@ export type UserUpdateWithoutFeePaymentsInput = {
   school?: Prisma.SchoolUpdateOneWithoutUsersNestedInput
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutUploadedByNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
 }
 
@@ -1140,7 +1014,6 @@ export type UserUncheckedUpdateWithoutFeePaymentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutUploadedByNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1170,7 +1043,6 @@ export type UserUpdateWithoutSchoolInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUpdateManyWithoutUploadedByNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
 }
@@ -1188,7 +1060,6 @@ export type UserUncheckedUpdateWithoutSchoolInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
-  examTimeTables?: Prisma.ExamTimeTableUncheckedUpdateManyWithoutUploadedByNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
 }
@@ -1212,12 +1083,10 @@ export type UserUncheckedUpdateManyWithoutSchoolInput = {
  */
 
 export type UserCountOutputType = {
-  examTimeTables: number
   feePayments: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  examTimeTables?: boolean | UserCountOutputTypeCountExamTimeTablesArgs
   feePayments?: boolean | UserCountOutputTypeCountFeePaymentsArgs
 }
 
@@ -1229,13 +1098,6 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountExamTimeTablesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ExamTimeTableWhereInput
 }
 
 /**
@@ -1261,7 +1123,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   school?: boolean | Prisma.User$schoolArgs<ExtArgs>
   teacher?: boolean | Prisma.User$teacherArgs<ExtArgs>
   parent?: boolean | Prisma.User$parentArgs<ExtArgs>
-  examTimeTables?: boolean | Prisma.User$examTimeTablesArgs<ExtArgs>
   staff?: boolean | Prisma.User$staffArgs<ExtArgs>
   feePayments?: boolean | Prisma.User$feePaymentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1316,7 +1177,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   school?: boolean | Prisma.User$schoolArgs<ExtArgs>
   teacher?: boolean | Prisma.User$teacherArgs<ExtArgs>
   parent?: boolean | Prisma.User$parentArgs<ExtArgs>
-  examTimeTables?: boolean | Prisma.User$examTimeTablesArgs<ExtArgs>
   staff?: boolean | Prisma.User$staffArgs<ExtArgs>
   feePayments?: boolean | Prisma.User$feePaymentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1334,7 +1194,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     school: Prisma.$SchoolPayload<ExtArgs> | null
     teacher: Prisma.$TeacherPayload<ExtArgs> | null
     parent: Prisma.$ParentPayload<ExtArgs> | null
-    examTimeTables: Prisma.$ExamTimeTablePayload<ExtArgs>[]
     staff: Prisma.$StaffPayload<ExtArgs> | null
     feePayments: Prisma.$FeePaymentPayload<ExtArgs>[]
   }
@@ -1747,7 +1606,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   school<T extends Prisma.User$schoolArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$schoolArgs<ExtArgs>>): Prisma.Prisma__SchoolClient<runtime.Types.Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   teacher<T extends Prisma.User$teacherArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$teacherArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   parent<T extends Prisma.User$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$parentArgs<ExtArgs>>): Prisma.Prisma__ParentClient<runtime.Types.Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  examTimeTables<T extends Prisma.User$examTimeTablesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$examTimeTablesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExamTimeTablePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   staff<T extends Prisma.User$staffArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$staffArgs<ExtArgs>>): Prisma.Prisma__StaffClient<runtime.Types.Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   feePayments<T extends Prisma.User$feePaymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$feePaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeePaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2245,30 +2103,6 @@ export type User$parentArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   include?: Prisma.ParentInclude<ExtArgs> | null
   where?: Prisma.ParentWhereInput
-}
-
-/**
- * User.examTimeTables
- */
-export type User$examTimeTablesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ExamTimeTable
-   */
-  select?: Prisma.ExamTimeTableSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ExamTimeTable
-   */
-  omit?: Prisma.ExamTimeTableOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ExamTimeTableInclude<ExtArgs> | null
-  where?: Prisma.ExamTimeTableWhereInput
-  orderBy?: Prisma.ExamTimeTableOrderByWithRelationInput | Prisma.ExamTimeTableOrderByWithRelationInput[]
-  cursor?: Prisma.ExamTimeTableWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ExamTimeTableScalarFieldEnum | Prisma.ExamTimeTableScalarFieldEnum[]
 }
 
 /**

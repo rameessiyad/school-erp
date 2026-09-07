@@ -114,21 +114,9 @@ export const ExamStatus = {
 export type ExamStatus = (typeof ExamStatus)[keyof typeof ExamStatus]
 
 
-export const FileType = {
-  PDF: 'PDF',
-  IMAGE: 'IMAGE'
-} as const
-
-export type FileType = (typeof FileType)[keyof typeof FileType]
-
-
 export const ExamType = {
-  UNIT_TEST: 'UNIT_TEST',
-  MID_TERM: 'MID_TERM',
-  ONAM: 'ONAM',
-  CHRISTMAS: 'CHRISTMAS',
-  FINAL: 'FINAL',
-  CUSTOM: 'CUSTOM'
+  MODEL: 'MODEL',
+  TERM: 'TERM'
 } as const
 
 export type ExamType = (typeof ExamType)[keyof typeof ExamType]

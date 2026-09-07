@@ -23,6 +23,7 @@ import { TeacherLeaveModule } from './teacher-leave/teacher-leave.module';
 import { StaffLeaveModule } from './staff-leave/staff-leave.module';
 import { MyClassModule } from './my-class/my-class.module';
 import { SubjectAllocatedModule } from './subject-allocated/subject-allocated.module';
+import { ExamModule } from './exam/exam.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { SubjectAllocatedModule } from './subject-allocated/subject-allocated.mo
     StaffLeaveModule,
     MyClassModule,
     SubjectAllocatedModule,
+    ExamModule,
   ],
   controllers: [AppController],
   providers: [AppService],

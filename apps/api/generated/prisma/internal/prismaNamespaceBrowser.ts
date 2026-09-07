@@ -75,7 +75,6 @@ export const ModelName = {
   UnitTest: 'UnitTest',
   Mark: 'Mark',
   Exam: 'Exam',
-  ExamTimeTable: 'ExamTimeTable',
   ExamResult: 'ExamResult',
   SubjectMark: 'SubjectMark',
   FeeStructure: 'FeeStructure',
@@ -446,6 +445,8 @@ export const ExamScalarFieldEnum = {
   id: 'id',
   name: 'name',
   examType: 'examType',
+  startDate: 'startDate',
+  endDate: 'endDate',
   academicYearId: 'academicYearId',
   status: 'status',
   createdAt: 'createdAt',
@@ -453,20 +454,6 @@ export const ExamScalarFieldEnum = {
 } as const
 
 export type ExamScalarFieldEnum = (typeof ExamScalarFieldEnum)[keyof typeof ExamScalarFieldEnum]
-
-
-export const ExamTimeTableScalarFieldEnum = {
-  id: 'id',
-  examId: 'examId',
-  classId: 'classId',
-  fileUrl: 'fileUrl',
-  fileType: 'fileType',
-  uploadedById: 'uploadedById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type ExamTimeTableScalarFieldEnum = (typeof ExamTimeTableScalarFieldEnum)[keyof typeof ExamTimeTableScalarFieldEnum]
 
 
 export const ExamResultScalarFieldEnum = {

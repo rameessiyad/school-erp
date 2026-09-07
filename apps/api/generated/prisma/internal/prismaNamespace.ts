@@ -421,7 +421,6 @@ export const ModelName = {
   UnitTest: 'UnitTest',
   Mark: 'Mark',
   Exam: 'Exam',
-  ExamTimeTable: 'ExamTimeTable',
   ExamResult: 'ExamResult',
   SubjectMark: 'SubjectMark',
   FeeStructure: 'FeeStructure',
@@ -447,7 +446,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "school" | "academicYear" | "user" | "staff" | "teacher" | "parent" | "student" | "parentStudent" | "class" | "section" | "subject" | "studentEnrollment" | "teacherSubjectAllocation" | "classTeacherAssignment" | "timetable" | "attendance" | "studyMaterial" | "homework" | "homeworkStatus" | "assignment" | "assignmentStatus" | "unitTest" | "mark" | "exam" | "examTimeTable" | "examResult" | "subjectMark" | "feeStructure" | "studentFee" | "feePayment" | "teacherAttendance" | "teacherLeaveApplication" | "staffAttendance" | "staffLeaveApplication" | "studentAttendance"
+    modelProps: "school" | "academicYear" | "user" | "staff" | "teacher" | "parent" | "student" | "parentStudent" | "class" | "section" | "subject" | "studentEnrollment" | "teacherSubjectAllocation" | "classTeacherAssignment" | "timetable" | "attendance" | "studyMaterial" | "homework" | "homeworkStatus" | "assignment" | "assignmentStatus" | "unitTest" | "mark" | "exam" | "examResult" | "subjectMark" | "feeStructure" | "studentFee" | "feePayment" | "teacherAttendance" | "teacherLeaveApplication" | "staffAttendance" | "staffLeaveApplication" | "studentAttendance"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2227,80 +2226,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    ExamTimeTable: {
-      payload: Prisma.$ExamTimeTablePayload<ExtArgs>
-      fields: Prisma.ExamTimeTableFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ExamTimeTableFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ExamTimeTableFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload>
-        }
-        findFirst: {
-          args: Prisma.ExamTimeTableFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ExamTimeTableFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload>
-        }
-        findMany: {
-          args: Prisma.ExamTimeTableFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload>[]
-        }
-        create: {
-          args: Prisma.ExamTimeTableCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload>
-        }
-        createMany: {
-          args: Prisma.ExamTimeTableCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.ExamTimeTableCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload>[]
-        }
-        delete: {
-          args: Prisma.ExamTimeTableDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload>
-        }
-        update: {
-          args: Prisma.ExamTimeTableUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload>
-        }
-        deleteMany: {
-          args: Prisma.ExamTimeTableDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ExamTimeTableUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.ExamTimeTableUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload>[]
-        }
-        upsert: {
-          args: Prisma.ExamTimeTableUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTimeTablePayload>
-        }
-        aggregate: {
-          args: Prisma.ExamTimeTableAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateExamTimeTable>
-        }
-        groupBy: {
-          args: Prisma.ExamTimeTableGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ExamTimeTableGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ExamTimeTableCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ExamTimeTableCountAggregateOutputType> | number
-        }
-      }
-    }
     ExamResult: {
       payload: Prisma.$ExamResultPayload<ExtArgs>
       fields: Prisma.ExamResultFieldRefs
@@ -3422,6 +3347,8 @@ export const ExamScalarFieldEnum = {
   id: 'id',
   name: 'name',
   examType: 'examType',
+  startDate: 'startDate',
+  endDate: 'endDate',
   academicYearId: 'academicYearId',
   status: 'status',
   createdAt: 'createdAt',
@@ -3429,20 +3356,6 @@ export const ExamScalarFieldEnum = {
 } as const
 
 export type ExamScalarFieldEnum = (typeof ExamScalarFieldEnum)[keyof typeof ExamScalarFieldEnum]
-
-
-export const ExamTimeTableScalarFieldEnum = {
-  id: 'id',
-  examId: 'examId',
-  classId: 'classId',
-  fileUrl: 'fileUrl',
-  fileType: 'fileType',
-  uploadedById: 'uploadedById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type ExamTimeTableScalarFieldEnum = (typeof ExamTimeTableScalarFieldEnum)[keyof typeof ExamTimeTableScalarFieldEnum]
 
 
 export const ExamResultScalarFieldEnum = {
@@ -3863,20 +3776,6 @@ export type ListEnumExamStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
- * Reference to a field of type 'FileType'
- */
-export type EnumFileTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileType'>
-    
-
-
-/**
- * Reference to a field of type 'FileType[]'
- */
-export type ListEnumFileTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileType[]'>
-    
-
-
-/**
  * Reference to a field of type 'Decimal'
  */
 export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
@@ -4148,7 +4047,6 @@ export type GlobalOmitConfig = {
   unitTest?: Prisma.UnitTestOmit
   mark?: Prisma.MarkOmit
   exam?: Prisma.ExamOmit
-  examTimeTable?: Prisma.ExamTimeTableOmit
   examResult?: Prisma.ExamResultOmit
   subjectMark?: Prisma.SubjectMarkOmit
   feeStructure?: Prisma.FeeStructureOmit

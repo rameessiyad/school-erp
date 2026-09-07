@@ -98,11 +98,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  teacher        Teacher?
-  parent         Parent?
-  examTimeTables ExamTimeTable[]
-  staff          Staff?
-  feePayments    FeePayment[]
+  teacher     Teacher?
+  parent      Parent?
+  staff       Staff?
+  feePayments FeePayment[]
 
   @@unique([schoolId, email])
   @@unique([schoolId, phone])
@@ -289,11 +288,10 @@ model Class {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sections       Section[]
+  sections      Section[]
   // feeStructures FeeStructure[]
-  examTimeTables ExamTimeTable[]
-  examResults    ExamResult[]
-  feeStructures  FeeStructure[]
+  examResults   ExamResult[]
+  feeStructures FeeStructure[]
 
   @@unique([schoolId, name])
   @@index([schoolId])
@@ -652,9 +650,13 @@ model Mark {
 }
 
 model Exam {
-  id       String   @id @default(uuid())
-  name     String
+  id   String @id @default(uuid())
+  name String // e.g. "Onam Exam", "Christmas Exam", "Term 1 Exam"
+
   examType ExamType
+
+  startDate DateTime
+  endDate   DateTime
 
   academicYearId String
   academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
@@ -663,41 +665,14 @@ model Exam {
 
   status ExamStatus @default(DRAFT)
 
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  examTimeTables ExamTimeTable[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum ExamStatus {
   DRAFT
   PUBLISHED
   COMPLETED
-}
-
-model ExamTimeTable {
-  id String @id @default(uuid())
-
-  examId  String
-  classId String
-
-  fileUrl  String
-  fileType FileType
-
-  uploadedById String
-  uploadedBy   User   @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
-
-  exam  Exam  @relation(fields: [examId], references: [id], onDelete: Cascade)
-  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([examId, classId])
-}
-
-enum FileType {
-  PDF
-  IMAGE
 }
 
 model ExamResult {
@@ -744,12 +719,8 @@ model SubjectMark {
 }
 
 enum ExamType {
-  UNIT_TEST
-  MID_TERM
-  ONAM
-  CHRISTMAS
-  FINAL
-  CUSTOM
+  MODEL
+  TERM
 }
 
 model FeeStructure {

@@ -87,6 +87,12 @@ const navigation = [
     requiredModules: [Module.ACADEMIC_YEAR],
   },
   {
+    label: "Exams",
+    href: "/dashboard/exams",
+    icon: ClipboardList,
+    requiredModules: [Module.ACADEMIC_YEAR],
+  },
+  {
     label: "Fee Structures",
     href: "/dashboard/fee-structures",
     icon: Wallet,
