@@ -213,4 +213,48 @@ export class TeacherService {
       include: { subject: true, section: true, academicYear: true },
     });
   }
+
+  async getAllocationClass(
+    schoolId: string,
+    teacherId: string,
+    allocationId: string,
+  ) {
+    const allocation = await this.prisma.teacherSubjectAllocation.findFirst({
+      where: { id: allocationId, teacherId, schoolId },
+      include: {
+        subject: true,
+        section: { include: { class: true, classTeacher: true } }, // added classTeacher
+      },
+    });
+    if (!allocation) throw new NotFoundException('Allocation not found');
+
+    const enrollments = await this.prisma.studentEnrollment.findMany({
+      where: {
+        sectionId: allocation.sectionId,
+        academicYearId: allocation.academicYearId,
+      },
+      include: { student: true },
+      orderBy: { rollNo: 'asc' },
+    });
+
+    return {
+      allocationId: allocation.id,
+      subject: { id: allocation.subject.id, name: allocation.subject.name },
+      section: {
+        id: allocation.section.id,
+        name: allocation.section.name,
+        className: allocation.section.class.name,
+        classTeacherName: allocation.section.classTeacher
+          ? `${allocation.section.classTeacher.firstName} ${allocation.section.classTeacher.lastName ?? ''}`.trim()
+          : null, // no class teacher assigned to this section yet
+      },
+      students: enrollments.map((e) => ({
+        studentId: e.student.id,
+        firstName: e.student.firstName,
+        lastName: e.student.lastName,
+        rollNo: e.rollNo,
+        photoUrl: e.student.photoUrl,
+      })),
+    };
+  }
 }

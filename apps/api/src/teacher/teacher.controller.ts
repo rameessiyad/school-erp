@@ -97,4 +97,14 @@ export class TeacherController {
       allocationId,
     );
   }
+
+  @Get('allocation/:id/students')
+  @Roles(Role.TEACHER)
+  getAllocationClass(@Request() req, @Param('id') id: string) {
+    return this.teacherService.getAllocationClass(
+      req.user.schoolId,
+      req.user.teacherId,
+      id,
+    );
+  }
 }

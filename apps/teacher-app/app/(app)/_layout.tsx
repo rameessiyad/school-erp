@@ -16,6 +16,10 @@ export default function AppLayout() {
         name="my-class/view-attendance"
         options={{ presentation: "card" }}
       />
+      <Stack.Screen
+        name="subject-class/[allocationId]"
+        options={{ presentation: "card" }}
+      />
     </Stack>
   );
 }

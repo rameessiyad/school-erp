@@ -1,14 +1,22 @@
 // src/components/dashboard/ClassSubjectRow.tsx
 import React from "react";
-import { View, Text } from "react-native";
+import { TouchableOpacity, View, Text } from "react-native";
 import { useTheme } from "../../theme/ThemeProvider";
 import { TeacherClassSubject } from "../../types/teacher";
 
-export function ClassSubjectRow({ item }: { item: TeacherClassSubject }) {
+export function ClassSubjectRow({
+  item,
+  onPress,
+}: {
+  item: TeacherClassSubject;
+  onPress?: () => void;
+}) {
   const { colors, radius, spacing, fontFamily } = useTheme();
 
   return (
-    <View
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.7}
       style={{
         flexDirection: "row",
         alignItems: "center",
@@ -61,6 +69,6 @@ export function ClassSubjectRow({ item }: { item: TeacherClassSubject }) {
           </Text>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 }

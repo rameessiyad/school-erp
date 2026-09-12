@@ -163,6 +163,7 @@ export default function HomeScreen() {
                     sectionName: item.section.name,
                     isClassTeacher: false,
                   }}
+                  onPress={() => router.push(`/(app)/subject-class/${item.id}`)}
                 />
               ))
             )}
