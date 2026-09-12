@@ -390,6 +390,58 @@ export function TeacherForm({
             </section>
 
             {/* ===================================================== */}
+            {/* Teacher Photo */}
+            {/* ===================================================== */}
+
+            <section className="border-t border-border px-6 py-7 lg:px-8">
+              <div className="mb-5">
+                <h3 className="text-sm font-semibold text-text-primary">
+                  Teacher Photo
+                </h3>
+
+                <p className="mt-1 text-xs text-text-muted">
+                  Upload a profile photo for the teacher.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-border bg-surface-secondary/50 p-5">
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+                  {photoPreview ? (
+                    <Image
+                      src={photoPreview}
+                      alt="Teacher preview"
+                      width={96}
+                      height={96}
+                      className="h-24 w-24 shrink-0 rounded-full border border-border object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full border border-dashed border-border bg-surface text-xs text-text-muted">
+                      No Photo
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="photo" className={labelClass}>
+                      Profile Photo
+                    </Label>
+
+                    <Input
+                      id="photo"
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="h-11 max-w-sm cursor-pointer rounded-lg border-border bg-surface text-text-primary file:mr-4 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-text-secondary"
+                    />
+
+                    <p className="text-xs text-text-muted">
+                      JPG, PNG or WEBP. Maximum 5MB.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ===================================================== */}
             {/* Contact & Account */}
             {/* ===================================================== */}
 
@@ -573,58 +625,6 @@ export function TeacherForm({
                       {errors.experience.message}
                     </p>
                   )}
-                </div>
-              </div>
-            </section>
-
-            {/* ===================================================== */}
-            {/* Teacher Photo */}
-            {/* ===================================================== */}
-
-            <section className="border-t border-border px-6 py-7 lg:px-8">
-              <div className="mb-5">
-                <h3 className="text-sm font-semibold text-text-primary">
-                  Teacher Photo
-                </h3>
-
-                <p className="mt-1 text-xs text-text-muted">
-                  Upload a profile photo for the teacher.
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-border bg-surface-secondary/50 p-5">
-                <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-                  {photoPreview ? (
-                    <Image
-                      src={photoPreview}
-                      alt="Teacher preview"
-                      width={96}
-                      height={96}
-                      className="h-24 w-24 shrink-0 rounded-full border border-border object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full border border-dashed border-border bg-surface text-xs text-text-muted">
-                      No Photo
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    <Label htmlFor="photo" className={labelClass}>
-                      Profile Photo
-                    </Label>
-
-                    <Input
-                      id="photo"
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhotoChange}
-                      className="h-11 max-w-sm cursor-pointer rounded-lg border-border bg-surface text-text-primary file:mr-4 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-text-secondary"
-                    />
-
-                    <p className="text-xs text-text-muted">
-                      JPG, PNG or WEBP. Maximum 5MB.
-                    </p>
-                  </div>
                 </div>
               </div>
             </section>
