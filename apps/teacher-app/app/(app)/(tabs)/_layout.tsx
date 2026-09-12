@@ -37,14 +37,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="attendance"
         options={{
-          title: "Attendance",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="checkmark-circle-outline"
-              size={size}
-              color={color}
-            />
-          ),
+          href: null, // hidden from tab bar
         }}
       />
       <Tabs.Screen

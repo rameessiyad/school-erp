@@ -5,18 +5,20 @@ import { useTheme } from "../../theme/ThemeProvider";
 interface StatCardProps {
   label: string;
   value: number;
-  variant: "warning" | "success" | "error";
+  variant: "primary" | "warning" | "success" | "error";
 }
 
 export function StatCard({ label, value, variant }: StatCardProps) {
   const { colors, radius, spacing, fontFamily } = useTheme();
 
   const variantColor = {
+    primary: colors.primary,
     warning: colors.warning,
     success: colors.success,
     error: colors.error,
   }[variant];
   const variantSoft = {
+    primary: colors.primarySoft,
     warning: colors.warningSoft,
     success: colors.successSoft,
     error: colors.errorSoft,

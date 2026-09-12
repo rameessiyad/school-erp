@@ -47,6 +47,7 @@ export class StudentAttendanceService {
         name: section.name,
         className: section.class.name,
       },
+      isMarked: existing.length > 0, // NEW
       students: enrollments.map((e) => ({
         studentId: e.student.id,
         firstName: e.student.firstName,
