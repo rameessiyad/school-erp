@@ -25,6 +25,7 @@ import { MyClassModule } from './my-class/my-class.module';
 import { SubjectAllocatedModule } from './subject-allocated/subject-allocated.module';
 import { ExamModule } from './exam/exam.module';
 import { StudentAttendanceModule } from './student-attendance/student-attendance.module';
+import { StaffAttendanceModule } from './staff-attendance/staff-attendance.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { StudentAttendanceModule } from './student-attendance/student-attendance
     SubjectAllocatedModule,
     ExamModule,
     StudentAttendanceModule,
+    StaffAttendanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
