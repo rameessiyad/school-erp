@@ -65,7 +65,7 @@ export default function ExamDetailPage() {
         <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
           <p className="text-sm font-medium text-text-secondary">Type</p>
           <p className="mt-2 text-lg font-semibold capitalize text-text-primary">
-            {exam.examType.toLowerCase()}
+            {exam.examType?.name ?? ""}
           </p>
         </div>
 

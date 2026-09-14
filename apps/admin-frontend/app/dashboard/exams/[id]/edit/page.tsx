@@ -34,7 +34,7 @@ export default function EditExamPage() {
         examId={exam.id}
         defaultValues={{
           name: exam.name,
-          examType: exam.examType,
+          examTypeId: exam.examTypeId,
           startDate: exam.startDate.slice(0, 10),
           endDate: exam.endDate.slice(0, 10),
           academicYearId: exam.academicYearId,
