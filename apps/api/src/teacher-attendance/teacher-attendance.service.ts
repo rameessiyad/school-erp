@@ -66,4 +66,30 @@ export class TeacherAttendanceService {
       orderBy: { date: 'desc' },
     });
   }
+
+  async findAllByDate(schoolId: string, date?: string) {
+    const day = startOfDay(date ? new Date(date) : new Date());
+
+    const teachers = await this.prisma.teacher.findMany({
+      where: { schoolId },
+      select: { id: true, firstName: true, lastName: true, photoUrl: true },
+      orderBy: { firstName: 'asc' },
+    });
+
+    const records = await this.prisma.teacherAttendance.findMany({
+      where: { schoolId, date: day },
+    });
+
+    const statusByTeacherId = new Map(
+      records.map((r) => [r.teacherId, r.status]),
+    );
+
+    return {
+      date: day,
+      teachers: teachers.map((t) => ({
+        ...t,
+        status: statusByTeacherId.get(t.id) ?? null,
+      })),
+    };
+  }
 }

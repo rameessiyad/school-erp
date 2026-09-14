@@ -16,6 +16,7 @@ import {
   Receipt,
   ClipboardList,
   School2,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -31,7 +32,22 @@ interface DashboardSidebarProps {
   };
 }
 
-const navigation = [
+interface NavChild {
+  label: string;
+  href: string;
+}
+
+interface NavItem {
+  label: string;
+  href?: string;
+  icon: React.ElementType;
+  requiredModules?: string[];
+  adminOnly?: boolean;
+  staffOnly?: boolean;
+  children?: NavChild[];
+}
+
+const navigation: NavItem[] = [
   {
     label: "Overview",
     href: "/dashboard",
@@ -74,12 +90,6 @@ const navigation = [
     icon: Layers,
     requiredModules: [Module.ACADEMIC_YEAR],
   },
-  // {
-  //   label: "Sections",
-  //   href: "/dashboard/sections",
-  //   icon: LayoutGrid,
-  //   requiredModules: [Module.ACADEMIC_YEAR],
-  // },
   {
     label: "Subject Allocation",
     href: "/dashboard/subject-allocation",
@@ -93,10 +103,14 @@ const navigation = [
     requiredModules: [Module.ACADEMIC_YEAR],
   },
   {
-    label: "Student Attendance",
-    href: "/dashboard/student-attendance",
+    label: "Attendance",
     icon: ClipboardList,
     requiredModules: [Module.STUDENT_ATTENDANCE],
+    children: [
+      { label: "Teacher Attendance", href: "/dashboard/teacher-attendance" },
+      { label: "Staff Attendance", href: "/dashboard/staff-attendance" },
+      { label: "Student Attendance", href: "/dashboard/student-attendance" },
+    ],
   },
   {
     label: "Fee Structures",
@@ -119,7 +133,7 @@ const navigation = [
     href: "/dashboard/leave-applications",
     icon: School2,
     requiredModules: undefined,
-    adminOnly: true, // NEW
+    adminOnly: true,
   },
   {
     label: "Apply Leave",
@@ -137,6 +151,23 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
 
   const isAdmin = user.role === "SCHOOL_ADMIN" || user.role === "SUPER_ADMIN";
   const allowedModules = user.allowedModules ?? [];
+
+  const isChildActive = (children?: NavChild[]) =>
+    !!children?.some((c) => pathname.startsWith(c.href));
+
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    navigation.forEach((item) => {
+      if (item.children && isChildActive(item.children)) {
+        initial[item.label] = true;
+      }
+    });
+    return initial;
+  });
+
+  const toggleGroup = (label: string) => {
+    setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
 
   const visibleNavigation = navigation.filter((item) => {
     if (item.adminOnly) return isAdmin;
@@ -180,14 +211,70 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         <nav className="space-y-1">
           {visibleNavigation.map((item) => {
             const Icon = item.icon;
+
+            if (item.children) {
+              const active = isChildActive(item.children);
+              const open = openGroups[item.label] ?? active;
+
+              return (
+                <div key={item.label}>
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(item.label)}
+                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                      active
+                        ? "bg-primary-soft text-primary"
+                        : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    <Icon
+                      className={`h-4.5 w-4.5 shrink-0 ${
+                        active ? "text-primary" : "text-text-muted"
+                      }`}
+                    />
+
+                    <span className="flex-1 text-left">{item.label}</span>
+
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 transition-transform ${
+                        open ? "rotate-180" : ""
+                      } ${active ? "text-primary" : "text-text-muted"}`}
+                    />
+                  </button>
+
+                  {open && (
+                    <div className="mt-1 space-y-1 border-l border-border pl-4">
+                      {item.children.map((child) => {
+                        const childActive = pathname.startsWith(child.href);
+
+                        return (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className={`block rounded-lg px-3 py-2 text-sm font-medium transition ${
+                              childActive
+                                ? "bg-primary-soft text-primary"
+                                : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                            }`}
+                          >
+                            {child.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
             const active =
               pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+              (item.href !== "/dashboard" && pathname.startsWith(item.href!));
 
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={item.href!}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                   active
                     ? "bg-primary-soft text-primary"
@@ -195,7 +282,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                 }`}
               >
                 <Icon
-                  className={`h-[18px] w-[18px] ${
+                  className={`h-4.5 w-4.5 ${
                     active ? "text-primary" : "text-text-muted"
                   }`}
                 />
@@ -216,7 +303,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
               href="/dashboard/settings"
               className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-surface-secondary hover:text-text-primary"
             >
-              <Settings className="h-[18px] w-[18px] text-text-muted" />
+              <Settings className="h-4.5 w-4.5 text-text-muted" />
               Settings
             </Link>
           </>

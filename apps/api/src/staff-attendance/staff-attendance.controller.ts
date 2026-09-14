@@ -60,4 +60,10 @@ export class StaffAttendanceController {
       },
     );
   }
+
+  @Get('by-date')
+  @Roles(Role.SCHOOL_ADMIN)
+  findAllByDate(@Request() req, @Query('date') date?: string) {
+    return this.attendanceService.findAllByDate(req.user.schoolId, date);
+  }
 }
