@@ -275,7 +275,7 @@ export function StudentForm({
         ? await studentsApi.update(studentId!, studentPayload, photoFile)
         : await studentsApi.create(studentPayload, photoFile);
 
-      if (!isEditMode && enableEnrollment && sectionId && academicYearId) {
+      if (enableEnrollment && sectionId && academicYearId) {
         try {
           await studentsApi.createEnrollment(student.id, {
             sectionId,
@@ -284,9 +284,9 @@ export function StudentForm({
           });
         } catch (enrollError) {
           throw new Error(
-            `Student created, but enrollment failed: ${getErrorMessage(
-              enrollError,
-            )}`,
+            `Student ${isEditMode ? "updated" : "created"}, but enrollment ${
+              isEditMode ? "update" : "creation"
+            } failed: ${getErrorMessage(enrollError)}`,
           );
         }
       }
