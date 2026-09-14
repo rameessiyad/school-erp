@@ -1,7 +1,7 @@
 // components/ui/date-picker.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -123,6 +123,9 @@ function YearDropdown({
 /* Main DatePicker                                                            */
 /* -------------------------------------------------------------------------- */
 
+const PANEL_HEIGHT_ESTIMATE = 360; // approx rendered height of the calendar panel
+const VIEWPORT_MARGIN = 16;
+
 export function DatePicker({
   value,
   onChange,
@@ -133,7 +136,13 @@ export function DatePicker({
   className = "",
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
+  const [dropUp, setDropUp] = useState(false);
+  const [maxPanelHeight, setMaxPanelHeight] = useState<number | undefined>(
+    undefined,
+  );
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const selectedDate = value ? new Date(`${value}T00:00:00`) : undefined;
 
@@ -163,6 +172,50 @@ export function DatePicker({
       document.removeEventListener("keydown", handleEscape);
     };
   }, []);
+
+  // Decide whether to drop the panel up or down, and cap its height,
+  // based on actual available space when it opens (and on resize/scroll
+  // while open, so it stays correct if the layout shifts).
+  useLayoutEffect(() => {
+    if (!open || !triggerRef.current) return;
+
+    function reposition() {
+      const rect = triggerRef.current!.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom - VIEWPORT_MARGIN;
+      const spaceAbove = rect.top - VIEWPORT_MARGIN;
+
+      const actualPanelHeight =
+        panelRef.current?.offsetHeight ?? PANEL_HEIGHT_ESTIMATE;
+
+      if (spaceBelow >= actualPanelHeight) {
+        // fits below, no cap needed
+        setDropUp(false);
+        setMaxPanelHeight(undefined);
+      } else if (spaceAbove >= actualPanelHeight) {
+        // doesn't fit below but fits above
+        setDropUp(true);
+        setMaxPanelHeight(undefined);
+      } else {
+        // doesn't fully fit either way — pick whichever side has more
+        // room and cap the panel height so it scrolls instead of clipping
+        if (spaceBelow >= spaceAbove) {
+          setDropUp(false);
+          setMaxPanelHeight(Math.max(spaceBelow, 200));
+        } else {
+          setDropUp(true);
+          setMaxPanelHeight(Math.max(spaceAbove, 200));
+        }
+      }
+    }
+
+    reposition();
+    window.addEventListener("resize", reposition);
+    window.addEventListener("scroll", reposition, true);
+    return () => {
+      window.removeEventListener("resize", reposition);
+      window.removeEventListener("scroll", reposition, true);
+    };
+  }, [open]);
 
   function openCalendar() {
     if (disabled) return;
@@ -219,6 +272,7 @@ export function DatePicker({
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <button
+        ref={triggerRef}
         type="button"
         disabled={disabled}
         onClick={openCalendar}
@@ -231,7 +285,13 @@ export function DatePicker({
       </button>
 
       {open && (
-        <div className="absolute left-0 z-50 mt-2 w-72 rounded-xl border border-border bg-surface p-3 shadow-lg">
+        <div
+          ref={panelRef}
+          style={maxPanelHeight ? { maxHeight: maxPanelHeight } : undefined}
+          className={`absolute left-0 z-50 w-72 overflow-y-auto rounded-xl border border-border bg-surface p-3 shadow-lg ${
+            dropUp ? "bottom-full mb-2" : "top-full mt-2"
+          }`}
+        >
           <div className="mb-3 flex items-center justify-between gap-2">
             <button
               type="button"

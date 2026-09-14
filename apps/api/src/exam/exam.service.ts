@@ -18,6 +18,11 @@ export class ExamService {
     });
     if (!academicYear) throw new NotFoundException('Academic year not found');
 
+    const examType = await this.prisma.examType.findFirst({
+      where: { id: dto.examTypeId, schoolId },
+    });
+    if (!examType) throw new NotFoundException('Exam type not found');
+
     const startDate = new Date(dto.startDate);
     const endDate = new Date(dto.endDate);
 
@@ -40,7 +45,7 @@ export class ExamService {
     return this.prisma.exam.create({
       data: {
         name: dto.name,
-        examType: dto.examType,
+        examTypeId: dto.examTypeId,
         startDate,
         endDate,
         academicYearId: dto.academicYearId,
@@ -55,7 +60,7 @@ export class ExamService {
         academicYear: { schoolId },
         ...(academicYearId && { academicYearId }),
       },
-      include: { academicYear: true },
+      include: { academicYear: true, examType: true },
       orderBy: { startDate: 'desc' },
     });
   }
@@ -63,7 +68,7 @@ export class ExamService {
   async findOne(schoolId: string, id: string) {
     const exam = await this.prisma.exam.findFirst({
       where: { id, academicYear: { schoolId } },
-      include: { academicYear: true },
+      include: { academicYear: true, examType: true },
     });
     if (!exam) throw new NotFoundException('Exam not found');
     return exam;
@@ -81,6 +86,15 @@ export class ExamService {
       }
     }
 
+    if (dto.examTypeId) {
+      const examType = await this.prisma.examType.findFirst({
+        where: { id: dto.examTypeId, schoolId },
+      });
+      if (!examType) {
+        throw new NotFoundException('Exam type not found');
+      }
+    }
+
     const startDate = dto.startDate ? new Date(dto.startDate) : undefined;
     const endDate = dto.endDate ? new Date(dto.endDate) : undefined;
 
@@ -91,7 +105,10 @@ export class ExamService {
     return this.prisma.exam.update({
       where: { id },
       data: {
-        ...dto,
+        name: dto.name,
+        examTypeId: dto.examTypeId,
+        academicYearId: dto.academicYearId,
+        status: dto.status,
         startDate,
         endDate,
       },

@@ -114,14 +114,6 @@ export const ExamStatus = {
 export type ExamStatus = (typeof ExamStatus)[keyof typeof ExamStatus]
 
 
-export const ExamType = {
-  MODEL: 'MODEL',
-  TERM: 'TERM'
-} as const
-
-export type ExamType = (typeof ExamType)[keyof typeof ExamType]
-
-
 export const FeeFrequency = {
   ONE_TIME: 'ONE_TIME',
   MONTHLY: 'MONTHLY',

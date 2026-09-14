@@ -155,6 +155,11 @@ export type UnitTest = Prisma.UnitTestModel
  */
 export type Mark = Prisma.MarkModel
 /**
+ * Model ExamType
+ * 
+ */
+export type ExamType = Prisma.ExamTypeModel
+/**
  * Model Exam
  * 
  */

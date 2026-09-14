@@ -1,20 +1,20 @@
 import {
+  IsString,
+  IsNotEmpty,
+  IsUUID,
   IsDateString,
   IsEnum,
-  IsNotEmpty,
   IsOptional,
-  IsString,
-  IsUUID,
 } from 'class-validator';
-import { ExamType, ExamStatus } from 'generated/prisma/enums';
+import { ExamStatus } from 'generated/prisma/enums';
 
 export class CreateExamDto {
-  @IsNotEmpty()
   @IsString()
-  name: string; // e.g. "Onam Exam", "Term 1 Exam"
+  @IsNotEmpty()
+  name: string;
 
-  @IsEnum(ExamType)
-  examType: ExamType; // MODEL | TERM
+  @IsUUID()
+  examTypeId: string;
 
   @IsDateString()
   startDate: string;
@@ -27,5 +27,5 @@ export class CreateExamDto {
 
   @IsOptional()
   @IsEnum(ExamStatus)
-  status?: ExamStatus; // defaults to DRAFT if omitted
+  status?: ExamStatus;
 }

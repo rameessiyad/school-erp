@@ -56,8 +56,8 @@ export function ExamTable({
                 {exam.name}
               </TableCell>
 
-              <TableCell className="text-text-secondary capitalize">
-                {exam.examType.toLowerCase()}
+              <TableCell className="text-text-secondary">
+                {exam.examType?.name ?? "—"}
               </TableCell>
 
               <TableCell className="text-text-secondary">

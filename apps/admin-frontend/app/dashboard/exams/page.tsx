@@ -25,7 +25,7 @@ export default function ExamsPage() {
     return exams.filter(
       (exam) =>
         exam.name.toLowerCase().includes(query) ||
-        exam.examType.toLowerCase().includes(query) ||
+        (exam.examType?.name ?? "").toLowerCase().includes(query) ||
         (exam.academicYear?.label ?? "").toLowerCase().includes(query),
     );
   }, [exams, searchInput, isSearching]);

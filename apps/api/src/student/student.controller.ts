@@ -45,18 +45,9 @@ export class StudentController {
   }
 
   @Get('unassigned')
-  findUnassigned(
-    @Request() req,
-    @Query('classId') classId?: string,
-    @Query('sectionId') sectionId?: string,
-  ) {
-    return this.studentService.findUnassigned(
-      req.user.schoolId,
-      classId,
-      sectionId,
-    );
+  findUnassigned(@Request() req) {
+    return this.studentService.findUnassigned(req.user.schoolId);
   }
-
   @Get(':id')
   findOne(@Request() req, @Param('id') id: string) {
     return this.studentService.findOne(req.user.schoolId, id);

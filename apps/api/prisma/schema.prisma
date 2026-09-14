@@ -36,6 +36,7 @@ model School {
   staffLeaveApplications    StaffLeaveApplication[]
   staffAttendances          StaffAttendance[]
   studentAttendances        StudentAttendance[]
+  examTypes                 ExamType[]
 }
 
 enum SchoolStatus {
@@ -649,11 +650,27 @@ model Mark {
   @@unique([unitTestId, studentEnrollmentId])
 }
 
+model ExamType {
+  id        String  @id @default(uuid())
+  schoolId  String
+  name      String // e.g. "Model", "Term", "Onam Exam", "Christmas Exam"
+  isDefault Boolean @default(false)
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  exams  Exam[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, name])
+}
+
 model Exam {
   id   String @id @default(uuid())
   name String // e.g. "Onam Exam", "Christmas Exam", "Term 1 Exam"
 
-  examType ExamType
+  examTypeId String
+  examType   ExamType @relation(fields: [examTypeId], references: [id])
 
   startDate DateTime
   endDate   DateTime
@@ -716,11 +733,6 @@ model SubjectMark {
   updatedAt DateTime @updatedAt
 
   @@unique([examResultId, subjectId])
-}
-
-enum ExamType {
-  MODEL
-  TERM
 }
 
 model FeeStructure {

@@ -420,6 +420,7 @@ export const ModelName = {
   AssignmentStatus: 'AssignmentStatus',
   UnitTest: 'UnitTest',
   Mark: 'Mark',
+  ExamType: 'ExamType',
   Exam: 'Exam',
   ExamResult: 'ExamResult',
   SubjectMark: 'SubjectMark',
@@ -446,7 +447,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "school" | "academicYear" | "user" | "staff" | "teacher" | "parent" | "student" | "parentStudent" | "class" | "section" | "subject" | "studentEnrollment" | "teacherSubjectAllocation" | "classTeacherAssignment" | "timetable" | "attendance" | "studyMaterial" | "homework" | "homeworkStatus" | "assignment" | "assignmentStatus" | "unitTest" | "mark" | "exam" | "examResult" | "subjectMark" | "feeStructure" | "studentFee" | "feePayment" | "teacherAttendance" | "teacherLeaveApplication" | "staffAttendance" | "staffLeaveApplication" | "studentAttendance"
+    modelProps: "school" | "academicYear" | "user" | "staff" | "teacher" | "parent" | "student" | "parentStudent" | "class" | "section" | "subject" | "studentEnrollment" | "teacherSubjectAllocation" | "classTeacherAssignment" | "timetable" | "attendance" | "studyMaterial" | "homework" | "homeworkStatus" | "assignment" | "assignmentStatus" | "unitTest" | "mark" | "examType" | "exam" | "examResult" | "subjectMark" | "feeStructure" | "studentFee" | "feePayment" | "teacherAttendance" | "teacherLeaveApplication" | "staffAttendance" | "staffLeaveApplication" | "studentAttendance"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2152,6 +2153,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ExamType: {
+      payload: Prisma.$ExamTypePayload<ExtArgs>
+      fields: Prisma.ExamTypeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ExamTypeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ExamTypeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload>
+        }
+        findFirst: {
+          args: Prisma.ExamTypeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ExamTypeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload>
+        }
+        findMany: {
+          args: Prisma.ExamTypeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload>[]
+        }
+        create: {
+          args: Prisma.ExamTypeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload>
+        }
+        createMany: {
+          args: Prisma.ExamTypeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ExamTypeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload>[]
+        }
+        delete: {
+          args: Prisma.ExamTypeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload>
+        }
+        update: {
+          args: Prisma.ExamTypeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload>
+        }
+        deleteMany: {
+          args: Prisma.ExamTypeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ExamTypeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ExamTypeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload>[]
+        }
+        upsert: {
+          args: Prisma.ExamTypeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamTypePayload>
+        }
+        aggregate: {
+          args: Prisma.ExamTypeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateExamType>
+        }
+        groupBy: {
+          args: Prisma.ExamTypeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExamTypeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ExamTypeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExamTypeCountAggregateOutputType> | number
+        }
+      }
+    }
     Exam: {
       payload: Prisma.$ExamPayload<ExtArgs>
       fields: Prisma.ExamFieldRefs
@@ -3343,10 +3418,22 @@ export const MarkScalarFieldEnum = {
 export type MarkScalarFieldEnum = (typeof MarkScalarFieldEnum)[keyof typeof MarkScalarFieldEnum]
 
 
+export const ExamTypeScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  name: 'name',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExamTypeScalarFieldEnum = (typeof ExamTypeScalarFieldEnum)[keyof typeof ExamTypeScalarFieldEnum]
+
+
 export const ExamScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  examType: 'examType',
+  examTypeId: 'examTypeId',
   startDate: 'startDate',
   endDate: 'endDate',
   academicYearId: 'academicYearId',
@@ -3748,20 +3835,6 @@ export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMode
 
 
 /**
- * Reference to a field of type 'ExamType'
- */
-export type EnumExamTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExamType'>
-    
-
-
-/**
- * Reference to a field of type 'ExamType[]'
- */
-export type ListEnumExamTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExamType[]'>
-    
-
-
-/**
  * Reference to a field of type 'ExamStatus'
  */
 export type EnumExamStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExamStatus'>
@@ -4046,6 +4119,7 @@ export type GlobalOmitConfig = {
   assignmentStatus?: Prisma.AssignmentStatusOmit
   unitTest?: Prisma.UnitTestOmit
   mark?: Prisma.MarkOmit
+  examType?: Prisma.ExamTypeOmit
   exam?: Prisma.ExamOmit
   examResult?: Prisma.ExamResultOmit
   subjectMark?: Prisma.SubjectMarkOmit
