@@ -93,6 +93,12 @@ const navigation = [
     requiredModules: [Module.ACADEMIC_YEAR],
   },
   {
+    label: "Student Attendance",
+    href: "/dashboard/student-attendance",
+    icon: ClipboardList,
+    requiredModules: [Module.STUDENT_ATTENDANCE],
+  },
+  {
     label: "Fee Structures",
     href: "/dashboard/fee-structures",
     icon: Wallet,

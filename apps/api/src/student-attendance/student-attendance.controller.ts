@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Request,
@@ -25,6 +26,20 @@ export class StudentAttendanceController {
     return this.service.getMyClassStudents(
       req.user.schoolId,
       req.user.teacherId,
+      date,
+    );
+  }
+
+  @Get('section/:sectionId')
+  @Roles(Role.SCHOOL_ADMIN, Role.STAFF)
+  getSectionAttendance(
+    @Request() req,
+    @Param('sectionId') sectionId: string,
+    @Query('date') date: string,
+  ) {
+    return this.service.getSectionAttendance(
+      req.user.schoolId,
+      sectionId,
       date,
     );
   }

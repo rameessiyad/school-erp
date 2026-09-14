@@ -98,4 +98,49 @@ export class StudentAttendanceService {
 
     return { message: 'Attendance marked successfully', count: results.length };
   }
+
+  async getSectionAttendance(
+    schoolId: string,
+    sectionId: string,
+    date: string,
+  ) {
+    const section = await this.prisma.section.findFirst({
+      where: { id: sectionId, schoolId },
+      include: { class: true },
+    });
+    if (!section) throw new NotFoundException('Section not found');
+
+    const activeYear = await this.prisma.academicYear.findFirst({
+      where: { schoolId, isActive: true },
+    });
+    if (!activeYear) throw new NotFoundException('No active academic year');
+
+    const enrollments = await this.prisma.studentEnrollment.findMany({
+      where: { sectionId: section.id, academicYearId: activeYear.id },
+      include: { student: true },
+      orderBy: { rollNo: 'asc' },
+    });
+
+    const existing = await this.prisma.studentAttendance.findMany({
+      where: { sectionId: section.id, date: new Date(date) },
+    });
+    const existingMap = new Map(existing.map((e) => [e.studentId, e.status]));
+
+    return {
+      section: {
+        id: section.id,
+        name: section.name,
+        className: section.class.name,
+      },
+      isMarked: existing.length > 0,
+      students: enrollments.map((e) => ({
+        studentId: e.student.id,
+        firstName: e.student.firstName,
+        lastName: e.student.lastName,
+        rollNo: e.rollNo,
+        photoUrl: e.student.photoUrl,
+        status: existingMap.get(e.student.id) ?? null,
+      })),
+    };
+  }
 }
