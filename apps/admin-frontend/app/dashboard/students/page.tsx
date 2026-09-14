@@ -128,7 +128,10 @@ export default function StudentsPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
+          <Link
+            href="/dashboard/students/unassigned"
+            className="rounded-xl border border-border bg-surface p-5 shadow-sm transition hover:border-primary hover:bg-primary-soft"
+          >
             <p className="text-sm font-medium text-text-secondary">
               Unassigned Students
             </p>
@@ -140,7 +143,7 @@ export default function StudentsPage() {
             <p className="mt-1 text-xs text-text-muted">
               Not yet enrolled in a section
             </p>
-          </div>
+          </Link>
         </div>
       )}
 
