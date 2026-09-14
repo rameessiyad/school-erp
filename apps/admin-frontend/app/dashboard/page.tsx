@@ -7,7 +7,6 @@ import {
   ReceiptText,
   UserRound,
   Wallet,
-  ClipboardCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -15,11 +14,10 @@ import { useQuery } from "@tanstack/react-query";
 import { dashboardApi } from "@/lib/api/dashboard";
 import { authApi } from "@/lib/api/auth";
 import { Module } from "@/lib/permissions/module.enum";
-import { MiniCalendar } from "@/components/dashboard/mini-calendar";
 import { PageLoader } from "@/components/common/page-loader";
 import { FeeCollectionChart } from "@/components/dashboard/fee-collection-chart";
+import { StudentAttendanceChart } from "@/components/dashboard/student-attendance-chart";
 import { FeeOverview } from "@/components/dashboard/fee-overview";
-import { StudentDistribution } from "@/components/dashboard/student-distribution";
 import { DashboardActivity } from "@/components/dashboard/dashboard-activity";
 
 function formatCurrency(amount: number) {
@@ -59,12 +57,6 @@ const quickActions = [
     icon: ReceiptText,
     requiredModules: [Module.STUDENT_FEES, Module.FEE_REPORTS],
   },
-  {
-    title: "Mark Attendance",
-    href: "/dashboard/attendance",
-    icon: ClipboardCheck,
-    requiredModules: [Module.ATTENDANCE],
-  },
 ];
 
 export default function DashboardPage() {
@@ -101,6 +93,8 @@ export default function DashboardPage() {
     Module.PAYMENT_HISTORY,
   ]);
 
+  const canSeeAttendance = hasModule([Module.STUDENT_ATTENDANCE]);
+
   const canSeeClasses = hasModule([Module.ACADEMIC_YEAR]);
 
   const statCards = [
@@ -135,7 +129,7 @@ export default function DashboardPage() {
   ].filter((card) => card.show);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="max-w-auto space-y-6">
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
@@ -200,26 +194,15 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Fees */}
-      {canSeeFees && (
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <FeeCollectionChart data={stats?.feeTrend ?? []} />
-          </div>
+      {/* Fee Trend + Attendance Trend + Quick Actions — single row */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {canSeeFees && (
+          <FeeCollectionChart data={stats?.feeTrend ?? []} />
+        )}
 
-          <div className="lg:col-span-1">
-            <FeeOverview
-              collected={stats?.totalFeesCollected ?? 0}
-              pending={stats?.totalFeesPending ?? 0}
-              percentage={stats?.feeCollectionPercentage ?? 0}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Calendar + Quick Actions */}
-      <div className="w-full">
-        {/* <MiniCalendar /> */}
+        {canSeeAttendance && (
+          <StudentAttendanceChart data={stats?.attendanceTrend ?? []} />
+        )}
 
         {visibleQuickActions.length > 0 && (
           <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
@@ -233,7 +216,7 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            <div className="mt-4 grid gap-2">
               {visibleQuickActions.map((action) => {
                 const Icon = action.icon;
 
@@ -260,11 +243,25 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Activity */}
-      <DashboardActivity
-        recentActivities={stats?.recentActivities ?? []}
-        upcomingItems={stats?.upcomingItems ?? []}
-      />
+      {/* Fee Overview + Activity */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {canSeeFees && (
+          <div className="lg:col-span-1">
+            <FeeOverview
+              collected={stats?.totalFeesCollected ?? 0}
+              pending={stats?.totalFeesPending ?? 0}
+              percentage={stats?.feeCollectionPercentage ?? 0}
+            />
+          </div>
+        )}
+
+        <div className={canSeeFees ? "lg:col-span-2" : "lg:col-span-3"}>
+          <DashboardActivity
+            recentActivities={stats?.recentActivities ?? []}
+            upcomingItems={stats?.upcomingItems ?? []}
+          />
+        </div>
+      </div>
     </div>
   );
 }

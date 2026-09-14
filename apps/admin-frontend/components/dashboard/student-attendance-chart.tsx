@@ -1,59 +1,47 @@
 "use client";
 
-import { BarChart3 } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import {
-  Bar,
   CartesianGrid,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
-  BarChart,
 } from "recharts";
 
-interface FeeTrendItem {
-  month: string;
-  collected: number;
+interface AttendanceTrendItem {
+  date: string;
+  percentage: number | null;
 }
 
-interface FeeCollectionChartProps {
-  data: FeeTrendItem[];
+interface StudentAttendanceChartProps {
+  data: AttendanceTrendItem[];
 }
 
-function formatCurrency(amount: number) {
-  if (amount >= 100000) {
-    return `₹${(amount / 100000).toFixed(1)}L`;
-  }
-
-  if (amount >= 1000) {
-    return `₹${(amount / 1000).toFixed(0)}K`;
-  }
-
-  return `₹${amount}`;
-}
-
-export function FeeCollectionChart({ data }: FeeCollectionChartProps) {
+export function StudentAttendanceChart({ data }: StudentAttendanceChartProps) {
   return (
     <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
           <h2 className="text-base font-semibold text-text-primary">
-            Fee Collection Trend
+            Student Attendance Trend
           </h2>
 
           <p className="mt-1 text-sm text-text-secondary">
-            Monthly fee collection for the academic year.
+            Daily attendance % over the last 14 days.
           </p>
         </div>
 
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-soft text-primary">
-          <BarChart3 className="h-4 w-4" />
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-success-soft text-success">
+          <TrendingUp className="h-4 w-4" />
         </div>
       </div>
 
       <div className="mt-6 h-55 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
+          <LineChart
             data={data}
             margin={{
               top: 10,
@@ -69,7 +57,7 @@ export function FeeCollectionChart({ data }: FeeCollectionChartProps) {
             />
 
             <XAxis
-              dataKey="month"
+              dataKey="date"
               axisLine={false}
               tickLine={false}
               tick={{
@@ -81,20 +69,18 @@ export function FeeCollectionChart({ data }: FeeCollectionChartProps) {
             <YAxis
               axisLine={false}
               tickLine={false}
+              domain={[0, 100]}
               tick={{
                 fontSize: 11,
                 fill: "var(--text-secondary)",
               }}
-              tickFormatter={formatCurrency}
+              tickFormatter={(v) => `${v}%`}
             />
 
             <Tooltip
-              cursor={{
-                fill: "var(--primary-soft)",
-              }}
               formatter={(value) => [
-                formatCurrency(Number(value)),
-                "Collected",
+                value === null ? "Not marked" : `${value}%`,
+                "Attendance",
               ]}
               contentStyle={{
                 borderRadius: "8px",
@@ -108,13 +94,16 @@ export function FeeCollectionChart({ data }: FeeCollectionChartProps) {
               }}
             />
 
-            <Bar
-              dataKey="collected"
-              fill="var(--primary)"
-              radius={[5, 5, 0, 0]}
-              barSize={30}
+            <Line
+              type="monotone"
+              dataKey="percentage"
+              stroke="var(--success)"
+              strokeWidth={2}
+              dot={{ r: 3, fill: "var(--success)", strokeWidth: 0 }}
+              activeDot={{ r: 5 }}
+              connectNulls
             />
-          </BarChart>
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>

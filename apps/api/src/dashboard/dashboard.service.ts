@@ -230,6 +230,56 @@ export class DashboardService {
     }));
 
     // ---------------------------------------------------------
+    // Student attendance trend (last 14 days, % present)
+    // ---------------------------------------------------------
+
+    const attendanceDays = 14;
+    const attendanceFrom = new Date();
+    attendanceFrom.setDate(attendanceFrom.getDate() - (attendanceDays - 1));
+    attendanceFrom.setHours(0, 0, 0, 0);
+
+    const attendanceRecords = await this.prisma.studentAttendance.findMany({
+      where: {
+        schoolId,
+        date: { gte: attendanceFrom },
+      },
+      select: { date: true, status: true },
+    });
+
+    const attendanceByDay = new Map<
+      string,
+      { present: number; total: number }
+    >();
+
+    for (const record of attendanceRecords) {
+      const key = record.date.toISOString().slice(0, 10);
+      const entry = attendanceByDay.get(key) ?? { present: 0, total: 0 };
+      entry.total += 1;
+      if (record.status === 'PRESENT') entry.present += 1;
+      attendanceByDay.set(key, entry);
+    }
+
+    const attendanceTrend = Array.from({ length: attendanceDays }).map(
+      (_, i) => {
+        const day = new Date(attendanceFrom);
+        day.setDate(day.getDate() + i);
+        const key = day.toISOString().slice(0, 10);
+        const entry = attendanceByDay.get(key);
+
+        return {
+          date: day.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+          }),
+          percentage:
+            entry && entry.total > 0
+              ? Math.round((entry.present / entry.total) * 100)
+              : null,
+        };
+      },
+    );
+
+    // ---------------------------------------------------------
     // Student distribution
     // ---------------------------------------------------------
 
@@ -362,6 +412,7 @@ export class DashboardService {
       feeCollectionPercentage,
 
       feeTrend,
+      attendanceTrend,
       studentDistribution,
 
       recentActivities,

@@ -3,6 +3,11 @@ export interface FeeTrendItem {
   collected: number;
 }
 
+export interface AttendanceTrendItem {
+  date: string;
+  percentage: number | null;
+}
+
 export interface StudentDistributionItem {
   className: string;
   count: number;
@@ -33,6 +38,7 @@ export interface DashboardStats {
   feeCollectionPercentage: number;
 
   feeTrend: FeeTrendItem[];
+  attendanceTrend: AttendanceTrendItem[];
   studentDistribution: StudentDistributionItem[];
 
   recentActivities: RecentActivityItem[];
