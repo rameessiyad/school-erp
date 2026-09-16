@@ -244,8 +244,8 @@ export default function DashboardPage() {
       </div>
 
       {/* Fee Overview + Activity */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {canSeeFees && (
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* {canSeeFees && (
           <div className="lg:col-span-1">
             <FeeOverview
               collected={stats?.totalFeesCollected ?? 0}
@@ -253,7 +253,7 @@ export default function DashboardPage() {
               percentage={stats?.feeCollectionPercentage ?? 0}
             />
           </div>
-        )}
+        )} */}
 
         <div className={canSeeFees ? "lg:col-span-2" : "lg:col-span-3"}>
           <DashboardActivity

@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye } from "lucide-react";
 import { feeApi } from "@/lib/api/fee";
 import { sectionsApi } from "@/lib/api/sections";
-import { FeeRowActions } from "@/components/fees/fee-row-actions";
-import { FeeStatusBadge } from "@/components/fees/fee-status-badge";
 import {
   Select,
   SelectContent,
@@ -19,8 +17,52 @@ import {
 import { Input } from "@/components/ui/input";
 import { feeStatuses } from "@/lib/validations/fee";
 import { PageLoader } from "@/components/common/page-loader";
+import type { StudentFee } from "@/lib/validations/fee";
 
 type FeeStatusValue = (typeof feeStatuses)[number];
+
+// One row per student, rolled up from all their StudentFee records
+interface StudentFeeGroup {
+  studentId: string;
+  student: StudentFee["student"];
+  fees: StudentFee[];
+  totalAmount: number;
+  totalBalance: number;
+  paidCount: number;
+}
+
+function balanceOf(fee: StudentFee) {
+  const paid = fee.payments?.reduce((s, p) => s + Number(p.amount), 0) ?? 0;
+  return Number(fee.totalAmount) - Number(fee.discountAmount) - paid;
+}
+
+function groupByStudent(fees: StudentFee[]): StudentFeeGroup[] {
+  const map = new Map<string, StudentFeeGroup>();
+
+  for (const fee of fees) {
+    const studentId = fee.student?.id;
+    if (!studentId) continue;
+
+    if (!map.has(studentId)) {
+      map.set(studentId, {
+        studentId,
+        student: fee.student,
+        fees: [],
+        totalAmount: 0,
+        totalBalance: 0,
+        paidCount: 0,
+      });
+    }
+
+    const group = map.get(studentId)!;
+    group.fees.push(fee);
+    group.totalAmount += Number(fee.totalAmount);
+    group.totalBalance += balanceOf(fee);
+    if (fee.status === "PAID") group.paidCount += 1;
+  }
+
+  return Array.from(map.values());
+}
 
 export default function SectionFeesPage() {
   const params = useParams<{ sectionId: string }>();
@@ -48,6 +90,11 @@ export default function SectionFeesPage() {
       }),
   });
 
+  const studentGroups = useMemo(
+    () => groupByStudent(studentFees),
+    [studentFees],
+  );
+
   if (isError) {
     router.push("/dashboard/fees");
     return null;
@@ -58,11 +105,6 @@ export default function SectionFeesPage() {
   }
 
   const { section } = sectionDetails;
-
-  const balanceOf = (fee: (typeof studentFees)[number]) => {
-    const paid = fee.payments?.reduce((s, p) => s + Number(p.amount), 0) ?? 0;
-    return Number(fee.totalAmount) - Number(fee.discountAmount) - paid;
-  };
 
   return (
     <div className="space-y-8">
@@ -129,8 +171,8 @@ export default function SectionFeesPage() {
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <h2 className="font-semibold text-text-primary">Student Fees</h2>
           <span className="text-sm text-text-muted">
-            {studentFees.length}{" "}
-            {studentFees.length === 1 ? "record" : "records"}
+            {studentGroups.length}{" "}
+            {studentGroups.length === 1 ? "student" : "students"}
           </span>
         </div>
 
@@ -142,16 +184,13 @@ export default function SectionFeesPage() {
                   Student
                 </th>
                 <th className="px-6 py-3.5 font-medium text-text-secondary">
-                  Fee
+                  Fees
                 </th>
                 <th className="px-6 py-3.5 font-medium text-text-secondary">
                   Total
                 </th>
                 <th className="px-6 py-3.5 font-medium text-text-secondary">
                   Balance
-                </th>
-                <th className="px-6 py-3.5 font-medium text-text-secondary">
-                  Status
                 </th>
                 <th className="px-6 py-3.5 font-medium text-text-secondary">
                   Actions
@@ -163,54 +202,56 @@ export default function SectionFeesPage() {
               {feesLoading ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={5}
                     className="px-6 py-12 text-center text-text-muted"
                   >
                     Loading fees...
                   </td>
                 </tr>
-              ) : studentFees.length === 0 ? (
+              ) : studentGroups.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={5}
                     className="px-6 py-12 text-center text-text-muted"
                   >
                     No fee records match these filters.
                   </td>
                 </tr>
               ) : (
-                studentFees.map((fee) => (
+                studentGroups.map((group) => (
                   <tr
-                    key={fee.id}
+                    key={group.studentId}
                     className="transition hover:bg-surface-secondary/50"
                   >
                     <td className="px-6 py-4">
                       <p className="font-medium text-text-primary">
-                        {fee.student?.firstName} {fee.student?.lastName}
+                        {group.student?.firstName} {group.student?.lastName}
                       </p>
                       <p className="text-xs text-text-muted">
-                        {fee.student?.admissionNumber}
+                        {group.student?.admissionNumber}
                       </p>
                     </td>
 
                     <td className="px-6 py-4 text-text-secondary">
-                      {fee.feeStructure?.name}
+                      {group.paidCount}/{group.fees.length} paid
                     </td>
 
                     <td className="px-6 py-4 text-text-secondary">
-                      ₹{fee.totalAmount}
+                      ₹{group.totalAmount}
                     </td>
 
                     <td className="px-6 py-4 font-medium text-text-primary">
-                      ₹{balanceOf(fee)}
+                      ₹{group.totalBalance}
                     </td>
 
                     <td className="px-6 py-4">
-                      <FeeStatusBadge status={fee.status} />
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <FeeRowActions studentFeeId={fee.id} />
+                      <Link
+                        href={`/dashboard/fees/section/${params.sectionId}/student/${group.studentId}`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border text-text-secondary transition hover:bg-surface-secondary hover:text-text-primary"
+                        title="View fees"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Link>
                     </td>
                   </tr>
                 ))

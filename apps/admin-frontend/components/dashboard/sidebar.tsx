@@ -302,7 +302,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           type="button"
           onClick={toggleCollapsed}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-muted transition hover:bg-surface-secondary hover:text-text-primary"
+          className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted transition hover:bg-surface-secondary hover:text-text-primary"
         >
           {collapsed ? (
             <ChevronRight className="h-4 w-4" />
