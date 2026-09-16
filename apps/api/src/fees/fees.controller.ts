@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -62,5 +63,11 @@ export class FeeStructureController {
   @RequireModule(Module.STUDENT_FEES)
   deactivate(@Request() req, @Param('id') id: string) {
     return this.feeStructureService.deactivate(req.user.schoolId, id);
+  }
+
+  @Delete(':id')
+  @RequireModule(Module.STUDENT_FEES)
+  remove(@Request() req, @Param('id') id: string) {
+    return this.feeStructureService.remove(req.user.schoolId, id);
   }
 }

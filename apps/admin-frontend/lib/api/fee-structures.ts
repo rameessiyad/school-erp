@@ -28,9 +28,8 @@ export const feeStructureApi = {
     return data;
   },
 
-  remove: async (id: string) => {
-    const { data } = await apiClient.delete(`/fee-structure/${id}`);
-    return data;
+  remove: async (id: string): Promise<void> => {
+    await apiClient.delete(`/fee-structure/${id}`);
   },
 
   deactivate: async (id: string) => {

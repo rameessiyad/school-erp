@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateFeeStructureDto } from './dto/create-fee-structure.dto';
@@ -117,6 +118,27 @@ export class FeeStructureService {
     return this.prisma.feeStructure.update({
       where: { id },
       data: { isActive: false },
+    });
+  }
+
+  async remove(schoolId: string, id: string) {
+    await this.findOne(schoolId, id); // ensures existence + tenant scope
+
+    // Block deletion if any student under this structure already has payments
+    const paymentCount = await this.prisma.feePayment.count({
+      where: { studentFee: { feeStructureId: id } },
+    });
+
+    if (paymentCount > 0) {
+      throw new BadRequestException(
+        'This fee structure has recorded payments and cannot be deleted. Deactivate it instead.',
+      );
+    }
+
+    // Safe to hard delete: no payments exist yet
+    return this.prisma.$transaction(async (tx) => {
+      await tx.studentFee.deleteMany({ where: { feeStructureId: id } });
+      return tx.feeStructure.delete({ where: { id } });
     });
   }
 }
