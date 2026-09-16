@@ -100,7 +100,7 @@ export default function FeeDetailPage() {
       </div>
 
       {balance > 0 && (
-        <div className="max-w-3xl mx-auto">
+        <div className=" mx-auto">
           <PaymentForm
             studentFeeId={fee.id}
             remainingBalance={balance}
