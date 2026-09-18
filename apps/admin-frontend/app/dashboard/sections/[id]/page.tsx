@@ -4,7 +4,7 @@ import { useState } from "react";
 import { sectionsApi } from "@/lib/api/sections";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { ArrowLeft, Search, X } from "lucide-react";
 import { useDebouncedValue } from "@/hooks/use-debounzed-values";
 import { SectionStudentsTable } from "@/components/tables/section-student-list";
 import Link from "next/link";
@@ -30,9 +30,7 @@ export default function SectionDetailPage() {
   }
 
   if (isLoading || !data) {
-    return (
-      <PageLoader text="Loading section details" />
-    );
+    return <PageLoader text="Loading section details" />;
   }
 
   const { section, academicYear, classTeacher, students } = data;
@@ -52,6 +50,14 @@ export default function SectionDetailPage() {
   return (
     <div className="space-y-8">
       <div>
+        <Link
+          href="/dashboard/classes"
+          className="mb-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to classes
+        </Link>
+
         <p className="mb-1 text-sm font-medium text-primary">
           {section.class?.name ?? "Class"}
         </p>
