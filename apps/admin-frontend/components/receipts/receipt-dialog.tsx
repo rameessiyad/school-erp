@@ -59,118 +59,241 @@ export function ReceiptDialog({
 
     const amount = Number(payment.amount || 0);
 
+    const student = studentName ?? "—";
+    const feeName = feeStructureName ?? "—";
+    const collectedBy = payment.collectedBy?.email ?? "—";
+
+    // =========================================================
+    // PAGE CONSTANTS
+    // =========================================================
+
     const pageWidth = 210;
+    const margin = 18;
+    const contentWidth = pageWidth - margin * 2;
 
     // =========================================================
-    // HEADER
+    // COLORS
     // =========================================================
 
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(15, 15, 180, 43, 4, 4, "F");
+    const primary = {
+      r: 30,
+      g: 41,
+      b: 59,
+    };
+
+    const secondary = {
+      r: 100,
+      g: 116,
+      b: 139,
+    };
+
+    const muted = {
+      r: 148,
+      g: 163,
+      b: 184,
+    };
+
+    const border = {
+      r: 226,
+      g: 232,
+      b: 240,
+    };
+
+    const light = {
+      r: 248,
+      g: 250,
+      b: 252,
+    };
+
+    const white = {
+      r: 255,
+      g: 255,
+      b: 255,
+    };
+
+    // =========================================================
+    // HELPER FUNCTIONS
+    // =========================================================
+
+    const setPrimary = () => {
+      doc.setTextColor(primary.r, primary.g, primary.b);
+    };
+
+    const setSecondary = () => {
+      doc.setTextColor(secondary.r, secondary.g, secondary.b);
+    };
+
+    const setBorder = () => {
+      doc.setDrawColor(border.r, border.g, border.b);
+    };
+
+    const drawLabel = (text: string, x: number, y: number) => {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      setSecondary();
+      doc.text(text, x, y);
+    };
+
+    const drawValue = (
+      text: string,
+      x: number,
+      y: number,
+      options?: {
+        align?: "left" | "center" | "right";
+        size?: number;
+      },
+    ) => {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(options?.size ?? 10);
+      setPrimary();
+
+      doc.text(text, x, y, {
+        align: options?.align ?? "left",
+      });
+    };
+
+    // =========================================================
+    // PAGE BACKGROUND
+    // =========================================================
+
+    doc.setFillColor(white.r, white.g, white.b);
+
+    doc.rect(0, 0, pageWidth, 297, "F");
+
+    // =========================================================
+    // TOP BRANDING
+    // =========================================================
+
+    // Header background
+    doc.setFillColor(light.r, light.g, light.b);
+
+    doc.roundedRect(margin, 16, contentWidth, 42, 4, 4, "F");
+
+    // Small vertical brand line
+    doc.setFillColor(primary.r, primary.g, primary.b);
+
+    doc.roundedRect(margin + 7, 24, 2, 25, 1, 1, "F");
 
     // SKOLA DECK
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.setTextColor(30, 41, 59);
-    doc.text("SKOLA DECK", 25, 30);
+    doc.setFontSize(21);
+    setPrimary();
+
+    doc.text("SKOLA DECK", margin + 15, 31);
 
     // School name
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.setTextColor(71, 85, 105);
-    doc.text(SCHOOL_NAME, 25, 39);
+    doc.setFontSize(10);
+    setSecondary();
+
+    doc.text(SCHOOL_NAME, margin + 15, 39);
 
     // Subtitle
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(8.5);
-    doc.setTextColor(100, 116, 139);
-    doc.text("School Management System", 25, 47);
+    doc.setFontSize(7.5);
+    doc.setTextColor(muted.r, muted.g, muted.b);
 
-    // Receipt badge
-    doc.setFillColor(30, 41, 59);
-    doc.roundedRect(148, 23, 37, 22, 3, 3, "F");
+    doc.text("School Management System", margin + 15, 46);
+
+    // =========================================================
+    // RECEIPT BADGE
+    // =========================================================
+
+    const badgeX = 151;
+    const badgeY = 23;
+    const badgeW = 39;
+    const badgeH = 27;
+
+    doc.setFillColor(primary.r, primary.g, primary.b);
+
+    doc.roundedRect(badgeX, badgeY, badgeW, badgeH, 3, 3, "F");
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(7.5);
+    doc.setTextColor(white.r, white.g, white.b);
 
-    doc.text("PAYMENT", 166.5, 31, {
+    doc.text("OFFICIAL", badgeX + badgeW / 2, badgeY + 9, {
       align: "center",
     });
 
-    doc.setFontSize(11);
+    doc.setFontSize(10);
 
-    doc.text("RECEIPT", 166.5, 38, {
+    doc.text("RECEIPT", badgeX + badgeW / 2, badgeY + 18, {
       align: "center",
     });
 
     // =========================================================
-    // RECEIPT INFORMATION
+    // RECEIPT META
     // =========================================================
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
+    const metaY = 72;
 
-    doc.text("Receipt Number", 20, 72);
+    // Receipt number
+    drawLabel("RECEIPT NUMBER", margin, metaY);
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.setTextColor(30, 41, 59);
-
-    doc.text(receiptNumber, 20, 79);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
-
-    doc.text("Payment Date", 190, 72, {
-      align: "right",
+    drawValue(receiptNumber, margin, metaY + 8, {
+      size: 10,
     });
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.setTextColor(30, 41, 59);
+    // Date
+    drawLabel("PAYMENT DATE", pageWidth - margin, metaY);
 
-    doc.text(date, 190, 79, {
+    drawValue(date, pageWidth - margin, metaY + 8, {
       align: "right",
+      size: 10,
     });
 
     // Divider
-    doc.setDrawColor(226, 232, 240);
-    doc.setLineWidth(0.5);
+    setBorder();
+    doc.setLineWidth(0.4);
 
-    doc.line(20, 87, 190, 87);
+    doc.line(margin, 86, pageWidth - margin, 86);
 
     // =========================================================
-    // STUDENT DETAILS
+    // STUDENT INFORMATION
     // =========================================================
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
-    doc.setTextColor(30, 41, 59);
+    setPrimary();
 
-    doc.text("Student Details", 20, 101);
+    doc.text("Student Information", margin, 100);
 
     // Student card
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(20, 108, 170, 26, 3, 3, "F");
+    doc.setFillColor(light.r, light.g, light.b);
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(100, 116, 139);
+    doc.roundedRect(margin, 106, contentWidth, 30, 3, 3, "F");
 
-    doc.text("STUDENT", 27, 117);
+    // Student label
+    drawLabel("STUDENT NAME", margin + 8, 116);
+
+    // Student name
+    const studentLines = doc.splitTextToSize(student, 105);
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
-    doc.setTextColor(30, 41, 59);
+    setPrimary();
 
-    const student = studentName ?? "—";
+    doc.text(studentLines, margin + 8, 125);
 
-    const studentText = doc.splitTextToSize(student, 145);
+    // Status
+    const statusX = 160;
+    const statusY = 116;
 
-    doc.text(studentText, 27, 125);
+    drawLabel("STATUS", statusX, statusY);
+
+    doc.setFillColor(240, 253, 244);
+
+    doc.roundedRect(statusX, 120, 20, 8, 4, 4, "F");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+
+    doc.setTextColor(22, 101, 52);
+
+    doc.text("PAID", statusX + 10, 125.5, {
+      align: "center",
+    });
 
     // =========================================================
     // PAYMENT DETAILS
@@ -178,126 +301,184 @@ export function ReceiptDialog({
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
-    doc.setTextColor(30, 41, 59);
+    setPrimary();
 
-    doc.text("Payment Details", 20, 151);
+    doc.text("Payment Details", margin, 153);
 
-    // Outer box
-    doc.setDrawColor(226, 232, 240);
-    doc.setLineWidth(0.4);
+    // Table
+    const tableX = margin;
+    const tableY = 160;
+    const tableW = contentWidth;
+    const rowH = 15;
 
-    doc.roundedRect(20, 158, 170, 50, 3, 3);
+    // Header
+    doc.setFillColor(primary.r, primary.g, primary.b);
 
-    // Fee
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
-
-    doc.text("Fee", 27, 169);
+    doc.roundedRect(tableX, tableY, tableW, 12, 3, 3, "F");
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(9.5);
-    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(8);
+    doc.setTextColor(white.r, white.g, white.b);
 
-    const feeName = doc.splitTextToSize(feeStructureName ?? "—", 100);
+    doc.text("DESCRIPTION", tableX + 8, tableY + 7.5);
 
-    doc.text(feeName, 190, 169, {
+    doc.text("DETAILS", tableX + tableW - 8, tableY + 7.5, {
       align: "right",
     });
 
-    // Divider
-    doc.setDrawColor(226, 232, 240);
+    // Table rows
+    const rows = [
+      {
+        label: "Fee",
+        value: feeName,
+      },
+      {
+        label: "Payment Method",
+        value: paymentMethod,
+      },
+      {
+        label: "Collected By",
+        value: collectedBy,
+      },
+    ];
 
-    doc.line(27, 176, 183, 176);
+    let currentY = tableY + 12;
 
-    // Payment method
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
+    rows.forEach((row, index) => {
+      const isLast = index === rows.length - 1;
 
-    doc.text("Payment Method", 27, 186);
+      // Row background
+      if (index % 2 === 0) {
+        doc.setFillColor(251, 252, 253);
 
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(30, 41, 59);
+        doc.rect(tableX, currentY, tableW, rowH, "F");
+      }
 
-    doc.text(paymentMethod, 190, 186, {
-      align: "right",
+      // Label
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      setSecondary();
+
+      doc.text(row.label, tableX + 8, currentY + 9);
+
+      // Value
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      setPrimary();
+
+      const valueLines = doc.splitTextToSize(row.value, 95);
+
+      // For long values, start slightly higher
+      const valueY = valueLines.length > 1 ? currentY + 6 : currentY + 9;
+
+      doc.text(valueLines, tableX + tableW - 8, valueY, {
+        align: "right",
+      });
+
+      // Row divider
+      if (!isLast) {
+        setBorder();
+        doc.setLineWidth(0.3);
+
+        doc.line(
+          tableX + 7,
+          currentY + rowH,
+          tableX + tableW - 7,
+          currentY + rowH,
+        );
+      }
+
+      currentY += rowH;
     });
 
-    // Divider
-    doc.setDrawColor(226, 232, 240);
+    // Outer table border
+    setBorder();
 
-    doc.line(27, 193, 183, 193);
+    doc.setLineWidth(0.5);
 
-    // Collected by
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
-
-    doc.text("Collected By", 27, 203);
-
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(30, 41, 59);
-
-    const collectedBy = payment.collectedBy?.email ?? "—";
-
-    const collectorText = doc.splitTextToSize(collectedBy, 105);
-
-    doc.text(collectorText, 190, 203, {
-      align: "right",
-    });
+    doc.roundedRect(tableX, tableY, tableW, 12 + rowH * rows.length, 3, 3);
 
     // =========================================================
     // TOTAL AMOUNT
     // =========================================================
 
-    doc.setFillColor(241, 245, 249);
+    const totalY = currentY + 13;
 
-    doc.roundedRect(20, 219, 170, 32, 4, 4, "F");
+    doc.setFillColor(light.r, light.g, light.b);
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
+    doc.roundedRect(margin, totalY, contentWidth, 34, 4, 4, "F");
 
-    doc.text("TOTAL AMOUNT PAID", 28, 232);
+    drawLabel("TOTAL AMOUNT PAID", margin + 10, totalY + 13);
 
+    // Amount
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(19);
-    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(20);
+    setPrimary();
 
-    // Using Rs. because default Helvetica doesn't support ₹
-    doc.text(`Rs. ${amount.toLocaleString("en-IN")}`, 182, 234, {
-      align: "right",
-    });
+    doc.text(
+      `Rs. ${amount.toLocaleString("en-IN")}`,
+      pageWidth - margin - 10,
+      totalY + 20,
+      {
+        align: "right",
+      },
+    );
 
     // =========================================================
-    // THANK YOU
+    // SIGNATURE SECTION
     // =========================================================
+
+    const signatureY = totalY + 53;
+
+    // Left signature
+    doc.setDrawColor(203, 213, 225);
+
+    doc.setLineWidth(0.4);
+
+    doc.line(margin, signatureY, margin + 58, signatureY);
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
+    doc.setFontSize(7.5);
 
-    doc.text("Thank you for your payment.", pageWidth / 2, 269, {
-      align: "center",
-    });
+    setSecondary();
+
+    doc.text("Authorized Signature", margin, signatureY + 6);
+
+    // Right signature
+    doc.line(
+      pageWidth - margin - 58,
+      signatureY,
+      pageWidth - margin,
+      signatureY,
+    );
+
+    doc.text("Parent / Student", pageWidth - margin - 58, signatureY + 6);
 
     // =========================================================
     // FOOTER
     // =========================================================
 
-    doc.setDrawColor(226, 232, 240);
-    doc.setLineWidth(0.4);
+    const footerY = 276;
 
-    doc.line(20, 278, 190, 278);
+    setBorder();
+
+    doc.line(margin, footerY, pageWidth - margin, footerY);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+
+    setPrimary();
+
+    doc.text("SKOLA DECK", margin, footerY + 8);
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(7.5);
-    doc.setTextColor(148, 163, 184);
+    doc.setFontSize(7);
 
-    doc.text("Generated by SKOLA DECK", 20, 285);
+    doc.setTextColor(muted.r, muted.g, muted.b);
 
-    doc.text("This is a computer-generated receipt.", 190, 285, {
+    doc.text("School Management System", margin + 27, footerY + 8);
+
+    doc.text("Computer-generated receipt", pageWidth - margin, footerY + 8, {
       align: "right",
     });
 
