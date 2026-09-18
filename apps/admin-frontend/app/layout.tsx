@@ -38,11 +38,15 @@ export default function RootLayout({
           <Providers>
             {children}
             <Toaster
-              position="top-right"
+              position="bottom-right"
               richColors
               closeButton
               toastOptions={{
                 duration: 3500,
+                classNames: {
+                  toast: "app-toast",
+                  closeButton: "app-toast-close",
+                },
               }}
             />
           </Providers>

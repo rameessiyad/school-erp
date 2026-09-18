@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { teachersApi } from "@/lib/api/teachers";
 import { DeleteEntityDialog } from "../shared/delete-entity-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { notify } from "@/lib/toast";
 
 interface TeacherRowActionsProps {
   teacherId: string;
@@ -24,6 +25,14 @@ export function TeacherRowActions({
     mutationFn: () => teachersApi.update(teacherId, { isActive: !isActive }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teachers"] });
+      if (isActive) {
+        notify.warning(`${teacherName} marked as inactive`);
+      } else {
+        notify.success(`${teacherName} marked as active`);
+      }
+    },
+    onError: () => {
+      notify.error("Failed to update teacher status");
     },
   });
 
@@ -60,9 +69,10 @@ export function TeacherRowActions({
         entityLabel="teacher"
         entityName={teacherName}
         onDelete={() => teachersApi.remove(teacherId)}
-        onSuccess={() =>
-          queryClient.invalidateQueries({ queryKey: ["teachers"] })
-        }
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ["teachers"] });
+          notify.success(`${teacherName} deleted successfully`);
+        }}
       />
     </div>
   );

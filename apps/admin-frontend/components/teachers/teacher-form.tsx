@@ -28,6 +28,7 @@ import { getErrorMessage } from "@/lib/api/error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MobileInput } from "../ui/mobile-input";
 import { DatePicker } from "../ui/date-picker";
+import { notify } from "@/lib/toast";
 
 interface Option {
   id: string;
@@ -204,26 +205,25 @@ export function TeacherForm({
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["teachers"],
-      });
-
+      queryClient.invalidateQueries({ queryKey: ["teachers"] });
       if (isEditMode) {
-        queryClient.invalidateQueries({
-          queryKey: ["teacher", teacherId],
-        });
+        queryClient.invalidateQueries({ queryKey: ["teacher", teacherId] });
       }
-
+      notify.success(
+        isEditMode
+          ? "Teacher updated successfully"
+          : "Teacher created successfully",
+      );
       router.push("/dashboard/teachers");
     },
 
     onError: (error) => {
-      setServerError(
-        getErrorMessage(
-          error,
-          `Failed to ${isEditMode ? "update" : "create"} teacher`,
-        ),
+      const message = getErrorMessage(
+        error,
+        `Failed to ${isEditMode ? "update" : "create"} teacher`,
       );
+      setServerError(message);
+      notify.error(message);
     },
   });
 
