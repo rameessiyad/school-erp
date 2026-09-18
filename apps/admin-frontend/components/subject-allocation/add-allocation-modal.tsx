@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AxiosError } from "axios";
+import { notify } from "@/lib/toast";
 
 interface AddAllocationModalProps {
   open: boolean;
@@ -74,11 +75,14 @@ export function AddAllocationModal({
       queryClient.invalidateQueries({
         queryKey: ["sectionAllocations", sectionId],
       });
+
+      notify.success("Allocation added successfully");
       reset();
       onOpenChange(false);
     },
     onError: (err: AxiosError<{ message?: string }>) => {
       setError(err?.response?.data?.message ?? "Failed to add allocation");
+      notify.error(err?.response?.data?.message ?? "Failed to add allocation");
     },
   });
 

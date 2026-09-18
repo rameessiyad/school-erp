@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { classesApi } from "@/lib/api/classes";
 import { sectionsApi } from "@/lib/api/sections";
 import { getErrorMessage } from "@/lib/api/error";
+import { notify } from "@/lib/toast";
 
 type SectionRow = { id: string; name: string };
 
@@ -78,17 +79,23 @@ export function ClassForm({
         queryClient.invalidateQueries({ queryKey: ["schoolClass", classId] });
       }
 
+      notify.success(
+        isEditMode
+          ? "Class updated successfully"
+          : "Class created successfully",
+      );
+
       router.push("/dashboard/classes");
       router.refresh();
     },
 
     onError: (error) => {
-      setServerError(
-        getErrorMessage(
-          error,
-          `Failed to ${isEditMode ? "update" : "create"} class`,
-        ),
+      const message = getErrorMessage(
+        error,
+        `Failed to ${isEditMode ? "update" : "create"} class`,
       );
+      setServerError(message);
+      notify.error(message);
     },
   });
 

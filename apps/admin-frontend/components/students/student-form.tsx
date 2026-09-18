@@ -43,6 +43,7 @@ import { DatePicker } from "../ui/date-picker";
 import { parentRelationships } from "@/lib/validations/student";
 import { parentsApi } from "@/lib/api/parents";
 import { Checkbox } from "@/components/ui/checkbox";
+import { notify } from "@/lib/toast";
 
 interface Option {
   id: string;
@@ -333,16 +334,22 @@ export function StudentForm({
         });
       }
 
+      notify.success(
+        isEditMode
+          ? "Student updated successfully"
+          : "Student created successfully",
+      );
+
       router.push("/dashboard/students");
     },
 
     onError: (error) => {
-      setServerError(
-        getErrorMessage(
-          error,
-          `Failed to ${isEditMode ? "update" : "create"} student`,
-        ),
+      const message = getErrorMessage(
+        error,
+        `Failed to ${isEditMode ? "update" : "create"} student`,
       );
+      setServerError(message);
+      notify.error(message);
     },
   });
 

@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { feeApi } from "@/lib/api/fee";
 import { getErrorMessage } from "@/lib/api/error";
+import { notify } from "@/lib/toast";
 
 interface PaymentFormProps {
   studentFeeId?: string;
@@ -94,6 +95,8 @@ export function PaymentForm({
         });
       }
 
+      notify.success("Payment recorded successfully");
+
       reset({
         studentFeeId: studentFeeId ?? "",
         amount: undefined,
@@ -113,6 +116,7 @@ export function PaymentForm({
 
     onError: (error) => {
       setServerError(getErrorMessage(error, "Failed to record payment"));
+      notify.error(getErrorMessage(error, "Failed to record payment"));
     },
   });
 

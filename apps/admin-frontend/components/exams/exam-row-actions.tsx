@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { examApi } from "@/lib/api/exam";
 import { getErrorMessage } from "@/lib/api/error";
+import { notify } from "@/lib/toast";
 
 interface ExamRowActionsProps {
   examId: string;
@@ -31,6 +32,7 @@ export function ExamRowActions({ examId, examName }: ExamRowActionsProps) {
     mutationFn: () => examApi.remove(examId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exams"] });
+      notify.success(`Exam ${examName} deleted successfully`);
       setConfirmOpen(false);
     },
     onError: (err) => {

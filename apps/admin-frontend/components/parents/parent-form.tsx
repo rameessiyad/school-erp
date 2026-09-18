@@ -32,6 +32,7 @@ import { studentsApi } from "@/lib/api/students";
 import { optionsApi } from "@/lib/api/options";
 import { getErrorMessage } from "@/lib/api/error";
 import { MobileInput } from "../ui/mobile-input";
+import { notify } from "@/lib/toast";
 
 interface ParentFormProps {
   parentId?: string;
@@ -147,16 +148,22 @@ export function ParentForm({ parentId, defaultValues }: ParentFormProps) {
         });
       }
 
+      notify.success(
+        isEditMode
+          ? "Parent updated successfully"
+          : "Parent created successfully",
+      );
+
       router.push("/dashboard/parents");
     },
 
     onError: (error) => {
-      setServerError(
-        getErrorMessage(
-          error,
-          `Failed to ${isEditMode ? "update" : "create"} parent`,
-        ),
+      const message = getErrorMessage(
+        error,
+        `Failed to ${isEditMode ? "update" : "create"} parent`,
       );
+      setServerError(message);
+      notify.error(message);
     },
   });
 

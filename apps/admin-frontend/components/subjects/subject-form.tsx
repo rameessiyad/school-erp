@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { subjectsApi } from "@/lib/api/subjects";
 import { getErrorMessage } from "@/lib/api/error";
+import { notify } from "@/lib/toast";
 
 interface SubjectFormProps {
   subjectId?: string;
@@ -49,16 +50,22 @@ export function SubjectForm({ subjectId, defaultValues }: SubjectFormProps) {
         queryClient.invalidateQueries({ queryKey: ["subject", subjectId] });
       }
 
+      notify.success(
+        isEditMode
+          ? "Subject updated successfully"
+          : "Subject created successfully",
+      );
+
       router.push("/dashboard/subjects");
     },
 
     onError: (error) => {
-      setServerError(
-        getErrorMessage(
-          error,
-          `Failed to ${isEditMode ? "update" : "create"} subject`,
-        ),
+      const message = getErrorMessage(
+        error,
+        `Failed to ${isEditMode ? "update" : "create"} subject`,
       );
+      setServerError(message);
+      notify.error(message);
     },
   });
 

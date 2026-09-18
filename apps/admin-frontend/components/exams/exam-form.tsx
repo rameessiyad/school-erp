@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
+import { notify } from "@/lib/toast";
 
 interface Option {
   id: string;
@@ -112,16 +113,21 @@ export function ExamForm({ examId, defaultValues }: ExamFormProps) {
       if (isEditMode) {
         queryClient.invalidateQueries({ queryKey: ["exam", examId] });
       }
+
+      notify.success(
+        isEditMode ? "Exam updated successfully" : "Exam created successfully",
+      );
+
       router.push("/dashboard/exams");
     },
 
     onError: (error) => {
-      setServerError(
-        getErrorMessage(
-          error,
-          `Failed to ${isEditMode ? "update" : "create"} exam`,
-        ),
+      const message = getErrorMessage(
+        error,
+        `Failed to ${isEditMode ? "update" : "create"} exam`,
       );
+      setServerError(message);
+      notify.error(message);
     },
   });
 

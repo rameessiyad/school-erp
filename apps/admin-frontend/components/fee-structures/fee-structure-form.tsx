@@ -26,6 +26,7 @@ import { classesApi } from "@/lib/api/classes";
 import { academicYearApi } from "@/lib/api/academic-year";
 import { feeStructureApi } from "@/lib/api/fee-structures";
 import { getErrorMessage } from "@/lib/api/error";
+import { notify } from "@/lib/toast";
 
 interface FeeStructureFormProps {
   feeStructureId?: string;
@@ -50,7 +51,7 @@ export function FeeStructureForm({
 
   const { data: academicYears = [] } = useQuery({
     queryKey: ["academicYears"],
-    queryFn: academicYearApi.list,
+    queryFn: academicYearApi.getAll,
   });
 
   const {
@@ -79,17 +80,23 @@ export function FeeStructureForm({
         });
       }
 
+      notify.success(
+        isEditMode
+          ? "Fees Structure updated successfully"
+          : "Fees Structure created successfully",
+      );
+
       router.push("/dashboard/fee-structures");
       router.refresh();
     },
 
     onError: (error) => {
-      setServerError(
-        getErrorMessage(
-          error,
-          `Failed to ${isEditMode ? "update" : "create"} fee structure`,
-        ),
+      const message = getErrorMessage(
+        error,
+        `Failed to ${isEditMode ? "update" : "create"} fees structure`,
       );
+      setServerError(message);
+      notify.error(message);
     },
   });
 
