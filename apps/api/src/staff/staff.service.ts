@@ -60,7 +60,7 @@ export class StaffService {
           lastName: dto.lastName,
           phone: dto.phone,
           email: dto.email,
-          designation: dto.designation,
+          designationId: dto.designationId,
           photoUrl,
         },
       });
@@ -68,14 +68,17 @@ export class StaffService {
   }
 
   async findAll(schoolId: string) {
-    return this.prisma.staff.findMany({ where: { schoolId } });
+    return this.prisma.staff.findMany({
+      where: { schoolId },
+      include: { designation: true },
+    });
   }
 
   async findOne(schoolId: string, id: string) {
     const staff = await this.prisma.staff.findFirst({
       where: { id, schoolId },
+      include: { designation: true },
     });
-
     if (!staff) throw new NotFoundException('Staff not found');
     return staff;
   }
@@ -104,7 +107,7 @@ export class StaffService {
         lastName: dto.lastName,
         phone: dto.phone,
         email: dto.email,
-        designation: dto.designation,
+        designationId: dto.designationId,
         ...(photoUrl && { photoUrl }),
       },
     });

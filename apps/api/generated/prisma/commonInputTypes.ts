@@ -182,21 +182,21 @@ export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
 }
 
-export type EnumStaffDesignationFilter<$PrismaModel = never> = {
-  equals?: $Enums.StaffDesignation | Prisma.EnumStaffDesignationFieldRefInput<$PrismaModel>
-  in?: $Enums.StaffDesignation[] | Prisma.ListEnumStaffDesignationFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StaffDesignation[] | Prisma.ListEnumStaffDesignationFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStaffDesignationFilter<$PrismaModel> | $Enums.StaffDesignation
+export type EnumStaffDesignationEnumNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.StaffDesignationEnum | Prisma.EnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StaffDesignationEnum[] | Prisma.ListEnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.StaffDesignationEnum[] | Prisma.ListEnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumStaffDesignationEnumNullableFilter<$PrismaModel> | $Enums.StaffDesignationEnum | null
 }
 
-export type EnumStaffDesignationWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.StaffDesignation | Prisma.EnumStaffDesignationFieldRefInput<$PrismaModel>
-  in?: $Enums.StaffDesignation[] | Prisma.ListEnumStaffDesignationFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StaffDesignation[] | Prisma.ListEnumStaffDesignationFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStaffDesignationWithAggregatesFilter<$PrismaModel> | $Enums.StaffDesignation
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumStaffDesignationFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumStaffDesignationFilter<$PrismaModel>
+export type EnumStaffDesignationEnumNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StaffDesignationEnum | Prisma.EnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StaffDesignationEnum[] | Prisma.ListEnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.StaffDesignationEnum[] | Prisma.ListEnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumStaffDesignationEnumNullableWithAggregatesFilter<$PrismaModel> | $Enums.StaffDesignationEnum | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStaffDesignationEnumNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStaffDesignationEnumNullableFilter<$PrismaModel>
 }
 
 export type EnumGenderNullableFilter<$PrismaModel = never> = {
@@ -726,21 +726,21 @@ export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
 }
 
-export type NestedEnumStaffDesignationFilter<$PrismaModel = never> = {
-  equals?: $Enums.StaffDesignation | Prisma.EnumStaffDesignationFieldRefInput<$PrismaModel>
-  in?: $Enums.StaffDesignation[] | Prisma.ListEnumStaffDesignationFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StaffDesignation[] | Prisma.ListEnumStaffDesignationFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStaffDesignationFilter<$PrismaModel> | $Enums.StaffDesignation
+export type NestedEnumStaffDesignationEnumNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.StaffDesignationEnum | Prisma.EnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StaffDesignationEnum[] | Prisma.ListEnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.StaffDesignationEnum[] | Prisma.ListEnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumStaffDesignationEnumNullableFilter<$PrismaModel> | $Enums.StaffDesignationEnum | null
 }
 
-export type NestedEnumStaffDesignationWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.StaffDesignation | Prisma.EnumStaffDesignationFieldRefInput<$PrismaModel>
-  in?: $Enums.StaffDesignation[] | Prisma.ListEnumStaffDesignationFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StaffDesignation[] | Prisma.ListEnumStaffDesignationFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStaffDesignationWithAggregatesFilter<$PrismaModel> | $Enums.StaffDesignation
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumStaffDesignationFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumStaffDesignationFilter<$PrismaModel>
+export type NestedEnumStaffDesignationEnumNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StaffDesignationEnum | Prisma.EnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StaffDesignationEnum[] | Prisma.ListEnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.StaffDesignationEnum[] | Prisma.ListEnumStaffDesignationEnumFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumStaffDesignationEnumNullableWithAggregatesFilter<$PrismaModel> | $Enums.StaffDesignationEnum | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStaffDesignationEnumNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStaffDesignationEnumNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumGenderNullableFilter<$PrismaModel = never> = {

@@ -11,6 +11,7 @@
 export type * from './models/School'
 export type * from './models/AcademicYear'
 export type * from './models/User'
+export type * from './models/StaffDesignation'
 export type * from './models/Staff'
 export type * from './models/Teacher'
 export type * from './models/Parent'

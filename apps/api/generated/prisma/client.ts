@@ -55,6 +55,11 @@ export type AcademicYear = Prisma.AcademicYearModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model StaffDesignation
+ * 
+ */
+export type StaffDesignation = Prisma.StaffDesignationModel
+/**
  * Model Staff
  * 
  */

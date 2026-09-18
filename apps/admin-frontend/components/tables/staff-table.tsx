@@ -77,7 +77,7 @@ export function StaffTable({ staff }: StaffTableProps) {
 
               <TableCell>
                 <span className="rounded-md bg-surface-secondary px-2.5 py-1 text-xs font-medium capitalize text-text-secondary">
-                  {s.designation.replace(/_/g, " ")}
+                  {s.designation?.name.replace(/_/g, " ")}
                 </span>
               </TableCell>
 

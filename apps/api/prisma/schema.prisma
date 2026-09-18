@@ -37,6 +37,7 @@ model School {
   staffAttendances          StaffAttendance[]
   studentAttendances        StudentAttendance[]
   examTypes                 ExamType[]
+  staffDesignations         StaffDesignation[]
 }
 
 enum SchoolStatus {
@@ -109,6 +110,24 @@ model User {
   @@index([schoolId])
 }
 
+model StaffDesignation {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  name String
+
+  allowedModules String[] @default([]) 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  staff Staff[]
+
+  @@unique([schoolId, name])
+  @@index([schoolId])
+}
+
 model Staff {
   id String @id @default(uuid())
 
@@ -124,7 +143,9 @@ model Staff {
   phone String?
   email String?
 
-  designation StaffDesignation
+  designationOld StaffDesignationEnum? // temporary — old enum column, kept only for migration
+  designationId  String?
+  designation    StaffDesignation?     @relation(fields: [designationId], references: [id])
 
   photoUrl String?
 
@@ -136,11 +157,10 @@ model Staff {
   staffAttendances       StaffAttendance[]
 }
 
-enum StaffDesignation {
+enum StaffDesignationEnum {
   ACCOUNTANT
   ADMISSION_OFFICER
   RECEPTIONIST
-  // add more as needed
 }
 
 model Teacher {

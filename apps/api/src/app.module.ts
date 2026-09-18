@@ -27,6 +27,7 @@ import { ExamModule } from './exam/exam.module';
 import { StudentAttendanceModule } from './student-attendance/student-attendance.module';
 import { StaffAttendanceModule } from './staff-attendance/staff-attendance.module';
 import { PromotionModule } from './promotion/promotion.module';
+import { StaffDesignationModule } from './staff-designation/staff-designation.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { PromotionModule } from './promotion/promotion.module';
     StudentAttendanceModule,
     StaffAttendanceModule,
     PromotionModule,
+    StaffDesignationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

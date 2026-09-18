@@ -54,6 +54,7 @@ export const ModelName = {
   School: 'School',
   AcademicYear: 'AcademicYear',
   User: 'User',
+  StaffDesignation: 'StaffDesignation',
   Staff: 'Staff',
   Teacher: 'Teacher',
   Parent: 'Parent',
@@ -147,6 +148,18 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const StaffDesignationScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  name: 'name',
+  allowedModules: 'allowedModules',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StaffDesignationScalarFieldEnum = (typeof StaffDesignationScalarFieldEnum)[keyof typeof StaffDesignationScalarFieldEnum]
+
+
 export const StaffScalarFieldEnum = {
   id: 'id',
   schoolId: 'schoolId',
@@ -155,7 +168,8 @@ export const StaffScalarFieldEnum = {
   lastName: 'lastName',
   phone: 'phone',
   email: 'email',
-  designation: 'designation',
+  designationOld: 'designationOld',
+  designationId: 'designationId',
   photoUrl: 'photoUrl',
   isActive: 'isActive',
   createdAt: 'createdAt',

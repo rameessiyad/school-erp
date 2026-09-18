@@ -5,7 +5,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'generated/prisma/enums';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { getAllowedModules } from 'src/common/permissions/staff-permission.util';
 import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
@@ -35,11 +34,12 @@ export class AuthService {
     if (user.role === Role.STAFF) {
       const staff = await this.prisma.staff.findUnique({
         where: { userId: user.id },
+        include: { designation: true },
       });
 
       if (!staff) throw new UnauthorizedException('Staff record not found');
 
-      allowedModules = getAllowedModules(staff.designation);
+      allowedModules = (staff.designation?.allowedModules ?? []) as Module[];
     }
 
     if (user.role === Role.TEACHER) {

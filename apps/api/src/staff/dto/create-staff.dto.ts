@@ -1,12 +1,11 @@
 import {
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   MinLength,
 } from 'class-validator';
-import { StaffDesignation } from 'generated/prisma/enums';
 
 export class CreateStaffDto {
   @IsNotEmpty()
@@ -28,6 +27,6 @@ export class CreateStaffDto {
   @MinLength(6)
   password: string;
 
-  @IsEnum(StaffDesignation)
-  designation: StaffDesignation;
+  @IsUUID()
+  designationId: string;
 }

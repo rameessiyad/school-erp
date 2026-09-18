@@ -15,8 +15,8 @@ function buildStaffFormData(
   if (values.phone !== undefined) formData.append("phone", values.phone ?? "");
   if (values.password !== undefined)
     formData.append("password", values.password);
-  if (values.designation !== undefined)
-    formData.append("designation", values.designation);
+  if (values.designationId !== undefined)
+    formData.append("designationId", values.designationId);
 
   if (photo) {
     formData.append("photo", photo);

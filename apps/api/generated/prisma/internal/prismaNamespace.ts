@@ -400,6 +400,7 @@ export const ModelName = {
   School: 'School',
   AcademicYear: 'AcademicYear',
   User: 'User',
+  StaffDesignation: 'StaffDesignation',
   Staff: 'Staff',
   Teacher: 'Teacher',
   Parent: 'Parent',
@@ -447,7 +448,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "school" | "academicYear" | "user" | "staff" | "teacher" | "parent" | "student" | "parentStudent" | "class" | "section" | "subject" | "studentEnrollment" | "teacherSubjectAllocation" | "classTeacherAssignment" | "timetable" | "attendance" | "studyMaterial" | "homework" | "homeworkStatus" | "assignment" | "assignmentStatus" | "unitTest" | "mark" | "examType" | "exam" | "examResult" | "subjectMark" | "feeStructure" | "studentFee" | "feePayment" | "teacherAttendance" | "teacherLeaveApplication" | "staffAttendance" | "staffLeaveApplication" | "studentAttendance"
+    modelProps: "school" | "academicYear" | "user" | "staffDesignation" | "staff" | "teacher" | "parent" | "student" | "parentStudent" | "class" | "section" | "subject" | "studentEnrollment" | "teacherSubjectAllocation" | "classTeacherAssignment" | "timetable" | "attendance" | "studyMaterial" | "homework" | "homeworkStatus" | "assignment" | "assignmentStatus" | "unitTest" | "mark" | "examType" | "exam" | "examResult" | "subjectMark" | "feeStructure" | "studentFee" | "feePayment" | "teacherAttendance" | "teacherLeaveApplication" | "staffAttendance" | "staffLeaveApplication" | "studentAttendance"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -670,6 +671,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    StaffDesignation: {
+      payload: Prisma.$StaffDesignationPayload<ExtArgs>
+      fields: Prisma.StaffDesignationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.StaffDesignationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.StaffDesignationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload>
+        }
+        findFirst: {
+          args: Prisma.StaffDesignationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.StaffDesignationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload>
+        }
+        findMany: {
+          args: Prisma.StaffDesignationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload>[]
+        }
+        create: {
+          args: Prisma.StaffDesignationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload>
+        }
+        createMany: {
+          args: Prisma.StaffDesignationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.StaffDesignationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload>[]
+        }
+        delete: {
+          args: Prisma.StaffDesignationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload>
+        }
+        update: {
+          args: Prisma.StaffDesignationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload>
+        }
+        deleteMany: {
+          args: Prisma.StaffDesignationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.StaffDesignationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.StaffDesignationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload>[]
+        }
+        upsert: {
+          args: Prisma.StaffDesignationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffDesignationPayload>
+        }
+        aggregate: {
+          args: Prisma.StaffDesignationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStaffDesignation>
+        }
+        groupBy: {
+          args: Prisma.StaffDesignationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StaffDesignationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.StaffDesignationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StaffDesignationCountAggregateOutputType> | number
         }
       }
     }
@@ -3123,6 +3198,18 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const StaffDesignationScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  name: 'name',
+  allowedModules: 'allowedModules',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StaffDesignationScalarFieldEnum = (typeof StaffDesignationScalarFieldEnum)[keyof typeof StaffDesignationScalarFieldEnum]
+
+
 export const StaffScalarFieldEnum = {
   id: 'id',
   schoolId: 'schoolId',
@@ -3131,7 +3218,8 @@ export const StaffScalarFieldEnum = {
   lastName: 'lastName',
   phone: 'phone',
   email: 'email',
-  designation: 'designation',
+  designationOld: 'designationOld',
+  designationId: 'designationId',
   photoUrl: 'photoUrl',
   isActive: 'isActive',
   createdAt: 'createdAt',
@@ -3697,16 +3785,16 @@ export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
- * Reference to a field of type 'StaffDesignation'
+ * Reference to a field of type 'StaffDesignationEnum'
  */
-export type EnumStaffDesignationFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StaffDesignation'>
+export type EnumStaffDesignationEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StaffDesignationEnum'>
     
 
 
 /**
- * Reference to a field of type 'StaffDesignation[]'
+ * Reference to a field of type 'StaffDesignationEnum[]'
  */
-export type ListEnumStaffDesignationFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StaffDesignation[]'>
+export type ListEnumStaffDesignationEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StaffDesignationEnum[]'>
     
 
 
@@ -4101,6 +4189,7 @@ export type GlobalOmitConfig = {
   school?: Prisma.SchoolOmit
   academicYear?: Prisma.AcademicYearOmit
   user?: Prisma.UserOmit
+  staffDesignation?: Prisma.StaffDesignationOmit
   staff?: Prisma.StaffOmit
   teacher?: Prisma.TeacherOmit
   parent?: Prisma.ParentOmit
