@@ -17,18 +17,29 @@ export function PageLoader({
     >
       <div className="flex flex-col items-center justify-center text-center">
         {/* Loader */}
-        <div className="relative flex h-12 w-12 items-center justify-center">
-          <div className="absolute inset-0 rounded-full bg-primary/10" />
+        <div className="relative flex h-16 w-16 items-center justify-center">
+          {/* Outer pulse */}
+          <div className="absolute inset-0 animate-ping rounded-full bg-primary/10 [animation-duration:2s]" />
 
-          <Loader2 className="relative h-5 w-5 animate-spin text-primary" />
+          {/* Middle pulse ring */}
+          <div className="absolute inset-1 animate-pulse rounded-full border border-primary/20" />
+
+          {/* Loader container */}
+          <div className="relative flex h-11 w-11 items-center justify-center rounded-full border border-primary/10 bg-background shadow-sm">
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+          </div>
         </div>
 
         {/* Text */}
-        <p className="mt-4 text-sm font-medium text-text-primary">{text}</p>
+        <p className="mt-5 animate-pulse text-sm font-semibold text-text-primary">
+          {text}
+        </p>
 
         {/* Description */}
         {description && (
-          <p className="mt-1 max-w-xs text-xs text-text-muted">{description}</p>
+          <p className="mt-1.5 max-w-sm animate-[fadeIn_0.5s_ease-out] text-xs leading-5 text-text-muted">
+            {description}
+          </p>
         )}
       </div>
     </div>

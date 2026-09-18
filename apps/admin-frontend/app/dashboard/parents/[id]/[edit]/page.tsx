@@ -5,6 +5,7 @@ import { ParentForm } from "@/components/parents/parent-form";
 import { parentsApi } from "@/lib/api/parents";
 import { useQuery } from "@tanstack/react-query";
 import { CreateParentValues } from "@/lib/validations/parent";
+import { PageLoader } from "@/components/common/page-loader";
 
 export default function EditParentPage() {
   const params = useParams<{ id: string }>();
@@ -25,7 +26,7 @@ export default function EditParentPage() {
   }
 
   if (isLoading || !parent) {
-    return <p className="text-sm text-slate-400">Loading parent...</p>;
+    return <PageLoader text="Loading parent" />
   }
 
   const primaryLink =
@@ -47,8 +48,8 @@ export default function EditParentPage() {
   };
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="mb-6 text-2xl font-semibold text-slate-900">
+    <div className="w-auto">
+      <h1 className="mb-6 text-2xl font-semibold text-text-primary">
         Edit Parent
       </h1>
       <ParentForm parentId={params.id} defaultValues={defaultValues} />
