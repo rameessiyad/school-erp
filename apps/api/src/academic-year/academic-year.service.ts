@@ -49,7 +49,16 @@ export class AcademicYearService {
   }
 
   async update(schoolId: string, id: string, dto: UpdateAcademicYearDto) {
-    await this.findOne(schoolId, id);
+    const existing = await this.findOne(schoolId, id);
+
+    const effectiveStart = dto.startDate
+      ? new Date(dto.startDate)
+      : existing.startDate;
+    const effectiveEnd = dto.endDate ? new Date(dto.endDate) : existing.endDate;
+
+    if (effectiveEnd.getTime() <= effectiveStart.getTime()) {
+      throw new ConflictException('endDate must be after startDate');
+    }
 
     if (dto.isActive) {
       await this.prisma.academicYear.updateMany({

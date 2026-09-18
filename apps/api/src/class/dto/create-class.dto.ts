@@ -1,7 +1,12 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateClassDto {
-  @IsNotEmpty()
   @IsString()
   name: string;
 
@@ -9,4 +14,12 @@ export class CreateClassDto {
   @IsArray()
   @IsString({ each: true })
   sections?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  isGraduatingClass?: boolean;
+
+  @IsOptional()
+  @IsUUID()
+  promotesToClassId?: string;
 }

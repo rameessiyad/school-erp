@@ -3216,6 +3216,8 @@ export const ClassScalarFieldEnum = {
   id: 'id',
   schoolId: 'schoolId',
   name: 'name',
+  isGraduatingClass: 'isGraduatingClass',
+  promotesToClassId: 'promotesToClassId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

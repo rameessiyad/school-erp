@@ -107,23 +107,38 @@ export default function ParentsPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
             <p className="text-sm font-medium text-text-secondary">
-              Total Parents
-            </p>
-
-            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-              {parentsLoading ? "—" : parents.length}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <p className="text-sm font-medium text-text-secondary">
-              Linked to a Student
+              Assigned Parents
             </p>
 
             <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
               {parentsLoading ? "—" : linkedCount}
             </p>
+
+            <p className="mt-1 text-xs text-text-muted">
+              Linked to at least one student
+            </p>
           </div>
+
+          <Link
+            href="/dashboard/parents/unassigned"
+            className="rounded-xl border border-border bg-surface p-5 shadow-sm transition hover:border-primary hover:bg-primary-soft"
+          >
+            <p className="text-sm font-medium text-text-secondary">
+              Unassigned Parents
+            </p>
+
+            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+              {parentsLoading
+                ? "—"
+                : parents.filter(
+                    (p) => !p.parentStudents || p.parentStudents.length === 0,
+                  ).length}
+            </p>
+
+            <p className="mt-1 text-xs text-text-muted">
+              Not yet linked to a student
+            </p>
+          </Link>
         </div>
       )}
 

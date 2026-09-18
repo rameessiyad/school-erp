@@ -1,23 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+const MONTH_ABBR = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+function getMonthAbbr(date: Date): string {
+  return MONTH_ABBR[date.getMonth()];
+}
+
 @Injectable()
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
-  async getStats(schoolId: string) {
-    const academicYear = await this.prisma.academicYear.findFirst({
-      where: {
-        schoolId,
-        isActive: true,
-      },
-      select: {
-        id: true,
-        label: true,
-      },
-    });
+  async getStats(schoolId: string, academicYearId?: string) {
+    const requestedYear = academicYearId
+      ? await this.prisma.academicYear.findFirst({
+          where: { id: academicYearId, schoolId },
+          select: { id: true, label: true, isActive: true },
+        })
+      : await this.prisma.academicYear.findFirst({
+          where: { schoolId, isActive: true },
+          select: { id: true, label: true, isActive: true },
+        });
 
-    const academicYearId = academicYear?.id;
+    const academicYear = requestedYear
+      ? { id: requestedYear.id, label: requestedYear.label }
+      : null;
+    const resolvedAcademicYearId = requestedYear?.id;
+    const isViewingActiveYear = requestedYear?.isActive ?? false;
 
     const [
       studentCount,
@@ -42,12 +64,12 @@ export class DashboardService {
         },
       }),
 
-      academicYearId
+      resolvedAcademicYearId
         ? this.prisma.section
             .findMany({
               where: {
                 schoolId,
-                academicYearId,
+                academicYearId: resolvedAcademicYearId,
               },
               select: {
                 classId: true,
@@ -57,14 +79,14 @@ export class DashboardService {
             .then((sections) => sections.length)
         : 0,
 
-      academicYearId
+      resolvedAcademicYearId
         ? this.prisma.studentFee.findMany({
             where: {
               student: {
                 schoolId,
               },
               feeStructure: {
-                academicYearId,
+                academicYearId: resolvedAcademicYearId,
               },
             },
             select: {
@@ -134,10 +156,10 @@ export class DashboardService {
             student: {
               schoolId,
             },
-            ...(academicYearId
+            ...(resolvedAcademicYearId
               ? {
                   feeStructure: {
-                    academicYearId,
+                    academicYearId: resolvedAcademicYearId,
                   },
                 }
               : {}),
@@ -188,9 +210,7 @@ export class DashboardService {
         paidAmount += amount;
         totalFeesCollected += amount;
 
-        const month = payment.paymentDate.toLocaleDateString('en-IN', {
-          month: 'short',
-        });
+        const month = getMonthAbbr(payment.paymentDate); // fixed: was locale-dependent 'Sept' vs 'Sep' mismatch
 
         feeTrendMap.set(month, (feeTrendMap.get(month) ?? 0) + amount);
       }
@@ -231,36 +251,40 @@ export class DashboardService {
 
     // ---------------------------------------------------------
     // Student attendance trend (last 14 days, % present)
+    // Only meaningful for the currently active academic year —
+    // a past year has no "last 14 days" to speak of.
     // ---------------------------------------------------------
 
     const attendanceDays = 14;
-    const attendanceFrom = new Date();
-    attendanceFrom.setDate(attendanceFrom.getDate() - (attendanceDays - 1));
-    attendanceFrom.setHours(0, 0, 0, 0);
+    let attendanceTrend: { date: string; percentage: number | null }[] = [];
 
-    const attendanceRecords = await this.prisma.studentAttendance.findMany({
-      where: {
-        schoolId,
-        date: { gte: attendanceFrom },
-      },
-      select: { date: true, status: true },
-    });
+    if (isViewingActiveYear) {
+      const attendanceFrom = new Date();
+      attendanceFrom.setDate(attendanceFrom.getDate() - (attendanceDays - 1));
+      attendanceFrom.setHours(0, 0, 0, 0);
 
-    const attendanceByDay = new Map<
-      string,
-      { present: number; total: number }
-    >();
+      const attendanceRecords = await this.prisma.studentAttendance.findMany({
+        where: {
+          schoolId,
+          date: { gte: attendanceFrom },
+        },
+        select: { date: true, status: true },
+      });
 
-    for (const record of attendanceRecords) {
-      const key = record.date.toISOString().slice(0, 10);
-      const entry = attendanceByDay.get(key) ?? { present: 0, total: 0 };
-      entry.total += 1;
-      if (record.status === 'PRESENT') entry.present += 1;
-      attendanceByDay.set(key, entry);
-    }
+      const attendanceByDay = new Map<
+        string,
+        { present: number; total: number }
+      >();
 
-    const attendanceTrend = Array.from({ length: attendanceDays }).map(
-      (_, i) => {
+      for (const record of attendanceRecords) {
+        const key = record.date.toISOString().slice(0, 10);
+        const entry = attendanceByDay.get(key) ?? { present: 0, total: 0 };
+        entry.total += 1;
+        if (record.status === 'PRESENT') entry.present += 1;
+        attendanceByDay.set(key, entry);
+      }
+
+      attendanceTrend = Array.from({ length: attendanceDays }).map((_, i) => {
         const day = new Date(attendanceFrom);
         day.setDate(day.getDate() + i);
         const key = day.toISOString().slice(0, 10);
@@ -276,8 +300,8 @@ export class DashboardService {
               ? Math.round((entry.present / entry.total) * 100)
               : null,
         };
-      },
-    );
+      });
+    }
 
     // ---------------------------------------------------------
     // Student distribution
@@ -288,11 +312,11 @@ export class DashboardService {
       count: number;
     }[] = [];
 
-    if (academicYearId) {
+    if (resolvedAcademicYearId) {
       const enrollments = await this.prisma.studentEnrollment.findMany({
         where: {
           schoolId,
-          academicYearId,
+          academicYearId: resolvedAcademicYearId,
           student: {
             isActive: true,
           },

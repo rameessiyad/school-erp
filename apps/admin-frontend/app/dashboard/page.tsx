@@ -3,6 +3,7 @@
 import {
   ArrowUpRight,
   BookOpen,
+  ChevronDown,
   GraduationCap,
   ReceiptText,
   UserRound,
@@ -11,14 +12,14 @@ import {
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 
-import { dashboardApi } from "@/lib/api/dashboard";
+import { dashboardApi, DashboardFilterBy } from "@/lib/api/dashboard";
 import { authApi } from "@/lib/api/auth";
 import { Module } from "@/lib/permissions/module.enum";
 import { PageLoader } from "@/components/common/page-loader";
-import { FeeCollectionChart } from "@/components/dashboard/fee-collection-chart";
-import { StudentAttendanceChart } from "@/components/dashboard/student-attendance-chart";
-import { FeeOverview } from "@/components/dashboard/fee-overview";
+import { DashboardChart } from "@/components/dashboard/dashboard-charts";
 import { DashboardActivity } from "@/components/dashboard/dashboard-activity";
+import { useEffect, useRef, useState } from "react";
+import { academicYearApi } from "@/lib/api/academic-year";
 
 function formatCurrency(amount: number) {
   if (amount >= 100000) {
@@ -40,8 +41,8 @@ const quickActions = [
     requiredModules: [Module.STUDENT_ADMISSIONS, Module.STUDENT_REGISTRATION],
   },
   {
-    title: "Add Parent",
-    href: "/dashboard/parents/new",
+    title: "Add Staff",
+    href: "/dashboard/staff/new",
     icon: UserRound,
     requiredModules: [Module.PARENT_DETAILS],
   },
@@ -60,15 +61,40 @@ const quickActions = [
 ];
 
 export default function DashboardPage() {
+  const [filterBy, setFilterBy] = useState<DashboardFilterBy>("month");
+  const [selectedYearId, setSelectedYearId] = useState<string | undefined>(
+    undefined,
+  );
+  const [yearMenuOpen, setYearMenuOpen] = useState(false);
+  const yearMenuRef = useRef<HTMLDivElement>(null);
+
   const { data: user } = useQuery({
     queryKey: ["currentUser"],
     queryFn: authApi.me,
   });
 
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ["dashboardStats"],
-    queryFn: dashboardApi.getStats,
+  const { data: academicYears } = useQuery({
+    queryKey: ["academicYears"],
+    queryFn: academicYearApi.getAll,
   });
+
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["dashboardStats", filterBy, selectedYearId],
+    queryFn: () => dashboardApi.getStats(filterBy, selectedYearId),
+  });
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        yearMenuRef.current &&
+        !yearMenuRef.current.contains(e.target as Node)
+      ) {
+        setYearMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   if (isLoading || !user) {
     return <PageLoader text="Loading dashboard..." />;
@@ -145,15 +171,48 @@ export default function DashboardPage() {
         </div>
 
         {stats?.academicYear && (
-          <div className="flex w-fit items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-secondary shadow-sm">
-            <BookOpen className="h-4 w-4 text-primary" />
-
-            <span>
-              Academic Year{" "}
-              <span className="font-medium text-text-primary">
-                {stats.academicYear.label}
+          <div className="relative" ref={yearMenuRef}>
+            <button
+              type="button"
+              onClick={() => setYearMenuOpen((v) => !v)}
+              className="flex w-fit items-center cursor-pointer gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-secondary shadow-sm transition hover:border-primary/40"
+            >
+              <BookOpen className="h-4 w-4 text-primary" />
+              <span>
+                Academic Year{" "}
+                <span className="font-medium text-text-primary">
+                  {stats.academicYear.label}
+                </span>
               </span>
-            </span>
+              <ChevronDown className="h-4 w-4 text-text-muted" />
+            </button>
+
+            {yearMenuOpen && (
+              <div className="absolute right-0 z-10 mt-1.5 w-48 overflow-hidden rounded-lg border border-border bg-surface shadow-md">
+                {academicYears?.map((year) => (
+                  <button
+                    key={year.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedYearId(year.id);
+                      setYearMenuOpen(false);
+                    }}
+                    className={`block w-full cursor-pointer px-3 py-2 text-left text-sm transition hover:bg-primary-soft ${
+                      stats.academicYear?.id === year.id
+                        ? "font-medium text-primary"
+                        : "text-text-secondary"
+                    }`}
+                  >
+                    {year.label}
+                    {year.isActive && (
+                      <span className="ml-1.5 text-xs text-text-muted">
+                        (active)
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -195,49 +254,56 @@ export default function DashboardPage() {
       )}
 
       {/* Fee Trend + Attendance Trend + Quick Actions — single row */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {canSeeFees && (
-          <FeeCollectionChart data={stats?.feeTrend ?? []} />
-        )}
-
-        {canSeeAttendance && (
-          <StudentAttendanceChart data={stats?.attendanceTrend ?? []} />
+      <div className="grid gap-6 lg:grid-cols-3 items-stretch">
+        {(canSeeFees || canSeeAttendance) && (
+          <div className="lg:col-span-2">
+            <DashboardChart
+              feeData={stats?.feeTrend ?? []}
+              attendanceData={stats?.attendanceTrend ?? []}
+              filterBy={filterBy}
+              onFilterChange={setFilterBy}
+              allowedCharts={[
+                ...(canSeeFees ? (["fee"] as const) : []),
+                ...(canSeeAttendance ? (["attendance"] as const) : []),
+              ]}
+            />
+          </div>
         )}
 
         {visibleQuickActions.length > 0 && (
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <div>
-              <h2 className="text-base font-semibold text-text-primary">
-                Quick Actions
-              </h2>
+          <div
+            className={canSeeFees || canSeeAttendance ? "" : "lg:col-span-3"}
+          >
+            <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
+              <div>
+                <h2 className="text-base font-semibold text-text-primary">
+                  Quick Actions
+                </h2>
+                <p className="mt-1 text-sm text-text-secondary">
+                  Common tasks you can access quickly.
+                </p>
+              </div>
 
-              <p className="mt-1 text-sm text-text-secondary">
-                Common tasks you can access quickly.
-              </p>
-            </div>
-
-            <div className="mt-4 grid gap-2">
-              {visibleQuickActions.map((action) => {
-                const Icon = action.icon;
-
-                return (
-                  <Link
-                    key={action.title}
-                    href={action.href}
-                    className="group flex items-center gap-3 rounded-lg border border-border bg-surface-secondary px-3 py-3 transition hover:border-primary/40 hover:bg-primary-soft"
-                  >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface text-primary shadow-sm transition group-hover:bg-primary group-hover:text-primary-foreground">
-                      <Icon className="h-4 w-4" />
-                    </div>
-
-                    <span className="text-sm font-medium text-text-secondary transition group-hover:text-text-primary">
-                      {action.title}
-                    </span>
-
-                    <ArrowUpRight className="ml-auto h-4 w-4 text-text-muted transition group-hover:text-primary" />
-                  </Link>
-                );
-              })}
+              <div className="mt-4 grid gap-2">
+                {visibleQuickActions.map((action) => {
+                  const Icon = action.icon;
+                  return (
+                    <Link
+                      key={action.title}
+                      href={action.href}
+                      className="group flex items-center gap-3 rounded-lg border border-border bg-surface-secondary px-3 py-3 transition hover:border-primary/40 hover:bg-primary-soft"
+                    >
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface text-primary shadow-sm transition group-hover:bg-primary group-hover:text-primary-foreground">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <span className="text-sm font-medium text-text-secondary transition group-hover:text-text-primary">
+                        {action.title}
+                      </span>
+                      <ArrowUpRight className="ml-auto h-4 w-4 text-text-muted transition group-hover:text-primary" />
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}

@@ -26,6 +26,7 @@ import { SubjectAllocatedModule } from './subject-allocated/subject-allocated.mo
 import { ExamModule } from './exam/exam.module';
 import { StudentAttendanceModule } from './student-attendance/student-attendance.module';
 import { StaffAttendanceModule } from './staff-attendance/staff-attendance.module';
+import { PromotionModule } from './promotion/promotion.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { StaffAttendanceModule } from './staff-attendance/staff-attendance.modul
     ExamModule,
     StudentAttendanceModule,
     StaffAttendanceModule,
+    PromotionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

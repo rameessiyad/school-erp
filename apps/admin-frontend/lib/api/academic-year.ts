@@ -1,5 +1,12 @@
 import { apiClient } from "../axios/client";
-import { AcademicYearOption } from "../validations/fee-structure";
+
+export interface AcademicYear {
+  id: string;
+  label: string;
+  isActive: boolean;
+  startDate: string;
+  endDate: string;
+}
 
 export interface CreateAcademicYearValues {
   label: string;
@@ -9,13 +16,26 @@ export interface CreateAcademicYearValues {
 }
 
 export const academicYearApi = {
-  list: async (): Promise<AcademicYearOption[]> => {
+  getAll: async (): Promise<AcademicYear[]> => {
     const { data } = await apiClient.get("/academic-year");
     return data;
   },
 
-  create: async (payload: CreateAcademicYearValues) => {
+  create: async (payload: CreateAcademicYearValues): Promise<AcademicYear> => {
     const { data } = await apiClient.post("/academic-year/create", payload);
+    return data;
+  },
+
+  update: async (
+    id: string,
+    payload: Partial<CreateAcademicYearValues>,
+  ): Promise<AcademicYear> => {
+    const { data } = await apiClient.patch(`/academic-year/${id}`, payload);
+    return data;
+  },
+
+  remove: async (id: string) => {
+    const { data } = await apiClient.delete(`/academic-year/${id}`);
     return data;
   },
 };

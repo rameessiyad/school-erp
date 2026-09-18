@@ -19,6 +19,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  CalendarDays,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -92,6 +93,15 @@ const navigation: NavItem[] = [
     href: "/dashboard/classes",
     icon: Layers,
     requiredModules: [Module.ACADEMIC_YEAR],
+  },
+  {
+    label: "Academic Year",
+    icon: CalendarDays,
+    adminOnly: true,
+    children: [
+      { label: "Academic Years", href: "/dashboard/academic-year" },
+      { label: "Promote Students", href: "/dashboard/academic-year/promotion" },
+    ],
   },
   {
     label: "Subject Allocation",
