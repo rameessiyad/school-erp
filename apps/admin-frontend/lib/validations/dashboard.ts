@@ -21,10 +21,18 @@ export interface RecentActivityItem {
   createdAt: string;
 }
 
-export interface UpcomingItem {
+export interface UpcomingFeeItem {
   id: string;
   title: string;
-  description: string;
+  studentCount: number;
+  pendingAmount: number;
+  date: string;
+}
+
+export interface UpcomingExamItem {
+  id: string;
+  title: string;
+  examTypeName: string;
   date: string;
 }
 
@@ -42,7 +50,9 @@ export interface DashboardStats {
   studentDistribution: StudentDistributionItem[];
 
   recentActivities: RecentActivityItem[];
-  upcomingItems: UpcomingItem[];
+
+  upcomingFees: UpcomingFeeItem[];
+  upcomingExams: UpcomingExamItem[];
 
   academicYear: {
     id: string;

@@ -95,7 +95,7 @@ export default function TeachersPage() {
       </div>
 
       {!isSearching && (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
             <p className="text-sm font-medium text-text-secondary">
               Total Teachers
@@ -111,6 +111,15 @@ export default function TeachersPage() {
             </p>
             <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
               {teachers.filter((t) => t.isActive).length}
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
+            <p className="text-sm font-medium text-text-secondary">
+              Inactive Teachers
+            </p>
+            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+              {teachers.filter((t) => !t.isActive).length}
             </p>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsEmail,
   IsEnum,
@@ -73,6 +74,17 @@ export class CreateTeacherDto {
   @IsOptional()
   @IsDateString()
   joiningDate?: string;
+
+  // FormData sends booleans as the strings "true"/"false" — coerce before validating
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'boolean') return value;
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  isActive?: boolean;
 
   // parse the JSON string AND build real DTO instances in one step —
   // don't rely on @Type here, it's what was dropping the fields

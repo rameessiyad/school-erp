@@ -101,6 +101,7 @@ export function TeacherTable({ teachers }: TeacherTableProps) {
                 <TeacherRowActions
                   teacherId={t.id}
                   teacherName={`${t.firstName} ${t.lastName ?? ""}`}
+                  isActive={t.isActive}
                 />
               </TableCell>
             </TableRow>

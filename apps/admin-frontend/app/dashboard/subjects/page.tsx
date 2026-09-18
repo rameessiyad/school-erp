@@ -89,15 +89,6 @@ export default function SubjectsPage() {
               {subjects.length}
             </p>
           </div>
-
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <p className="text-sm font-medium text-text-secondary">
-              With Subject Codes
-            </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-              {subjects.filter((s) => s.code).length}
-            </p>
-          </div>
         </div>
       )}
 

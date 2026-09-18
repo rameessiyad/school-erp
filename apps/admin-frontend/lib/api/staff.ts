@@ -25,10 +25,23 @@ function buildStaffFormData(
   return formData;
 }
 
+function sortStaffAlphabetically(staff: Staff[]): Staff[] {
+  return [...staff].sort((a, b) => {
+    const firstNameCompare = a.firstName.localeCompare(b.firstName, undefined, {
+      sensitivity: "base",
+    });
+    if (firstNameCompare !== 0) return firstNameCompare;
+
+    return (a.lastName ?? "").localeCompare(b.lastName ?? "", undefined, {
+      sensitivity: "base",
+    });
+  });
+}
+
 export const staffApi = {
   list: async (): Promise<Staff[]> => {
     const { data } = await apiClient.get("/staff");
-    return data;
+    return sortStaffAlphabetically(data);
   },
 
   get: async (id: string): Promise<Staff> => {

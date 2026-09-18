@@ -405,26 +405,86 @@ export class DashboardService {
       .slice(0, 6);
 
     // ---------------------------------------------------------
-    // Upcoming fee dues
+    // Upcoming fee dues — grouped by fee type + due date,
+    // not one row per student.
     // ---------------------------------------------------------
 
     const now = new Date();
 
-    const upcomingItems = studentFees
-      .filter((fee) => fee.dueDate && new Date(fee.dueDate) >= now)
-      .sort(
-        (a, b) =>
-          new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime(),
-      )
-      .slice(0, 5)
-      .map((fee) => ({
-        id: fee.id,
-        title: fee.feeStructure.name,
-        description: `${fee.student.firstName} ${
-          fee.student.lastName ?? ''
-        }`.trim(),
-        date: fee.dueDate!.toISOString(),
-      }));
+    const upcomingFeeMap = new Map<
+      string,
+      { title: string; date: Date; studentCount: number; pendingAmount: number }
+    >();
+
+    for (const fee of studentFees) {
+      if (!fee.dueDate || new Date(fee.dueDate) < now) continue;
+
+      const payableAmount = Math.max(
+        Number(fee.totalAmount) - Number(fee.discountAmount),
+        0,
+      );
+      const paidAmount = fee.payments.reduce(
+        (sum, p) => sum + Number(p.amount),
+        0,
+      );
+      const pending = Math.max(payableAmount - paidAmount, 0);
+
+      if (pending <= 0) continue; // fully paid — nothing left to show as "due"
+
+      const key = `${fee.feeStructure.name}|${fee.dueDate.toISOString()}`;
+      const existing = upcomingFeeMap.get(key);
+
+      if (existing) {
+        existing.studentCount += 1;
+        existing.pendingAmount += pending;
+      } else {
+        upcomingFeeMap.set(key, {
+          title: fee.feeStructure.name,
+          date: new Date(fee.dueDate),
+          studentCount: 1,
+          pendingAmount: pending,
+        });
+      }
+    }
+
+    const upcomingFees = Array.from(upcomingFeeMap.entries())
+      .map(([key, value]) => ({
+        id: key,
+        title: value.title,
+        studentCount: value.studentCount,
+        pendingAmount: value.pendingAmount,
+        date: value.date.toISOString(),
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(0, 5);
+
+    // ---------------------------------------------------------
+    // Upcoming examinations
+    // ---------------------------------------------------------
+
+    const upcomingExams = resolvedAcademicYearId
+      ? (
+          await this.prisma.exam.findMany({
+            where: {
+              academicYearId: resolvedAcademicYearId,
+              startDate: { gte: now },
+            },
+            orderBy: { startDate: 'asc' },
+            take: 5,
+            select: {
+              id: true,
+              name: true,
+              startDate: true,
+              examType: { select: { name: true } },
+            },
+          })
+        ).map((exam) => ({
+          id: exam.id,
+          title: exam.name,
+          examTypeName: exam.examType.name,
+          date: exam.startDate.toISOString(),
+        }))
+      : [];
 
     return {
       studentCount,
@@ -440,7 +500,8 @@ export class DashboardService {
       studentDistribution,
 
       recentActivities,
-      upcomingItems,
+      upcomingFees,
+      upcomingExams,
 
       academicYear,
     };

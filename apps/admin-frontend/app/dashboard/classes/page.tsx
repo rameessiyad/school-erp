@@ -8,6 +8,7 @@ import { classesApi } from "@/lib/api/classes";
 import { ClassListTable } from "@/components/tables/class-list-table";
 import { useDebouncedValue } from "@/hooks/use-debounzed-values";
 import { PageLoader } from "@/components/common/page-loader";
+import { sectionsApi } from "@/lib/api/sections";
 
 export default function ClassesPage() {
   const [searchInput, setSearchInput] = useState("");
@@ -20,8 +21,13 @@ export default function ClassesPage() {
     queryFn: classesApi.list,
   });
 
+  const { data: sections = [], isLoading: sectionsLoading } = useQuery({
+    queryKey: ["sections"],
+    queryFn: sectionsApi.list,
+  });
+
   if (isLoading) {
-    return <PageLoader text="Loading classes" />
+    return <PageLoader text="Loading classes" />;
   }
 
   const isSearching = debouncedSearch.length > 0;
@@ -93,6 +99,20 @@ export default function ClassesPage() {
 
             <p className="mt-1 text-xs text-text-muted">
               Classes registered in your school
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
+            <p className="text-sm font-medium text-text-secondary">
+              Total Sections
+            </p>
+
+            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+              {sectionsLoading ? "—" : sections.length}
+            </p>
+
+            <p className="mt-1 text-xs text-text-muted">
+              Sections across all classes
             </p>
           </div>
         </div>

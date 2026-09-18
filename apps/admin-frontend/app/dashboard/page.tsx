@@ -324,7 +324,8 @@ export default function DashboardPage() {
         <div className={canSeeFees ? "lg:col-span-2" : "lg:col-span-3"}>
           <DashboardActivity
             recentActivities={stats?.recentActivities ?? []}
-            upcomingItems={stats?.upcomingItems ?? []}
+            upcomingFees={stats?.upcomingFees ?? []}
+            upcomingExams={stats?.upcomingExams ?? []}
           />
         </div>
       </div>

@@ -31,6 +31,8 @@ function buildTeacherFormData(
   }
   if (values.joiningDate !== undefined)
     formData.append("joiningDate", values.joiningDate ?? "");
+  if (values.isActive !== undefined)
+    formData.append("isActive", String(values.isActive));
 
   if (photo) {
     formData.append("photo", photo);
@@ -43,10 +45,23 @@ function buildTeacherFormData(
   return formData;
 }
 
+function sortTeachersAlphabetically(teachers: Teacher[]): Teacher[] {
+  return [...teachers].sort((a, b) => {
+    const firstNameCompare = a.firstName.localeCompare(b.firstName, undefined, {
+      sensitivity: "base",
+    });
+    if (firstNameCompare !== 0) return firstNameCompare;
+
+    return (a.lastName ?? "").localeCompare(b.lastName ?? "", undefined, {
+      sensitivity: "base",
+    });
+  });
+}
+
 export const teachersApi = {
   list: async (): Promise<Teacher[]> => {
     const { data } = await apiClient.get("/teacher");
-    return data;
+    return sortTeachersAlphabetically(data);
   },
 
   get: async (id: string): Promise<Teacher> => {

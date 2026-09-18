@@ -5,6 +5,7 @@ import { teachersApi } from "@/lib/api/teachers";
 import { CreateTeacherValues } from "@/lib/validations/teacher";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { PageLoader } from "@/components/common/page-loader";
 
 type TeacherDefaultValues = Partial<CreateTeacherValues> & {
   photoUrl?: string | null;
@@ -46,7 +47,7 @@ export default function EditTeacherPage() {
   }
 
   if (isLoading) {
-    return <p className="text-sm text-slate-400">Loading teacher...</p>;
+    return <PageLoader text="Loading teacher..." />;
   }
 
   const allocationsMeta: AllocationWithClass[] = (
@@ -73,6 +74,7 @@ export default function EditTeacherPage() {
         email: teacher.email ?? undefined,
         phone: teacher.phone ?? undefined,
         photoUrl: teacher.photoUrl ?? undefined,
+        isActive: teacher.isActive,
         allocations: allocationsMeta.map(
           ({ subjectId, sectionId, academicYearId }) => ({
             subjectId,

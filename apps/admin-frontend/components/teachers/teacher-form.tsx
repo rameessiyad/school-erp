@@ -140,6 +140,7 @@ export function TeacherForm({
     defaultValues: {
       allocations: [],
       ...defaultValues,
+      isActive: defaultValues?.isActive ?? true,
     },
   });
 
@@ -546,6 +547,41 @@ export function TeacherForm({
                   )}
                 </div>
               </div>
+            </section>
+
+            {/* ===================================================== */}
+            {/* Status */}
+            {/* ===================================================== */}
+
+            <section className="border-t border-border px-6 py-7 lg:px-8">
+              <div className="mb-5">
+                <h3 className="text-sm font-semibold text-text-primary">
+                  Status
+                </h3>
+
+                <p className="mt-1 text-xs text-text-muted">
+                  Inactive teachers are hidden from active listings but their
+                  records are kept.
+                </p>
+              </div>
+
+              <Controller
+                control={control}
+                name="isActive"
+                render={({ field }) => (
+                  <label className="flex w-fit cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface-secondary/50 px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={field.value ?? true}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="h-4 w-4 rounded border-border cursor-pointer"
+                    />
+                    <span className="text-sm font-medium text-text-primary">
+                      {(field.value ?? true) ? "Active" : "Inactive"}
+                    </span>
+                  </label>
+                )}
+              />
             </section>
 
             {/* ===================================================== */}

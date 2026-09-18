@@ -27,6 +27,7 @@ export function getTeacherSchema(isEditMode: boolean) {
     qualification: z.string().optional(),
     experience: z.coerce.number().int().nonnegative().optional(),
     joiningDate: z.string().optional(),
+    isActive: z.boolean(), // no .default() — keep input/output types identical
     allocations: z.array(allocationSchema).optional(),
     photo: z.string().optional(),
   });

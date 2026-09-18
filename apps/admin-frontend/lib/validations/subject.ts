@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createSubjectSchema = z.object({
   name: z.string().min(1, "Subject name is required"),
-  code: z.string().optional(),
+  code: z.string().min(1, "Subject code is required"),
 });
 
 export type CreateSubjectValues = z.infer<typeof createSubjectSchema>;

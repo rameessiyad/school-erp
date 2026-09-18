@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "./provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -34,7 +35,17 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
-          <Providers>{children}</Providers>
+          <Providers>
+            {children}
+            <Toaster
+              position="top-right"
+              richColors
+              closeButton
+              toastOptions={{
+                duration: 3500,
+              }}
+            />
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
