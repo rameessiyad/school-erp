@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FeePayment } from "@/lib/validations/fee";
+import jsPDF from "jspdf";
 
 interface ReceiptDialogProps {
   payment: FeePayment;
@@ -35,40 +36,56 @@ export function ReceiptDialog({
   const [open, setOpen] = useState(false);
 
   function handleDownload() {
-    const receiptWindow = window.open("", "_blank", "width=420,height=600");
-    if (!receiptWindow) return;
+    const doc = new jsPDF();
 
-    receiptWindow.document.write(`
-      <html>
-        <head>
-          <title>Receipt ${payment.receiptNumber}</title>
-          <style>
-            body { font-family: system-ui, sans-serif; padding: 32px; color: #111; }
-            h1 { font-size: 18px; margin-bottom: 4px; }
-            .muted { color: #666; font-size: 13px; margin-bottom: 24px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-            td { padding: 8px 0; font-size: 14px; border-bottom: 1px solid #eee; }
-            td:first-child { color: #666; }
-            td:last-child { text-align: right; font-weight: 600; }
-          </style>
-        </head>
-        <body>
-          <h1>Payment Receipt</h1>
-          <p class="muted">Receipt No. ${payment.receiptNumber}</p>
-          <table>
-            <tr><td>Student</td><td>${studentName ?? "—"}</td></tr>
-            <tr><td>Fee</td><td>${feeStructureName ?? "—"}</td></tr>
-            <tr><td>Amount Paid</td><td>₹${payment.amount}</td></tr>
-            <tr><td>Payment Method</td><td>${payment.paymentMethod.replace("_", " ")}</td></tr>
-            <tr><td>Date</td><td>${new Date(payment.paymentDate).toLocaleDateString()}</td></tr>
-            <tr><td>Collected By</td><td>${payment.collectedBy?.email ?? "—"}</td></tr>
-          </table>
-        </body>
-      </html>
-    `);
-    receiptWindow.document.close();
-    receiptWindow.focus();
-    receiptWindow.print();
+    const receiptNumber = payment.receiptNumber;
+    const paymentMethod = payment.paymentMethod.replace("_", " ");
+    const date = new Date(payment.paymentDate).toLocaleDateString();
+
+    // Title
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("Payment Receipt", 20, 25);
+
+    // Receipt number
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Receipt No. ${receiptNumber}`, 20, 33);
+
+    // Divider
+    doc.line(20, 40, 190, 40);
+
+    // Details
+    const rows = [
+      ["Student", studentName ?? "—"],
+      ["Fee", feeStructureName ?? "—"],
+      ["Amount Paid", `₹${payment.amount}`],
+      ["Payment Method", paymentMethod],
+      ["Date", date],
+      ["Collected By", payment.collectedBy?.email ?? "—"],
+    ];
+
+    let y = 55;
+
+    rows.forEach(([label, value]) => {
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(100, 100, 100);
+      doc.text(label, 20, y);
+
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(20, 20, 20);
+      doc.text(value, 190, y, {
+        align: "right",
+      });
+
+      doc.setDrawColor(230, 230, 230);
+      doc.line(20, y + 5, 190, y + 5);
+
+      y += 16;
+    });
+
+    // Download
+    doc.save(`Receipt-${receiptNumber}.pdf`);
   }
 
   return (
