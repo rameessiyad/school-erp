@@ -32,7 +32,7 @@ export default function StaffPage() {
         return (
           fullName.includes(debouncedSearch) ||
           s.email?.toLowerCase().includes(debouncedSearch) ||
-          s.designation.toLowerCase().includes(debouncedSearch)
+          s.designation?.name.toLowerCase().includes(debouncedSearch)
         );
       })
     : staff;

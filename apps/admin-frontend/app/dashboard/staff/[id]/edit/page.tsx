@@ -33,6 +33,7 @@ export default function EditStaffPage() {
     lastName: staff.lastName ?? undefined,
     email: staff.email ?? undefined,
     phone: staff.phone ?? undefined,
+    isActive: staff.isActive,
     designation: staff.designation,
   };
 

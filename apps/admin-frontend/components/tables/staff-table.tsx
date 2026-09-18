@@ -97,6 +97,7 @@ export function StaffTable({ staff }: StaffTableProps) {
                 <StaffRowActions
                   staffId={s.id}
                   staffName={`${s.firstName} ${s.lastName ?? ""}`}
+                  isActive={s.isActive}
                 />
               </TableCell>
             </TableRow>

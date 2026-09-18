@@ -108,6 +108,7 @@ export class StaffService {
         phone: dto.phone,
         email: dto.email,
         designationId: dto.designationId,
+        isActive: dto.isActive,
         ...(photoUrl && { photoUrl }),
       },
     });

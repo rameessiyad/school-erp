@@ -5,8 +5,9 @@ export const staffSchema = z.object({
   lastName: z.string().optional(),
   email: z.string().email("Enter a valid email"),
   phone: z.string().optional(),
-  password: z.string().optional(), // always optional at the type level
+  password: z.string().optional(),
   designationId: z.string().min(1, "Select a designation"),
+  isActive: z.boolean(),
   photo: z.string().optional(),
 });
 

@@ -17,7 +17,8 @@ function buildStaffFormData(
     formData.append("password", values.password);
   if (values.designationId !== undefined)
     formData.append("designationId", values.designationId);
-
+  if (values.isActive !== undefined)
+    formData.append("isActive", String(values.isActive));
   if (photo) {
     formData.append("photo", photo);
   }

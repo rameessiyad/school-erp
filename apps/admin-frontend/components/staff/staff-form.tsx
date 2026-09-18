@@ -91,7 +91,10 @@ export function StaffForm({
     formState: { errors },
   } = useForm<CreateStaffValues>({
     resolver: zodResolver(getStaffSchema(isEditMode)),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      isActive: defaultValues?.isActive ?? true,
+    },
   });
 
   const createDesignationMutation = useMutation({
@@ -455,6 +458,42 @@ export function StaffForm({
               </p>
             )}
           </div>
+
+          {/* ===================================================== */}
+          {/* Status */}
+          {/* ===================================================== */}
+
+          <section className="border-t border-border py-2">
+            <div className="mb-5">
+              <h3 className="text-sm font-semibold text-text-primary">
+                Status
+              </h3>
+
+              <p className="mt-1 text-xs text-text-muted">
+                Inactive staff members are hidden from active listings but their
+                records are kept.
+              </p>
+            </div>
+
+            <Controller
+              control={control}
+              name="isActive"
+              render={({ field }) => (
+                <label className="flex w-fit cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface-secondary/50 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={field.value ?? true}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                    className="h-4 w-4 cursor-pointer rounded border-border"
+                  />
+
+                  <span className="text-sm font-medium text-text-primary">
+                    {(field.value ?? true) ? "Active" : "Inactive"}
+                  </span>
+                </label>
+              )}
+            />
+          </section>
 
           {serverError && (
             <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3">
