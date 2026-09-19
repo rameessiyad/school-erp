@@ -149,6 +149,8 @@ export default function DashboardPage() {
       title: "Fees Collected",
       value: formatCurrency(stats?.totalFeesCollected ?? 0),
       description: `${stats?.feeCollectionPercentage ?? 0}% collected`,
+      secondaryLabel: "Pending",
+      secondaryValue: formatCurrency(stats?.totalFeesPending ?? 0),
       icon: Wallet,
       show: canSeeFees,
     },
@@ -234,9 +236,20 @@ export default function DashboardPage() {
                       {stat.title}
                     </p>
 
-                    <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-                      {stat.value}
-                    </p>
+                    <div className="mt-2 flex items-baseline gap-2">
+                      <p className="text-2xl font-bold tracking-tight text-text-primary">
+                        {stat.value}
+                      </p>
+
+                      {stat.secondaryValue && (
+                        <p className="text-sm font-semibold text-orange-500">
+                          {stat.secondaryValue}
+                          <span className="ml-1 text-xs font-normal text-text-muted">
+                            {stat.secondaryLabel}
+                          </span>
+                        </p>
+                      )}
+                    </div>
 
                     <p className="mt-1 text-xs text-text-muted">
                       {stat.description}
