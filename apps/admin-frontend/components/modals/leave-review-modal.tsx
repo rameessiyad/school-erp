@@ -10,6 +10,7 @@ import {
   UnifiedLeaveApplication,
 } from "@/lib/api/leave-unified";
 import { getErrorMessage } from "@/lib/api/error";
+import { notify } from "@/lib/toast";
 
 interface LeaveReviewModalProps {
   leave: UnifiedLeaveApplication;
@@ -30,6 +31,7 @@ export function LeaveReviewModal({ leave, onClose }: LeaveReviewModalProps) {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["unified-leave"] });
+      notify.success("Leave application reviewed successfully");
       onClose();
     },
 

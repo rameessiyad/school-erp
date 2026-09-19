@@ -15,12 +15,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { getErrorMessage } from "@/lib/api/error";
+import { notify } from "@/lib/toast";
 
 interface DeleteEntityDialogProps {
   entityLabel: string;
   entityName: string;
   onDelete: () => Promise<void>;
   onSuccess?: () => void;
+  onError?: () => void;
   description?: string;
 }
 
@@ -29,6 +31,7 @@ export function DeleteEntityDialog({
   entityName,
   onDelete,
   onSuccess,
+  onError,
   description,
 }: DeleteEntityDialogProps) {
   const [loading, setLoading] = useState(false);
@@ -41,9 +44,13 @@ export function DeleteEntityDialog({
     try {
       await onDelete();
       setOpen(false);
+      notify.success(`${entityName} deleted successfully`);
       onSuccess?.();
     } catch (error) {
-      setServerError(getErrorMessage(error, `Failed to delete ${entityLabel}`));
+      const message = getErrorMessage(error, `Failed to delete ${entityLabel}`);
+      setServerError(message);
+      notify.error(message);
+      onError?.();
     } finally {
       setLoading(false);
     }

@@ -51,7 +51,7 @@ export class StaffLeaveController {
     return this.leaveService.review(
       req.user.schoolId,
       id,
-      req.user.id, // reviewer is the admin — adjust field name to match your JWT payload
+      req.user.userId,
       dto,
     );
   }

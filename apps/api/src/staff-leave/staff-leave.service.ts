@@ -19,8 +19,8 @@ export class StaffLeaveService {
 
     return this.prisma.staffLeaveApplication.create({
       data: {
-        schoolId,
-        staffId,
+        school: { connect: { id: schoolId } },
+        staff: { connect: { id: staffId } },
         fromDate: new Date(dto.fromDate),
         toDate: new Date(dto.toDate),
         reason: dto.reason,

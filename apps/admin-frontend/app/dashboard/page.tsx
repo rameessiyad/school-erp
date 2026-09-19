@@ -18,6 +18,7 @@ import { Module } from "@/lib/permissions/module.enum";
 import { PageLoader } from "@/components/common/page-loader";
 import { DashboardChart } from "@/components/dashboard/dashboard-charts";
 import { DashboardActivity } from "@/components/dashboard/dashboard-activity";
+import { StaffAttendanceCard } from "@/components/dashboard/staff-attendance-card";
 import { useEffect, useRef, useState } from "react";
 import { academicYearApi } from "@/lib/api/academic-year";
 
@@ -101,6 +102,7 @@ export default function DashboardPage() {
   }
 
   const isAdmin = user.role === "SCHOOL_ADMIN" || user.role === "SUPER_ADMIN";
+  const isStaff = user.role === "STAFF";
   const allowedModules = user.allowedModules ?? [];
 
   const hasModule = (requiredModules?: Module[]) => {
@@ -171,6 +173,8 @@ export default function DashboardPage() {
             Welcome back. Here&apos;s what&apos;s happening in your school.
           </p>
         </div>
+
+        {isStaff && <StaffAttendanceCard />}
 
         {stats?.academicYear && (
           <div className="relative" ref={yearMenuRef}>

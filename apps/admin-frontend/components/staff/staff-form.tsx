@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Eye, EyeOff } from "lucide-react";
 import { getStaffSchema, CreateStaffValues } from "@/lib/validations/staff";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,6 +63,7 @@ export function StaffForm({
   const isEditMode = !!staffId;
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(
@@ -266,197 +267,223 @@ export function StaffForm({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label
-              htmlFor="email"
-              className="text-sm font-medium text-text-primary"
-            >
-              Email
-            </Label>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label
+                htmlFor="email"
+                className="text-sm font-medium text-text-primary"
+              >
+                Email
+              </Label>
 
-            <Input
-              id="email"
-              type="email"
-              placeholder="staff@school.com"
-              {...register("email")}
-              className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
-            />
+              <Input
+                id="email"
+                type="email"
+                placeholder="staff@school.com"
+                {...register("email")}
+                className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+              />
 
-            {errors.email && (
-              <p className="text-xs text-red-500">{errors.email.message}</p>
-            )}
+              {errors.email && (
+                <p className="text-xs text-red-500">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="phone"
+                className="text-sm font-medium text-text-primary"
+              >
+                Phone
+              </Label>
+
+              <MobileInput
+                id="phone"
+                type="tel"
+                placeholder="Enter phone number"
+                {...register("phone")}
+                className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <Label
-              htmlFor="phone"
-              className="text-sm font-medium text-text-primary"
-            >
-              Phone
-            </Label>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label
+                htmlFor="password"
+                className="text-sm font-medium text-text-primary"
+              >
+                Password
+              </Label>
 
-            <MobileInput
-              id="phone"
-              type="tel"
-              placeholder="Enter phone number"
-              {...register("phone")}
-              className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder={
+                    isEditMode
+                      ? "Leave blank to keep current password"
+                      : "Create a secure password"
+                  }
+                  {...register("password")}
+                  className="h-11 rounded-lg border-border bg-surface-secondary/50 pr-10 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+                />
 
-          <div className="space-y-2">
-            <Label
-              htmlFor="password"
-              className="text-sm font-medium text-text-primary"
-            >
-              Password
-            </Label>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  tabIndex={-1}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
 
-            <Input
-              id="password"
-              type="password"
-              placeholder={
-                isEditMode
-                  ? "Leave blank to keep current password"
-                  : "Create a secure password"
-              }
-              {...register("password")}
-              className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
-            />
+              {errors.password && (
+                <p className="text-xs text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
 
-            {errors.password && (
-              <p className="text-xs text-red-500">{errors.password.message}</p>
-            )}
-          </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-text-primary">
+                Designation
+              </Label>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-text-primary">
-              Designation
-            </Label>
+              {isAddingDesignation ? (
+                <div className="space-y-3 rounded-lg border border-border bg-surface-secondary/50 p-4">
+                  <div className="flex gap-2">
+                    <Input
+                      autoFocus
+                      value={newDesignationName}
+                      onChange={(e) => {
+                        setNewDesignationName(e.target.value);
+                        setNewDesignationError(null);
+                      }}
+                      placeholder="e.g. Librarian, Lab Assistant"
+                      className="h-11 rounded-lg border-border bg-surface"
+                    />
 
-            {isAddingDesignation ? (
-              <div className="space-y-3 rounded-lg border border-border bg-surface-secondary/50 p-4">
-                <div className="flex gap-2">
-                  <Input
-                    autoFocus
-                    value={newDesignationName}
-                    onChange={(e) => {
-                      setNewDesignationName(e.target.value);
-                      setNewDesignationError(null);
-                    }}
-                    placeholder="e.g. Librarian, Lab Assistant"
-                    className="h-11 rounded-lg border-border bg-surface"
-                  />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setIsAddingDesignation(false);
+                        setNewDesignationName("");
+                        setNewDesignationModules([]);
+                        setNewDesignationError(null);
+                      }}
+                      className="h-11 shrink-0 rounded-lg border-border px-3"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div>
+                    <p className="mb-2 text-xs font-medium text-text-secondary">
+                      Allowed modules for this designation
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                      {ALL_MODULES.map((mod) => (
+                        <label
+                          key={mod}
+                          className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs text-text-secondary hover:bg-surface"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={newDesignationModules.includes(mod)}
+                            onChange={() => toggleModule(mod)}
+                            className="h-3.5 w-3.5 rounded border-border"
+                          />
+                          {formatModuleLabel(mod)}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {newDesignationError && (
+                    <p className="text-xs text-red-500">
+                      {newDesignationError}
+                    </p>
+                  )}
 
                   <Button
                     type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsAddingDesignation(false);
-                      setNewDesignationName("");
-                      setNewDesignationModules([]);
-                      setNewDesignationError(null);
-                    }}
-                    className="h-11 shrink-0 rounded-lg border-border px-3"
+                    onClick={handleAddDesignation}
+                    disabled={createDesignationMutation.isPending}
+                    className="h-10 w-full rounded-lg bg-primary text-primary-foreground hover:bg-primary-hover"
                   >
-                    <X className="h-4 w-4" />
+                    {createDesignationMutation.isPending
+                      ? "Adding..."
+                      : "Add Designation"}
                   </Button>
                 </div>
-
-                <div>
-                  <p className="mb-2 text-xs font-medium text-text-secondary">
-                    Allowed modules for this designation
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                    {ALL_MODULES.map((mod) => (
-                      <label
-                        key={mod}
-                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs text-text-secondary hover:bg-surface"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={newDesignationModules.includes(mod)}
-                          onChange={() => toggleModule(mod)}
-                          className="h-3.5 w-3.5 rounded border-border"
-                        />
-                        {formatModuleLabel(mod)}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {newDesignationError && (
-                  <p className="text-xs text-red-500">{newDesignationError}</p>
-                )}
-
-                <Button
-                  type="button"
-                  onClick={handleAddDesignation}
-                  disabled={createDesignationMutation.isPending}
-                  className="h-10 w-full rounded-lg bg-primary text-primary-foreground hover:bg-primary-hover"
-                >
-                  {createDesignationMutation.isPending
-                    ? "Adding..."
-                    : "Add Designation"}
-                </Button>
-              </div>
-            ) : (
-              <Controller
-                control={control}
-                name="designationId"
-                render={({ field }) => (
-                  <Select
-                    onValueChange={(value) => {
-                      if (value === "__add_new__") {
-                        setIsAddingDesignation(true);
-                        return;
-                      }
-                      field.onChange(value);
-                    }}
-                    value={field.value}
-                  >
-                    <SelectTrigger
-                      id="designationId"
-                      className="h-11 w-full max-w-md rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
-                    >
-                      <SelectValue placeholder="Select designation">
-                        {(value: string) =>
-                          designations.find((d) => d.id === value)?.name ??
-                          "Select designation"
+              ) : (
+                <Controller
+                  control={control}
+                  name="designationId"
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={(value) => {
+                        if (value === "__add_new__") {
+                          setIsAddingDesignation(true);
+                          return;
                         }
-                      </SelectValue>
-                    </SelectTrigger>
-
-                    <SelectContent className="min-w-(--radix-select-trigger-width)">
-                      {designations.map((designation) => (
-                        <SelectItem key={designation.id} value={designation.id}>
-                          {designation.name}
-                        </SelectItem>
-                      ))}
-
-                      <div className="my-1 border-t border-border" />
-
-                      <SelectItem
-                        value="__add_new__"
-                        className="font-medium text-primary focus:bg-primary-soft focus:text-primary"
+                        field.onChange(value);
+                      }}
+                      value={field.value}
+                    >
+                      <SelectTrigger
+                        id="designationId"
+                        className="h-11 w-full rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
                       >
-                        <span className="flex items-center cursor-pointer gap-1.5">
-                          <Plus className="h-3.5 w-3.5" />
-                          Add new designation
-                        </span>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            )}
+                        <SelectValue placeholder="Select designation">
+                          {(value: string) =>
+                            designations.find((d) => d.id === value)?.name ??
+                            "Select designation"
+                          }
+                        </SelectValue>
+                      </SelectTrigger>
 
-            {errors.designationId && (
-              <p className="text-xs text-red-500">
-                {errors.designationId.message}
-              </p>
-            )}
+                      <SelectContent className="min-w-(--radix-select-trigger-width)">
+                        {designations.map((designation) => (
+                          <SelectItem
+                            key={designation.id}
+                            value={designation.id}
+                          >
+                            {designation.name}
+                          </SelectItem>
+                        ))}
+
+                        <div className="my-1 border-t border-border" />
+
+                        <SelectItem
+                          value="__add_new__"
+                          className="font-medium text-primary focus:bg-primary-soft focus:text-primary"
+                        >
+                          <span className="flex items-center cursor-pointer gap-1.5">
+                            <Plus className="h-3.5 w-3.5" />
+                            Add new designation
+                          </span>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              )}
+
+              {errors.designationId && (
+                <p className="text-xs text-red-500">
+                  {errors.designationId.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* ===================================================== */}

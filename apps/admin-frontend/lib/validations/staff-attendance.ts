@@ -12,3 +12,17 @@ export interface StaffAttendanceByDateResponse {
   date: string;
   staff: AttendanceStaff[];
 }
+
+export interface StaffAttendanceRecord {
+  id: string;
+  schoolId: string;
+  staffId: string;
+  date: string;
+  status: StaffAttendanceStatus;
+  markedAt: string;
+}
+
+export interface MarkStaffAttendanceValues {
+  status: StaffAttendanceStatus;
+  date?: string;
+}

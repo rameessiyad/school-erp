@@ -19,6 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     role: string;
     allowedModules?: string[];
     teacherId?: string;
+    staffId?: string;
   }) {
     return {
       userId: payload.sub,
@@ -26,6 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       role: payload.role,
       allowedModules: payload.allowedModules ?? [],
       teacherId: payload.teacherId,
+      staffId: payload.staffId,
     };
   }
 }

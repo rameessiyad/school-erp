@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { staffLeaveApi } from "@/lib/api/staff-leave";
 import { PageLoader } from "@/components/common/page-loader";
 import { getErrorMessage } from "@/lib/api/error";
+import { notify } from "@/lib/toast";
 
 export default function ApplyLeavePage() {
   const queryClient = useQueryClient();
@@ -26,10 +27,14 @@ export default function ApplyLeavePage() {
       setFromDate("");
       setToDate("");
       setReason("");
+      notify.success("Leave applied successfully");
       setError(null);
     },
-    onError: (err) =>
-      setError(getErrorMessage(err, "Failed to apply for leave")),
+    onError: (err) => {
+      const message = getErrorMessage(err, "Failed to apply for leave");
+      setError(message);
+      notify.error(message);
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {

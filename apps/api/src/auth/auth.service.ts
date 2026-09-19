@@ -30,6 +30,7 @@ export class AuthService {
 
     let allowedModules: Module[] = [];
     let teacherId: string | undefined;
+    let staffId: string | undefined;
 
     if (user.role === Role.STAFF) {
       const staff = await this.prisma.staff.findUnique({
@@ -40,6 +41,7 @@ export class AuthService {
       if (!staff) throw new UnauthorizedException('Staff record not found');
 
       allowedModules = (staff.designation?.allowedModules ?? []) as Module[];
+      staffId = staff.id;
     }
 
     if (user.role === Role.TEACHER) {
@@ -56,6 +58,7 @@ export class AuthService {
       role: user.role,
       allowedModules,
       teacherId,
+      staffId,
     };
 
     return {
@@ -68,7 +71,6 @@ export class AuthService {
       },
     };
   }
-
   async requestOtp(schoolId: string, phone: string) {
     const user = await this.prisma.user.findFirst({
       where: { schoolId, phone, role: Role.PARENT },

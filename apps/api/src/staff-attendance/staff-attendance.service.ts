@@ -2,19 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MarkStaffAttendanceDto } from './dto/mark-staff-attendance.dto';
 
-function startOfDay(date: Date) {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d;
+// Parses a "yyyy-MM-dd" string as a UTC calendar date (no timezone drift)
+function parseDateOnly(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+// Normalizes any Date to UTC midnight of the same UTC calendar date
+function startOfDay(date: Date): Date {
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+  );
 }
 
 @Injectable()
 export class StaffAttendanceService {
   constructor(private prisma: PrismaService) {}
 
-  // Staff marks their own attendance for a given day (defaults to today)
   async mark(schoolId: string, staffId: string, dto: MarkStaffAttendanceDto) {
-    const date = startOfDay(dto.date ? new Date(dto.date) : new Date());
+    const date = dto.date ? parseDateOnly(dto.date) : startOfDay(new Date());
 
     return this.prisma.staffAttendance.upsert({
       where: {
@@ -25,7 +31,6 @@ export class StaffAttendanceService {
     });
   }
 
-  // Admin: list all attendance, optionally filtered
   async findAll(
     schoolId: string,
     filters: { staffId?: string; from?: string; to?: string },
@@ -35,8 +40,8 @@ export class StaffAttendanceService {
         schoolId,
         staffId: filters.staffId,
         date: {
-          gte: filters.from ? startOfDay(new Date(filters.from)) : undefined,
-          lte: filters.to ? startOfDay(new Date(filters.to)) : undefined,
+          gte: filters.from ? parseDateOnly(filters.from) : undefined,
+          lte: filters.to ? parseDateOnly(filters.to) : undefined,
         },
       },
       include: {
@@ -48,7 +53,6 @@ export class StaffAttendanceService {
     });
   }
 
-  // Staff: their own attendance history
   async findMine(
     schoolId: string,
     staffId: string,
@@ -59,8 +63,8 @@ export class StaffAttendanceService {
         schoolId,
         staffId,
         date: {
-          gte: filters.from ? startOfDay(new Date(filters.from)) : undefined,
-          lte: filters.to ? startOfDay(new Date(filters.to)) : undefined,
+          gte: filters.from ? parseDateOnly(filters.from) : undefined,
+          lte: filters.to ? parseDateOnly(filters.to) : undefined,
         },
       },
       orderBy: { date: 'desc' },
@@ -68,7 +72,7 @@ export class StaffAttendanceService {
   }
 
   async findAllByDate(schoolId: string, date?: string) {
-    const day = startOfDay(date ? new Date(date) : new Date());
+    const day = date ? parseDateOnly(date) : startOfDay(new Date());
 
     const staffMembers = await this.prisma.staff.findMany({
       where: { schoolId },
