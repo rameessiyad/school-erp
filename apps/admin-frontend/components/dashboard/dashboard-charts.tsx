@@ -20,7 +20,7 @@ interface FeeTrendItem {
 }
 
 interface AttendanceTrendItem {
-  date: string;
+  month: string;
   percentage: number | null;
 }
 
@@ -61,12 +61,23 @@ function formatCurrency(amount: number) {
   return `₹${amount}`;
 }
 
-function normalizeToFullYear(data: FeeTrendItem[]): FeeTrendItem[] {
+function normalizeFeeToFullYear(data: FeeTrendItem[]): FeeTrendItem[] {
   return MONTHS.map((month) => {
     const match = data.find((d) =>
       d.month.toLowerCase().startsWith(month.toLowerCase()),
     );
     return { month, collected: match?.collected ?? 0 };
+  });
+}
+
+function normalizeAttendanceToFullYear(
+  data: AttendanceTrendItem[],
+): AttendanceTrendItem[] {
+  return MONTHS.map((month) => {
+    const match = data.find((d) =>
+      d?.month?.toLowerCase().startsWith(month.toLowerCase()),
+    );
+    return { month, percentage: match?.percentage ?? null };
   });
 }
 
@@ -101,7 +112,9 @@ export function DashboardChart({
   const activeChartLabel = chartOptions.find(
     (c) => c.value === chartType,
   )?.label;
-  const normalizedFeeData = normalizeToFullYear(feeData);
+  const normalizedFeeData = normalizeFeeToFullYear(feeData);
+  const normalizedAttendanceData =
+    normalizeAttendanceToFullYear(attendanceData);
 
   return (
     <div className="rounded-xl border h-full border-border bg-surface p-5 shadow-sm">
@@ -145,7 +158,7 @@ export function DashboardChart({
       <p className="mt-1 text-sm text-text-secondary">
         {chartType === "fee"
           ? "Monthly fee collection for the academic year."
-          : "Daily attendance % over the last 14 days."}
+          : "Monthly attendance % for the academic year."}
       </p>
 
       <div className="mt-6 h-56 w-full">
@@ -198,8 +211,8 @@ export function DashboardChart({
             </BarChart>
           ) : (
             <LineChart
-              data={attendanceData}
-              margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
+              data={normalizedAttendanceData}
+              margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
             >
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -207,7 +220,7 @@ export function DashboardChart({
                 stroke="var(--border)"
               />
               <XAxis
-                dataKey="date"
+                dataKey="month"
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 11, fill: "var(--text-secondary)" }}
@@ -217,6 +230,7 @@ export function DashboardChart({
                 tickLine={false}
                 domain={[0, 100]}
                 ticks={ATTENDANCE_Y_TICKS}
+                width={35}
                 tick={{ fontSize: 11, fill: "var(--text-secondary)" }}
                 tickFormatter={(v) => `${v}%`}
               />

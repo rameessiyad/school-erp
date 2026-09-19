@@ -10,9 +10,12 @@ import { PageLoader } from "@/components/common/page-loader";
 import { useQuery } from "@tanstack/react-query";
 import { useDebouncedValue } from "@/hooks/use-debounzed-values";
 
+type StatusFilter = "all" | "active" | "inactive";
+
 export default function TeachersPage() {
   const [assignOpen, setAssignOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const debouncedSearch = useDebouncedValue(searchInput, 250)
     .trim()
     .toLowerCase();
@@ -28,17 +31,47 @@ export default function TeachersPage() {
 
   const isSearching = debouncedSearch.length > 0;
 
-  const filteredTeachers = isSearching
-    ? teachers.filter((t) => {
-        const fullName = `${t.firstName} ${t.lastName ?? ""}`.toLowerCase();
-        return (
-          fullName.includes(debouncedSearch) ||
-          t.email?.toLowerCase().includes(debouncedSearch) ||
-          t.employeeId?.toLowerCase().includes(debouncedSearch) ||
-          t.qualification?.toLowerCase().includes(debouncedSearch)
-        );
-      })
-    : teachers;
+  const filteredTeachers = teachers
+    .filter((t) => {
+      if (statusFilter === "active") return t.isActive;
+      if (statusFilter === "inactive") return !t.isActive;
+      return true;
+    })
+    .filter((t) => {
+      if (!isSearching) return true;
+      const fullName = `${t.firstName} ${t.lastName ?? ""}`.toLowerCase();
+      return (
+        fullName.includes(debouncedSearch) ||
+        t.email?.toLowerCase().includes(debouncedSearch) ||
+        t.employeeId?.toLowerCase().includes(debouncedSearch) ||
+        t.qualification?.toLowerCase().includes(debouncedSearch)
+      );
+    });
+
+  const statCards: {
+    key: StatusFilter;
+    label: string;
+    value: number;
+  }[] = [
+    { key: "all", label: "Total Teachers", value: teachers.length },
+    {
+      key: "active",
+      label: "Active Teachers",
+      value: teachers.filter((t) => t.isActive).length,
+    },
+    {
+      key: "inactive",
+      label: "Inactive Teachers",
+      value: teachers.filter((t) => !t.isActive).length,
+    },
+  ];
+
+  const headerLabel =
+    statusFilter === "active"
+      ? "Active Teachers"
+      : statusFilter === "inactive"
+        ? "Inactive Teachers"
+        : "All Teachers";
 
   return (
     <div className="space-y-8">
@@ -94,47 +127,43 @@ export default function TeachersPage() {
         )}
       </div>
 
-      {!isSearching && (
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <p className="text-sm font-medium text-text-secondary">
-              Total Teachers
-            </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-              {teachers.length}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <p className="text-sm font-medium text-text-secondary">
-              Active Teachers
-            </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-              {teachers.filter((t) => t.isActive).length}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <p className="text-sm font-medium text-text-secondary">
-              Inactive Teachers
-            </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-              {teachers.filter((t) => !t.isActive).length}
-            </p>
-          </div>
-        </div>
-      )}
+      <div className="grid gap-4 sm:grid-cols-3">
+        {statCards.map((card) => {
+          const isActive = statusFilter === card.key;
+          return (
+            <button
+              key={card.key}
+              type="button"
+              onClick={() => setStatusFilter(card.key)}
+              className={`rounded-xl border p-5 text-left shadow-sm transition ${
+                isActive
+                  ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                  : "border-border bg-surface hover:bg-surface-secondary"
+              }`}
+            >
+              <p className="text-sm font-medium text-text-secondary">
+                {card.label}
+              </p>
+              <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+                {card.value}
+              </p>
+            </button>
+          );
+        })}
+      </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
         <div className="flex flex-col justify-between gap-3 border-b border-border px-6 py-4 sm:flex-row sm:items-center">
           <div>
             <h2 className="font-semibold text-text-primary">
-              {isSearching ? "Matching Teachers" : "All Teachers"}
+              {isSearching ? "Matching Teachers" : headerLabel}
             </h2>
             <p className="mt-1 text-xs text-text-secondary">
               {isSearching
                 ? `Teachers whose name, email, employee ID or qualification match "${searchInput}".`
-                : "View all teachers registered in your school"}
+                : statusFilter === "all"
+                  ? "View all teachers registered in your school"
+                  : `Showing only ${statusFilter} teachers.`}
             </p>
           </div>
 
@@ -144,10 +173,12 @@ export default function TeachersPage() {
           </span>
         </div>
 
-        {isSearching && filteredTeachers.length === 0 ? (
+        {filteredTeachers.length === 0 ? (
           <div className="p-8 text-center">
             <p className="text-sm text-text-muted">
-              No teachers match &quot;{searchInput}&quot;.
+              {isSearching
+                ? `No teachers match "${searchInput}".`
+                : `No ${statusFilter} teachers found.`}
             </p>
           </div>
         ) : (

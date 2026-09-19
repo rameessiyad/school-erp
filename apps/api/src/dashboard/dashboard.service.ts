@@ -28,18 +28,29 @@ export class DashboardService {
     const requestedYear = academicYearId
       ? await this.prisma.academicYear.findFirst({
           where: { id: academicYearId, schoolId },
-          select: { id: true, label: true, isActive: true },
+          select: {
+            id: true,
+            label: true,
+            isActive: true,
+            startDate: true,
+            endDate: true,
+          },
         })
       : await this.prisma.academicYear.findFirst({
           where: { schoolId, isActive: true },
-          select: { id: true, label: true, isActive: true },
+          select: {
+            id: true,
+            label: true,
+            isActive: true,
+            startDate: true,
+            endDate: true,
+          },
         });
 
     const academicYear = requestedYear
       ? { id: requestedYear.id, label: requestedYear.label }
       : null;
     const resolvedAcademicYearId = requestedYear?.id;
-    const isViewingActiveYear = requestedYear?.isActive ?? false;
 
     const [
       studentCount,
@@ -260,51 +271,42 @@ export class DashboardService {
     }));
 
     // ---------------------------------------------------------
-    // Student attendance trend (last 14 days, % present)
-    // Only meaningful for the currently active academic year —
-    // a past year has no "last 14 days" to speak of.
+    // Student attendance trend (monthly avg % present, for the
+    // selected academic year — Apr to Mar, matching feeTrend)
     // ---------------------------------------------------------
 
-    const attendanceDays = 14;
-    let attendanceTrend: { date: string; percentage: number | null }[] = [];
+    let attendanceTrend: { month: string; percentage: number | null }[] =
+      monthOrder.map((month) => ({ month, percentage: null }));
 
-    if (isViewingActiveYear) {
-      const attendanceFrom = new Date();
-      attendanceFrom.setDate(attendanceFrom.getDate() - (attendanceDays - 1));
-      attendanceFrom.setHours(0, 0, 0, 0);
+    if (resolvedAcademicYearId && requestedYear?.startDate) {
+      const yearStart = requestedYear.startDate;
+      const yearEnd = requestedYear.endDate ?? new Date();
 
       const attendanceRecords = await this.prisma.studentAttendance.findMany({
         where: {
           schoolId,
-          date: { gte: attendanceFrom },
+          date: { gte: yearStart, lte: yearEnd },
         },
         select: { date: true, status: true },
       });
 
-      const attendanceByDay = new Map<
+      const attendanceByMonth = new Map<
         string,
         { present: number; total: number }
       >();
 
       for (const record of attendanceRecords) {
-        const key = record.date.toISOString().slice(0, 10);
-        const entry = attendanceByDay.get(key) ?? { present: 0, total: 0 };
+        const key = getMonthAbbr(record.date);
+        const entry = attendanceByMonth.get(key) ?? { present: 0, total: 0 };
         entry.total += 1;
         if (record.status === 'PRESENT') entry.present += 1;
-        attendanceByDay.set(key, entry);
+        attendanceByMonth.set(key, entry);
       }
 
-      attendanceTrend = Array.from({ length: attendanceDays }).map((_, i) => {
-        const day = new Date(attendanceFrom);
-        day.setDate(day.getDate() + i);
-        const key = day.toISOString().slice(0, 10);
-        const entry = attendanceByDay.get(key);
-
+      attendanceTrend = monthOrder.map((month) => {
+        const entry = attendanceByMonth.get(month);
         return {
-          date: day.toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-          }),
+          month,
           percentage:
             entry && entry.total > 0
               ? Math.round((entry.present / entry.total) * 100)

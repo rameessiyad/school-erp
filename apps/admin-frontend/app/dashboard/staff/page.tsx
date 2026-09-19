@@ -9,8 +9,11 @@ import { PageLoader } from "@/components/common/page-loader";
 import { useQuery } from "@tanstack/react-query";
 import { useDebouncedValue } from "@/hooks/use-debounzed-values";
 
+type StatusFilter = "all" | "active" | "inactive";
+
 export default function StaffPage() {
   const [searchInput, setSearchInput] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const debouncedSearch = useDebouncedValue(searchInput, 250)
     .trim()
     .toLowerCase();
@@ -26,16 +29,46 @@ export default function StaffPage() {
 
   const isSearching = debouncedSearch.length > 0;
 
-  const filteredStaff = isSearching
-    ? staff.filter((s) => {
-        const fullName = `${s.firstName} ${s.lastName ?? ""}`.toLowerCase();
-        return (
-          fullName.includes(debouncedSearch) ||
-          s.email?.toLowerCase().includes(debouncedSearch) ||
-          s.designation?.name.toLowerCase().includes(debouncedSearch)
-        );
-      })
-    : staff;
+  const filteredStaff = staff
+    .filter((s) => {
+      if (statusFilter === "active") return s.isActive;
+      if (statusFilter === "inactive") return !s.isActive;
+      return true;
+    })
+    .filter((s) => {
+      if (!isSearching) return true;
+      const fullName = `${s.firstName} ${s.lastName ?? ""}`.toLowerCase();
+      return (
+        fullName.includes(debouncedSearch) ||
+        s.email?.toLowerCase().includes(debouncedSearch) ||
+        s.designation?.name.toLowerCase().includes(debouncedSearch)
+      );
+    });
+
+  const statCards: {
+    key: StatusFilter;
+    label: string;
+    value: number;
+  }[] = [
+    { key: "all", label: "Total Staff", value: staff.length },
+    {
+      key: "active",
+      label: "Active Staff",
+      value: staff.filter((s) => s.isActive).length,
+    },
+    {
+      key: "inactive",
+      label: "Inactive Staff",
+      value: staff.filter((s) => !s.isActive).length,
+    },
+  ];
+
+  const headerLabel =
+    statusFilter === "active"
+      ? "Active Staff"
+      : statusFilter === "inactive"
+        ? "Inactive Staff"
+        : "All Staff";
 
   return (
     <div className="space-y-8">
@@ -83,47 +116,43 @@ export default function StaffPage() {
         )}
       </div>
 
-      {!isSearching && (
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <p className="text-sm font-medium text-text-secondary">
-              Total Staff
-            </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-              {staff.length}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <p className="text-sm font-medium text-text-secondary">
-              Active Staff
-            </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-              {staff.filter((s) => s.isActive).length}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <p className="text-sm font-medium text-text-secondary">
-              Inactive Staff
-            </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-              {staff.filter((s) => !s.isActive).length}
-            </p>
-          </div>
-        </div>
-      )}
+      <div className="grid gap-4 sm:grid-cols-3">
+        {statCards.map((card) => {
+          const isActive = statusFilter === card.key;
+          return (
+            <button
+              key={card.key}
+              type="button"
+              onClick={() => setStatusFilter(card.key)}
+              className={`rounded-xl border p-5 text-left shadow-sm transition ${
+                isActive
+                  ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                  : "border-border bg-surface hover:bg-surface-secondary"
+              }`}
+            >
+              <p className="text-sm font-medium text-text-secondary">
+                {card.label}
+              </p>
+              <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+                {card.value}
+              </p>
+            </button>
+          );
+        })}
+      </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
         <div className="flex flex-col justify-between gap-3 border-b border-border px-6 py-4 sm:flex-row sm:items-center">
           <div>
             <h2 className="font-semibold text-text-primary">
-              {isSearching ? "Matching Staff" : "All Staff"}
+              {isSearching ? "Matching Staff" : headerLabel}
             </h2>
             <p className="mt-1 text-xs text-text-secondary">
               {isSearching
                 ? `Staff whose name, email or designation match "${searchInput}".`
-                : "View and manage staff members"}
+                : statusFilter === "all"
+                  ? "View and manage staff members"
+                  : `Showing only ${statusFilter} staff.`}
             </p>
           </div>
 
@@ -133,10 +162,12 @@ export default function StaffPage() {
           </span>
         </div>
 
-        {isSearching && filteredStaff.length === 0 ? (
+        {filteredStaff.length === 0 ? (
           <div className="p-8 text-center">
             <p className="text-sm text-text-muted">
-              No staff match &quot;{searchInput}&quot;.
+              {isSearching
+                ? `No staff match "${searchInput}".`
+                : `No ${statusFilter} staff found.`}
             </p>
           </div>
         ) : (
