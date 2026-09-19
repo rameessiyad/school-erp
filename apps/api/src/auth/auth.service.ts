@@ -16,6 +16,40 @@ export class AuthService {
     private redisService: RedisService,
   ) {}
 
+  async validateSuperAdminLogin(email: string, password: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email,
+        role: Role.SUPER_ADMIN,
+        schoolId: null,
+      },
+    });
+
+    if (!user) throw new UnauthorizedException('Invalid Credentials');
+
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid)
+      throw new UnauthorizedException('Invalid Credentials');
+
+    if (!user.isActive) throw new UnauthorizedException('Account inactive');
+
+    const payload = {
+      sub: user.id,
+      schoolId: null,
+      role: user.role,
+      allowedModules: [],
+    };
+
+    return {
+      accessToken: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  }
+
   async validateAdminLogin(schoolId: string, email: string, password: string) {
     const user = await this.usersService.findByEmail(schoolId, email);
 

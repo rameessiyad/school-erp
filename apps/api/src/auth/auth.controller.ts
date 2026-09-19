@@ -13,10 +13,17 @@ import { loginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RequestOtpDto } from './dto/request-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { SuperAdminLoginDto } from './dto/super-admin-login.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Post('super-admin/login')
+  @HttpCode(HttpStatus.OK)
+  async superAdminLogin(@Body() dto: SuperAdminLoginDto) {
+    return this.authService.validateSuperAdminLogin(dto.email, dto.password);
+  }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
