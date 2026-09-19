@@ -40,6 +40,7 @@ export interface DashboardStats {
   studentCount: number;
   teacherCount: number;
   classCount: number;
+  sectionCount: number;
 
   totalFeesCollected: number;
   totalFeesPending: number;

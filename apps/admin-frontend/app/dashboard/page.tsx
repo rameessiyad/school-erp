@@ -125,7 +125,18 @@ export default function DashboardPage() {
 
   const canSeeClasses = hasModule([Module.ACADEMIC_YEAR]);
 
-  const statCards = [
+  interface StatCard {
+    title: string;
+    value: number | string;
+    description: string;
+    icon: typeof GraduationCap;
+    show: boolean;
+    secondaryLabel?: string;
+    secondaryValue?: number | string;
+    secondaryColor?: string;
+  }
+
+  const statCards: StatCard[] = [
     {
       title: "Total Students",
       value: stats?.studentCount ?? 0,
@@ -144,6 +155,9 @@ export default function DashboardPage() {
       title: "Classes",
       value: stats?.classCount ?? 0,
       description: "Active classes",
+      secondaryLabel: "Sections",
+      secondaryValue: stats?.sectionCount ?? 0,
+      secondaryColor: "text-primary",
       icon: BookOpen,
       show: canSeeClasses,
     },
@@ -245,8 +259,10 @@ export default function DashboardPage() {
                         {stat.value}
                       </p>
 
-                      {stat.secondaryValue && (
-                        <p className="text-sm font-semibold text-orange-500">
+                      {stat.secondaryValue !== undefined && (
+                        <p
+                          className={`text-sm font-semibold ${stat.secondaryColor ?? "text-orange-500"}`}
+                        >
                           {stat.secondaryValue}
                           <span className="ml-1 text-xs font-normal text-text-muted">
                             {stat.secondaryLabel}
@@ -277,8 +293,6 @@ export default function DashboardPage() {
             <DashboardChart
               feeData={stats?.feeTrend ?? []}
               attendanceData={stats?.attendanceTrend ?? []}
-              filterBy={filterBy}
-              onFilterChange={setFilterBy}
               allowedCharts={[
                 ...(canSeeFees ? (["fee"] as const) : []),
                 ...(canSeeAttendance ? (["attendance"] as const) : []),

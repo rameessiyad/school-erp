@@ -45,6 +45,7 @@ export class DashboardService {
       studentCount,
       teacherCount,
       classCount,
+      sectionCount,
       studentFees,
       recentStudents,
       recentTeachers,
@@ -77,6 +78,15 @@ export class DashboardService {
               distinct: ['classId'],
             })
             .then((sections) => sections.length)
+        : 0,
+
+      resolvedAcademicYearId
+        ? this.prisma.section.count({
+            where: {
+              schoolId,
+              academicYearId: resolvedAcademicYearId,
+            },
+          })
         : 0,
 
       resolvedAcademicYearId
@@ -490,6 +500,7 @@ export class DashboardService {
       studentCount,
       teacherCount,
       classCount,
+      sectionCount,
 
       totalFeesCollected,
       totalFeesPending,

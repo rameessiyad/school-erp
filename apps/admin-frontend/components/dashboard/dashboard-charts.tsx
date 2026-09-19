@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Filter } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -25,14 +25,11 @@ interface AttendanceTrendItem {
 }
 
 type ChartType = "fee" | "attendance";
-export type FilterOption = "week" | "month" | "year";
 
 interface DashboardChartProps {
   feeData: FeeTrendItem[];
   attendanceData: AttendanceTrendItem[];
   allowedCharts?: ChartType[];
-  filterBy: FilterOption;
-  onFilterChange: (value: FilterOption) => void;
 }
 
 const MONTHS = [
@@ -51,16 +48,11 @@ const MONTHS = [
 ];
 
 const FEE_Y_TICKS = [30000, 60000, 90000, 120000];
+const ATTENDANCE_Y_TICKS = [0, 25, 50, 75, 100];
 
 const CHART_OPTIONS: { value: ChartType; label: string }[] = [
   { value: "fee", label: "Fee Collection Chart" },
   { value: "attendance", label: "Student Attendance Chart" },
-];
-
-const FILTER_OPTIONS: { value: FilterOption; label: string }[] = [
-  { value: "week", label: "Filter by Week" },
-  { value: "month", label: "Filter by Month" },
-  { value: "year", label: "Filter by Year" },
 ];
 
 function formatCurrency(amount: number) {
@@ -82,8 +74,6 @@ export function DashboardChart({
   feeData,
   attendanceData,
   allowedCharts = ["fee", "attendance"],
-  filterBy,
-  onFilterChange,
 }: DashboardChartProps) {
   const chartOptions = CHART_OPTIONS.filter((c) =>
     allowedCharts.includes(c.value),
@@ -92,12 +82,8 @@ export function DashboardChart({
   const [chartType, setChartType] = useState<ChartType>(
     chartOptions[0]?.value ?? "fee",
   );
-  // filterBy is now controlled by the parent (page.tsx) — removed local state
   const [chartMenuOpen, setChartMenuOpen] = useState(false);
-  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
-
   const chartMenuRef = useRef<HTMLDivElement>(null);
-  const filterMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -107,12 +93,6 @@ export function DashboardChart({
       ) {
         setChartMenuOpen(false);
       }
-      if (
-        filterMenuRef.current &&
-        !filterMenuRef.current.contains(e.target as Node)
-      ) {
-        setFilterMenuOpen(false);
-      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -121,51 +101,12 @@ export function DashboardChart({
   const activeChartLabel = chartOptions.find(
     (c) => c.value === chartType,
   )?.label;
-  const activeFilterLabel = FILTER_OPTIONS.find(
-    (f) => f.value === filterBy,
-  )?.label;
   const normalizedFeeData = normalizeToFullYear(feeData);
 
   return (
     <div className="rounded-xl border h-full border-border bg-surface p-5 shadow-sm">
-      <div className="flex items-start flex-row-reverse justify-between gap-3">
-        {/* Filter by — left end */}
-        <div className="relative" ref={filterMenuRef}>
-          <button
-            type="button"
-            onClick={() => setFilterMenuOpen((v) => !v)}
-            className="flex items-center gap-1.5 cursor-pointer rounded-lg border border-border bg-surface-secondary px-2.5 py-1.5 text-xs font-medium text-text-secondary transition hover:border-primary/40 hover:text-text-primary"
-          >
-            <Filter className="h-3.5 w-3.5" />
-            {activeFilterLabel}
-            <ChevronDown className="h-3.5 w-3.5" />
-          </button>
-
-          {filterMenuOpen && (
-            <div className="absolute left-0 z-10 mt-1.5 w-40 overflow-hidden rounded-lg border border-border bg-surface shadow-md">
-              {FILTER_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => {
-                    onFilterChange(option.value);
-                    setFilterMenuOpen(false);
-                  }}
-                  className={`block w-full px-3 py-2 text-left text-xs transition hover:bg-primary-soft ${
-                    filterBy === option.value
-                      ? "font-medium text-primary"
-                      : "text-text-secondary"
-                  }`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Chart title + type switcher — right end */}
-        <div className="relative text-right" ref={chartMenuRef}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="relative" ref={chartMenuRef}>
           <button
             type="button"
             onClick={() => setChartMenuOpen((v) => !v)}
@@ -178,7 +119,7 @@ export function DashboardChart({
           </button>
 
           {chartMenuOpen && (
-            <div className="absolute right-0 z-10 mt-1.5 w-52 overflow-hidden rounded-lg border border-border bg-surface shadow-md">
+            <div className="absolute left-0 z-10 mt-1.5 w-52 overflow-hidden rounded-lg border border-border bg-surface shadow-md">
               {chartOptions.map((option) => (
                 <button
                   key={option.value}
@@ -275,6 +216,7 @@ export function DashboardChart({
                 axisLine={false}
                 tickLine={false}
                 domain={[0, 100]}
+                ticks={ATTENDANCE_Y_TICKS}
                 tick={{ fontSize: 11, fill: "var(--text-secondary)" }}
                 tickFormatter={(v) => `${v}%`}
               />
