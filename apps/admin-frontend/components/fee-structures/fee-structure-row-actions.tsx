@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { DeleteEntityDialog } from "../shared/delete-entity-dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { feeStructureApi } from "@/lib/api/fee-structures";
-import { notify } from "@/lib/toast";
 
 interface FeeStructureRowActionsProps {
   feeStructureId: string;
@@ -21,7 +20,6 @@ export function FeeStructureRowActions({
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: ["feeStructures"] });
-  notify.success(`Fee Structure ${feeStructureName} deleted successfully`);
 
   return (
     <div className="flex items-center justify-end gap-1">

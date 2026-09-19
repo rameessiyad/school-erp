@@ -169,7 +169,7 @@ export default function StaffDetailPage() {
               </h2>
 
               <p className="mt-1 text-sm text-text-muted">
-                {staff.designation.replace(/_/g, " ")}
+                {staff.designation?.name.replace(/_/g, " ")}
               </p>
             </div>
 
@@ -242,7 +242,7 @@ export default function StaffDetailPage() {
                 </p>
 
                 <p className="mt-2 text-sm font-medium capitalize text-text-primary">
-                  {staff.designation.replace(/_/g, " ")}
+                  {staff.designation?.name.replace(/_/g, " ")}
                 </p>
               </div>
             </div>
