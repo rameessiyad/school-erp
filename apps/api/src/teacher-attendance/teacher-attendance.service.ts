@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MarkAttendanceDto } from './dto/mark-attendance.dto';
+import { TeacherAttendanceStatus } from 'generated/prisma/enums';
 
 function startOfDay(date: Date) {
   const d = new Date(date);
@@ -72,7 +73,13 @@ export class TeacherAttendanceService {
 
     const teachers = await this.prisma.teacher.findMany({
       where: { schoolId },
-      select: { id: true, firstName: true, lastName: true, photoUrl: true },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        photoUrl: true,
+        joiningDate: true,
+      },
       orderBy: { firstName: 'asc' },
     });
 
@@ -86,10 +93,25 @@ export class TeacherAttendanceService {
 
     return {
       date: day,
-      teachers: teachers.map((t) => ({
-        ...t,
-        status: statusByTeacherId.get(t.id) ?? null,
-      })),
+      teachers: teachers.map((t) => {
+        const hasJoined = startOfDay(t.joiningDate) <= day;
+        const markedStatus = statusByTeacherId.get(t.id);
+
+        let status: TeacherAttendanceStatus | null;
+
+        if (!hasJoined) {
+          // Teacher hadn't joined yet on this date — show as "Not marked"
+          status = null;
+        } else if (markedStatus) {
+          // Explicitly marked by the teacher
+          status = markedStatus;
+        } else {
+          // Joined, but didn't mark attendance — default to Absent
+          status = 'ABSENT';
+        }
+
+        return { ...t, status };
+      }),
     };
   }
 }
