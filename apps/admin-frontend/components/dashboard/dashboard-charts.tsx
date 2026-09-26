@@ -20,7 +20,7 @@ interface FeeTrendItem {
 }
 
 interface AttendanceTrendItem {
-  month: string;
+  month?: string;
   percentage: number | null;
 }
 

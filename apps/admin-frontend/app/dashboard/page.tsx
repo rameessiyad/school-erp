@@ -287,7 +287,7 @@ export default function DashboardPage() {
 
                       {stat.secondaryValue !== undefined && (
                         <p
-                          className={`text-sm font-semibold ${stat.secondaryColor ?? "text-orange-500"}`}
+                          className={`text-sm font-semibold ${stat.accent.secondaryText ?? "text-orange-500"}`}
                         >
                           {stat.secondaryValue}
                           <span className="ml-1 text-xs font-normal text-text-muted">
