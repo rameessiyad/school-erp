@@ -38,6 +38,9 @@ model School {
   studentAttendances        StudentAttendance[]
   examTypes                 ExamType[]
   staffDesignations         StaffDesignation[]
+  announcements             Announcement[]
+  adminAttendances          AdminAttendance[]
+  gradingScales             GradingScale[]
 }
 
 enum SchoolStatus {
@@ -100,10 +103,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  teacher     Teacher?
-  parent      Parent?
-  staff       Staff?
-  feePayments FeePayment[]
+  teacher          Teacher?
+  parent           Parent?
+  staff            Staff?
+  feePayments      FeePayment[]
+  announcements    Announcement[]
+  adminAttendances AdminAttendance[]
 
   @@unique([schoolId, email])
   @@unique([schoolId, phone])
@@ -117,7 +122,7 @@ model StaffDesignation {
 
   name String
 
-  allowedModules String[] @default([]) 
+  allowedModules String[] @default([])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1005,4 +1010,76 @@ model StudentAttendance {
   @@unique([studentId, date])
   @@index([schoolId])
   @@index([sectionId, date])
+}
+
+// ── Announcements ──────────────────────────────────────
+enum AnnouncementAudience {
+  ALL
+  TEACHERS
+  PARENTS
+  STAFF
+}
+
+model Announcement {
+  id String @id @default(uuid())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  title   String
+  content String
+
+  audience AnnouncementAudience @default(ALL)
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  isPushNotified Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+  @@index([audience])
+}
+
+// ── Admin self-attendance ──────────────────────────────
+model AdminAttendance {
+  id String @id @default(uuid())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date   DateTime                @db.Date
+  status TeacherAttendanceStatus
+
+  markedAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([schoolId])
+}
+
+// ── Grade Card scale (used to derive ExamResult.grade) ─
+model GradingScale {
+  id String @id @default(uuid())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  grade      String // e.g. "A+", "A", "B"
+  minPercent Float
+  maxPercent Float
+  remarks    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, grade])
+  @@index([schoolId])
 }

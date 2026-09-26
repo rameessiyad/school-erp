@@ -133,7 +133,12 @@ export default function DashboardPage() {
     show: boolean;
     secondaryLabel?: string;
     secondaryValue?: number | string;
-    secondaryColor?: string;
+    accent: {
+      bar: string;
+      iconBg: string;
+      iconText: string;
+      secondaryText?: string;
+    };
   }
 
   const statCards: StatCard[] = [
@@ -143,6 +148,11 @@ export default function DashboardPage() {
       description: "Currently enrolled",
       icon: GraduationCap,
       show: hasModule([Module.STUDENT_ADMISSIONS, Module.STUDENT_REGISTRATION]),
+      accent: {
+        bar: "bg-blue-500",
+        iconBg: "bg-blue-50",
+        iconText: "text-blue-600",
+      },
     },
     {
       title: "Teachers",
@@ -150,6 +160,11 @@ export default function DashboardPage() {
       description: "Active teachers",
       icon: UserRound,
       show: hasModule([Module.TEACHER_MANAGEMENT]),
+      accent: {
+        bar: "bg-violet-500",
+        iconBg: "bg-violet-50",
+        iconText: "text-violet-600",
+      },
     },
     {
       title: "Classes",
@@ -157,9 +172,14 @@ export default function DashboardPage() {
       description: "Active classes",
       secondaryLabel: "Sections",
       secondaryValue: stats?.sectionCount ?? 0,
-      secondaryColor: "text-primary",
       icon: BookOpen,
       show: canSeeClasses,
+      accent: {
+        bar: "bg-amber-500",
+        iconBg: "bg-amber-50",
+        iconText: "text-amber-600",
+        secondaryText: "text-amber-600",
+      },
     },
     {
       title: "Fees Collected",
@@ -169,6 +189,12 @@ export default function DashboardPage() {
       secondaryValue: formatCurrency(stats?.totalFeesPending ?? 0),
       icon: Wallet,
       show: canSeeFees,
+      accent: {
+        bar: "bg-emerald-500",
+        iconBg: "bg-emerald-50",
+        iconText: "text-emerald-600",
+        secondaryText: "text-orange-500",
+      },
     },
   ].filter((card) => card.show);
 

@@ -173,3 +173,13 @@ export const StudentAttendanceStatus = {
 } as const
 
 export type StudentAttendanceStatus = (typeof StudentAttendanceStatus)[keyof typeof StudentAttendanceStatus]
+
+
+export const AnnouncementAudience = {
+  ALL: 'ALL',
+  TEACHERS: 'TEACHERS',
+  PARENTS: 'PARENTS',
+  STAFF: 'STAFF'
+} as const
+
+export type AnnouncementAudience = (typeof AnnouncementAudience)[keyof typeof AnnouncementAudience]

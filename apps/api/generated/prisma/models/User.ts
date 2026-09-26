@@ -235,6 +235,8 @@ export type UserWhereInput = {
   parent?: Prisma.XOR<Prisma.ParentNullableScalarRelationFilter, Prisma.ParentWhereInput> | null
   staff?: Prisma.XOR<Prisma.StaffNullableScalarRelationFilter, Prisma.StaffWhereInput> | null
   feePayments?: Prisma.FeePaymentListRelationFilter
+  announcements?: Prisma.AnnouncementListRelationFilter
+  adminAttendances?: Prisma.AdminAttendanceListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -254,6 +256,8 @@ export type UserOrderByWithRelationInput = {
   parent?: Prisma.ParentOrderByWithRelationInput
   staff?: Prisma.StaffOrderByWithRelationInput
   feePayments?: Prisma.FeePaymentOrderByRelationAggregateInput
+  announcements?: Prisma.AnnouncementOrderByRelationAggregateInput
+  adminAttendances?: Prisma.AdminAttendanceOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -278,6 +282,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   parent?: Prisma.XOR<Prisma.ParentNullableScalarRelationFilter, Prisma.ParentWhereInput> | null
   staff?: Prisma.XOR<Prisma.StaffNullableScalarRelationFilter, Prisma.StaffWhereInput> | null
   feePayments?: Prisma.FeePaymentListRelationFilter
+  announcements?: Prisma.AnnouncementListRelationFilter
+  adminAttendances?: Prisma.AdminAttendanceListRelationFilter
 }, "id" | "schoolId_email" | "schoolId_phone">
 
 export type UserOrderByWithAggregationInput = {
@@ -330,6 +336,8 @@ export type UserCreateInput = {
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -348,6 +356,8 @@ export type UserUncheckedCreateInput = {
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -366,6 +376,8 @@ export type UserUpdateInput = {
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -384,6 +396,8 @@ export type UserUncheckedUpdateInput = {
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -604,6 +618,34 @@ export type UserUpdateOneRequiredWithoutFeePaymentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFeePaymentsInput, Prisma.UserUpdateWithoutFeePaymentsInput>, Prisma.UserUncheckedUpdateWithoutFeePaymentsInput>
 }
 
+export type UserCreateNestedOneWithoutAnnouncementsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAnnouncementsInput, Prisma.UserUncheckedCreateWithoutAnnouncementsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAnnouncementsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAnnouncementsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAnnouncementsInput, Prisma.UserUncheckedCreateWithoutAnnouncementsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAnnouncementsInput
+  upsert?: Prisma.UserUpsertWithoutAnnouncementsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAnnouncementsInput, Prisma.UserUpdateWithoutAnnouncementsInput>, Prisma.UserUncheckedUpdateWithoutAnnouncementsInput>
+}
+
+export type UserCreateNestedOneWithoutAdminAttendancesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAdminAttendancesInput, Prisma.UserUncheckedCreateWithoutAdminAttendancesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAdminAttendancesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAdminAttendancesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAdminAttendancesInput, Prisma.UserUncheckedCreateWithoutAdminAttendancesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAdminAttendancesInput
+  upsert?: Prisma.UserUpsertWithoutAdminAttendancesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAdminAttendancesInput, Prisma.UserUpdateWithoutAdminAttendancesInput>, Prisma.UserUncheckedUpdateWithoutAdminAttendancesInput>
+}
+
 export type UserCreateWithoutSchoolInput = {
   id?: string
   role: $Enums.Role
@@ -619,6 +661,8 @@ export type UserCreateWithoutSchoolInput = {
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSchoolInput = {
@@ -636,6 +680,8 @@ export type UserUncheckedCreateWithoutSchoolInput = {
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSchoolInput = {
@@ -696,6 +742,8 @@ export type UserCreateWithoutStaffInput = {
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutStaffInput = {
@@ -713,6 +761,8 @@ export type UserUncheckedCreateWithoutStaffInput = {
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutStaffInput = {
@@ -746,6 +796,8 @@ export type UserUpdateWithoutStaffInput = {
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStaffInput = {
@@ -763,6 +815,8 @@ export type UserUncheckedUpdateWithoutStaffInput = {
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTeacherInput = {
@@ -780,6 +834,8 @@ export type UserCreateWithoutTeacherInput = {
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTeacherInput = {
@@ -797,6 +853,8 @@ export type UserUncheckedCreateWithoutTeacherInput = {
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTeacherInput = {
@@ -830,6 +888,8 @@ export type UserUpdateWithoutTeacherInput = {
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTeacherInput = {
@@ -847,6 +907,8 @@ export type UserUncheckedUpdateWithoutTeacherInput = {
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutParentInput = {
@@ -864,6 +926,8 @@ export type UserCreateWithoutParentInput = {
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutParentInput = {
@@ -881,6 +945,8 @@ export type UserUncheckedCreateWithoutParentInput = {
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
   feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutParentInput = {
@@ -914,6 +980,8 @@ export type UserUpdateWithoutParentInput = {
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutParentInput = {
@@ -931,6 +999,8 @@ export type UserUncheckedUpdateWithoutParentInput = {
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFeePaymentsInput = {
@@ -948,6 +1018,8 @@ export type UserCreateWithoutFeePaymentsInput = {
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffCreateNestedOneWithoutUserInput
+  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFeePaymentsInput = {
@@ -965,6 +1037,8 @@ export type UserUncheckedCreateWithoutFeePaymentsInput = {
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
   staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
+  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFeePaymentsInput = {
@@ -998,6 +1072,8 @@ export type UserUpdateWithoutFeePaymentsInput = {
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
+  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFeePaymentsInput = {
@@ -1015,6 +1091,192 @@ export type UserUncheckedUpdateWithoutFeePaymentsInput = {
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
+  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutAnnouncementsInput = {
+  id?: string
+  role: $Enums.Role
+  email?: string | null
+  phone?: string | null
+  passwordHash?: string | null
+  refreshTokenHash?: string | null
+  isActive?: boolean
+  lastLogin?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  school?: Prisma.SchoolCreateNestedOneWithoutUsersInput
+  teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
+  parent?: Prisma.ParentCreateNestedOneWithoutUserInput
+  staff?: Prisma.StaffCreateNestedOneWithoutUserInput
+  feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
+  adminAttendances?: Prisma.AdminAttendanceCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAnnouncementsInput = {
+  id?: string
+  schoolId?: string | null
+  role: $Enums.Role
+  email?: string | null
+  phone?: string | null
+  passwordHash?: string | null
+  refreshTokenHash?: string | null
+  isActive?: boolean
+  lastLogin?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
+  parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
+  staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
+  feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAnnouncementsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAnnouncementsInput, Prisma.UserUncheckedCreateWithoutAnnouncementsInput>
+}
+
+export type UserUpsertWithoutAnnouncementsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAnnouncementsInput, Prisma.UserUncheckedUpdateWithoutAnnouncementsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAnnouncementsInput, Prisma.UserUncheckedCreateWithoutAnnouncementsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAnnouncementsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAnnouncementsInput, Prisma.UserUncheckedUpdateWithoutAnnouncementsInput>
+}
+
+export type UserUpdateWithoutAnnouncementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  school?: Prisma.SchoolUpdateOneWithoutUsersNestedInput
+  teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
+  parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
+  staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
+  feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAnnouncementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  schoolId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
+  parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
+  staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
+  feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutAdminAttendancesInput = {
+  id?: string
+  role: $Enums.Role
+  email?: string | null
+  phone?: string | null
+  passwordHash?: string | null
+  refreshTokenHash?: string | null
+  isActive?: boolean
+  lastLogin?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  school?: Prisma.SchoolCreateNestedOneWithoutUsersInput
+  teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
+  parent?: Prisma.ParentCreateNestedOneWithoutUserInput
+  staff?: Prisma.StaffCreateNestedOneWithoutUserInput
+  feePayments?: Prisma.FeePaymentCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutAdminAttendancesInput = {
+  id?: string
+  schoolId?: string | null
+  role: $Enums.Role
+  email?: string | null
+  phone?: string | null
+  passwordHash?: string | null
+  refreshTokenHash?: string | null
+  isActive?: boolean
+  lastLogin?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
+  parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
+  staff?: Prisma.StaffUncheckedCreateNestedOneWithoutUserInput
+  feePayments?: Prisma.FeePaymentUncheckedCreateNestedManyWithoutCollectedByInput
+  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutAdminAttendancesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAdminAttendancesInput, Prisma.UserUncheckedCreateWithoutAdminAttendancesInput>
+}
+
+export type UserUpsertWithoutAdminAttendancesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAdminAttendancesInput, Prisma.UserUncheckedUpdateWithoutAdminAttendancesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAdminAttendancesInput, Prisma.UserUncheckedCreateWithoutAdminAttendancesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAdminAttendancesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAdminAttendancesInput, Prisma.UserUncheckedUpdateWithoutAdminAttendancesInput>
+}
+
+export type UserUpdateWithoutAdminAttendancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  school?: Prisma.SchoolUpdateOneWithoutUsersNestedInput
+  teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
+  parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
+  staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
+  feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAdminAttendancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  schoolId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
+  parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
+  staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
+  feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateManySchoolInput = {
@@ -1045,6 +1307,8 @@ export type UserUpdateWithoutSchoolInput = {
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSchoolInput = {
@@ -1062,6 +1326,8 @@ export type UserUncheckedUpdateWithoutSchoolInput = {
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
   staff?: Prisma.StaffUncheckedUpdateOneWithoutUserNestedInput
   feePayments?: Prisma.FeePaymentUncheckedUpdateManyWithoutCollectedByNestedInput
+  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
+  adminAttendances?: Prisma.AdminAttendanceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutSchoolInput = {
@@ -1084,10 +1350,14 @@ export type UserUncheckedUpdateManyWithoutSchoolInput = {
 
 export type UserCountOutputType = {
   feePayments: number
+  announcements: number
+  adminAttendances: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   feePayments?: boolean | UserCountOutputTypeCountFeePaymentsArgs
+  announcements?: boolean | UserCountOutputTypeCountAnnouncementsArgs
+  adminAttendances?: boolean | UserCountOutputTypeCountAdminAttendancesArgs
 }
 
 /**
@@ -1105,6 +1375,20 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountFeePaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.FeePaymentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAnnouncementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AnnouncementWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAdminAttendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AdminAttendanceWhereInput
 }
 
 
@@ -1125,6 +1409,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   parent?: boolean | Prisma.User$parentArgs<ExtArgs>
   staff?: boolean | Prisma.User$staffArgs<ExtArgs>
   feePayments?: boolean | Prisma.User$feePaymentsArgs<ExtArgs>
+  announcements?: boolean | Prisma.User$announcementsArgs<ExtArgs>
+  adminAttendances?: boolean | Prisma.User$adminAttendancesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1179,6 +1465,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   parent?: boolean | Prisma.User$parentArgs<ExtArgs>
   staff?: boolean | Prisma.User$staffArgs<ExtArgs>
   feePayments?: boolean | Prisma.User$feePaymentsArgs<ExtArgs>
+  announcements?: boolean | Prisma.User$announcementsArgs<ExtArgs>
+  adminAttendances?: boolean | Prisma.User$adminAttendancesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1196,6 +1484,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     parent: Prisma.$ParentPayload<ExtArgs> | null
     staff: Prisma.$StaffPayload<ExtArgs> | null
     feePayments: Prisma.$FeePaymentPayload<ExtArgs>[]
+    announcements: Prisma.$AnnouncementPayload<ExtArgs>[]
+    adminAttendances: Prisma.$AdminAttendancePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1608,6 +1898,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   parent<T extends Prisma.User$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$parentArgs<ExtArgs>>): Prisma.Prisma__ParentClient<runtime.Types.Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   staff<T extends Prisma.User$staffArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$staffArgs<ExtArgs>>): Prisma.Prisma__StaffClient<runtime.Types.Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   feePayments<T extends Prisma.User$feePaymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$feePaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeePaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  announcements<T extends Prisma.User$announcementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$announcementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AnnouncementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  adminAttendances<T extends Prisma.User$adminAttendancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$adminAttendancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdminAttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2146,6 +2438,54 @@ export type User$feePaymentsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.FeePaymentScalarFieldEnum | Prisma.FeePaymentScalarFieldEnum[]
+}
+
+/**
+ * User.announcements
+ */
+export type User$announcementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Announcement
+   */
+  select?: Prisma.AnnouncementSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Announcement
+   */
+  omit?: Prisma.AnnouncementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AnnouncementInclude<ExtArgs> | null
+  where?: Prisma.AnnouncementWhereInput
+  orderBy?: Prisma.AnnouncementOrderByWithRelationInput | Prisma.AnnouncementOrderByWithRelationInput[]
+  cursor?: Prisma.AnnouncementWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AnnouncementScalarFieldEnum | Prisma.AnnouncementScalarFieldEnum[]
+}
+
+/**
+ * User.adminAttendances
+ */
+export type User$adminAttendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AdminAttendance
+   */
+  select?: Prisma.AdminAttendanceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AdminAttendance
+   */
+  omit?: Prisma.AdminAttendanceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminAttendanceInclude<ExtArgs> | null
+  where?: Prisma.AdminAttendanceWhereInput
+  orderBy?: Prisma.AdminAttendanceOrderByWithRelationInput | Prisma.AdminAttendanceOrderByWithRelationInput[]
+  cursor?: Prisma.AdminAttendanceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AdminAttendanceScalarFieldEnum | Prisma.AdminAttendanceScalarFieldEnum[]
 }
 
 /**

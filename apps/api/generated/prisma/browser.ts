@@ -197,3 +197,18 @@ export type StaffLeaveApplication = Prisma.StaffLeaveApplicationModel
  * 
  */
 export type StudentAttendance = Prisma.StudentAttendanceModel
+/**
+ * Model Announcement
+ * 
+ */
+export type Announcement = Prisma.AnnouncementModel
+/**
+ * Model AdminAttendance
+ * 
+ */
+export type AdminAttendance = Prisma.AdminAttendanceModel
+/**
+ * Model GradingScale
+ * 
+ */
+export type GradingScale = Prisma.GradingScaleModel

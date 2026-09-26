@@ -20,6 +20,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarDays,
+  Megaphone,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -39,6 +40,8 @@ interface DashboardSidebarProps {
 interface NavChild {
   label: string;
   href: string;
+  adminOnly?: boolean;
+  staffOnly?: boolean;
 }
 
 interface NavItem {
@@ -56,69 +59,61 @@ const navigation: NavItem[] = [
     label: "Overview",
     href: "/dashboard",
     icon: LayoutDashboard,
-    requiredModules: undefined,
   },
   {
-    label: "Students",
-    href: "/dashboard/students",
+    label: "Admission Management",
     icon: GraduationCap,
-    requiredModules: [Module.STUDENT_ADMISSIONS, Module.STUDENT_REGISTRATION],
-  },
-  {
-    label: "Teachers",
-    href: "/dashboard/teachers",
-    icon: UserRound,
-    requiredModules: [Module.TEACHER_MANAGEMENT],
-  },
-  {
-    label: "Parents",
-    href: "/dashboard/parents",
-    icon: Users,
-    requiredModules: [Module.PARENT_DETAILS],
-  },
-  {
-    label: "Staff",
-    href: "/dashboard/staff",
-    icon: Briefcase,
-    requiredModules: [Module.USER_MANAGEMENT],
-  },
-  {
-    label: "Subjects",
-    href: "/dashboard/subjects",
-    icon: BookOpen,
-    requiredModules: [Module.ACADEMIC_YEAR],
-  },
-  {
-    label: "Classes",
-    href: "/dashboard/classes",
-    icon: Layers,
-    requiredModules: [Module.ACADEMIC_YEAR],
-  },
-  {
-    label: "Academic Year",
-    icon: CalendarDays,
-    adminOnly: true,
+    requiredModules: [
+      Module.STUDENT_ADMISSIONS,
+      Module.STUDENT_REGISTRATION,
+      Module.PARENT_DETAILS,
+      Module.ACADEMIC_YEAR,
+    ],
     children: [
+      { label: "Students", href: "/dashboard/students" },
+      { label: "Parents", href: "/dashboard/parents" },
       { label: "Academic Years", href: "/dashboard/academic-year" },
       { label: "Promote Students", href: "/dashboard/academic-year/promotion" },
     ],
   },
   {
-    label: "Subject Allocation",
-    href: "/dashboard/subject-allocation",
-    icon: ClipboardList,
+    label: "Fee Management",
+    icon: Wallet,
+    requiredModules: [
+      Module.STUDENT_FEES,
+      Module.FEE_REPORTS,
+      Module.PAYMENT_HISTORY,
+    ],
+    children: [
+      { label: "Fee Structures", href: "/dashboard/fee-structures" },
+      { label: "Fees", href: "/dashboard/fees" },
+    ],
+  },
+  {
+    label: "Teacher Enrollment & Details",
+    icon: UserRound,
+    requiredModules: [Module.TEACHER_MANAGEMENT],
+    children: [
+      { label: "Teachers", href: "/dashboard/teachers" },
+      { label: "Subject Allocation", href: "/dashboard/subject-allocation" },
+    ],
+  },
+  {
+    label: "Class Management",
+    href: "/dashboard/classes",
+    icon: Layers,
     requiredModules: [Module.ACADEMIC_YEAR],
   },
   {
-    label: "Exams",
-    href: "/dashboard/exams",
-    icon: ClipboardList,
+    label: "Subject Management",
+    href: "/dashboard/subjects",
+    icon: BookOpen,
     requiredModules: [Module.ACADEMIC_YEAR],
   },
   {
     label: "Attendance",
     icon: ClipboardList,
-    requiredModules: [Module.STUDENT_ATTENDANCE],
+    requiredModules: [Module.STUDENT_ATTENDANCE, Module.ATTENDANCE],
     children: [
       { label: "Teacher Attendance", href: "/dashboard/teacher-attendance" },
       { label: "Staff Attendance", href: "/dashboard/staff-attendance" },
@@ -126,34 +121,33 @@ const navigation: NavItem[] = [
     ],
   },
   {
-    label: "Fee Structures",
-    href: "/dashboard/fee-structures",
-    icon: Wallet,
-    requiredModules: [
-      Module.STUDENT_FEES,
-      Module.FEE_REPORTS,
-      Module.PAYMENT_HISTORY,
+    label: "Staff Management",
+    href: "/dashboard/staff",
+    icon: Briefcase,
+    requiredModules: [Module.USER_MANAGEMENT],
+  },
+  {
+    label: "Exam",
+    href: "/dashboard/exams",
+    icon: ClipboardList,
+    requiredModules: [Module.EXAM_SETTINGS],
+  },
+  {
+    label: "Leave Application",
+    icon: School2,
+    children: [
+      {
+        label: "Applications",
+        href: "/dashboard/leave-applications",
+        adminOnly: true,
+      },
+      { label: "Apply Leave", href: "/dashboard/apply-leave", staffOnly: true },
     ],
   },
   {
-    label: "Fees",
-    href: "/dashboard/fees",
-    icon: Receipt,
-    requiredModules: [Module.STUDENT_FEES, Module.PAYMENT_HISTORY],
-  },
-  {
-    label: "Leave Applications",
-    href: "/dashboard/leave-applications",
-    icon: School2,
-    requiredModules: undefined,
-    adminOnly: true,
-  },
-  {
-    label: "Apply Leave",
-    href: "/dashboard/apply-leave",
-    icon: ClipboardList,
-    requiredModules: undefined,
-    staffOnly: true,
+    label: "Announcements",
+    href: "/dashboard/announcements",
+    icon: Megaphone,
   },
 ];
 
@@ -258,13 +252,23 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
     setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
   };
 
-  const visibleNavigation = navigation.filter((item) => {
-    if (item.adminOnly) return isAdmin;
-    if (item.staffOnly) return user.role === "STAFF";
-    if (isAdmin) return true;
-    if (!item.requiredModules) return true;
-    return item.requiredModules.some((m) => allowedModules.includes(m));
-  });
+  const filterChildren = (children?: NavChild[]) =>
+    children?.filter((c) => {
+      if (c.adminOnly) return isAdmin;
+      if (c.staffOnly) return user.role === "STAFF";
+      return true;
+    });
+
+  const visibleNavigation = navigation
+    .map((item) => ({ ...item, children: filterChildren(item.children) }))
+    .filter((item) => {
+      if (item.children) return item.children.length > 0;
+      if (item.adminOnly) return isAdmin;
+      if (item.staffOnly) return user.role === "STAFF";
+      if (isAdmin) return true;
+      if (!item.requiredModules) return true;
+      return item.requiredModules.some((m) => allowedModules.includes(m));
+    });
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -342,7 +346,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                 <button
                   type="button"
                   onClick={() => !collapsed && toggleGroup(item.label)}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                  className={`group relative flex w-full items-center gap-3 rounded-lg py-2.5 pl-3 pr-3 text-sm font-medium transition-all duration-200 ${
                     collapsed ? "justify-center px-0" : ""
                   } ${
                     active
@@ -350,18 +354,29 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                       : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                   }`}
                 >
-                  <Icon
-                    className={`h-[18px] w-[18px] shrink-0 ${
-                      active ? "text-primary" : "text-text-muted"
+                  {active && !collapsed && (
+                    <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary" />
+                  )}
+
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
+                      active
+                        ? "bg-primary/15"
+                        : "bg-transparent group-hover:bg-surface"
                     }`}
-                  />
+                  >
+                    <Icon
+                      className={`h-[17px] w-[17px] ${
+                        active ? "text-primary" : "text-text-muted"
+                      }`}
+                    />
+                  </span>
 
                   {!collapsed && (
                     <>
                       <span className="flex-1 text-left">{item.label}</span>
-
                       <ChevronDown
-                        className={`h-4 w-4 shrink-0 transition-transform ${
+                        className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
                           open ? "rotate-180" : ""
                         } ${active ? "text-primary" : "text-text-muted"}`}
                       />
@@ -410,7 +425,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                   {groupButton}
 
                   {open && (
-                    <div className="mt-1 space-y-1 border-l border-border pl-4">
+                    <div className="ml-[26px] mt-1 space-y-0.5 border-l border-border/70 pl-4 animate-in fade-in slide-in-from-top-1 duration-150">
                       {item.children.map((child) => {
                         const childActive = pathname.startsWith(child.href);
 
@@ -418,12 +433,17 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                           <Link
                             key={child.href}
                             href={child.href}
-                            className={`block rounded-lg px-3 py-2 text-sm font-medium transition ${
+                            className={`relative flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ${
                               childActive
                                 ? "bg-primary-soft text-primary"
                                 : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                             }`}
                           >
+                            <span
+                              className={`absolute -left-[21px] h-1.5 w-1.5 rounded-full transition-colors ${
+                                childActive ? "bg-primary" : "bg-border"
+                              }`}
+                            />
                             {child.label}
                           </Link>
                         );
@@ -441,7 +461,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
             const link = (
               <Link
                 href={item.href!}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                className={`group relative flex items-center gap-3 rounded-lg py-2.5 pl-3 pr-3 text-sm font-medium transition-all duration-200 ${
                   collapsed ? "justify-center px-0" : ""
                 } ${
                   active
@@ -449,11 +469,23 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                     : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                 }`}
               >
-                <Icon
-                  className={`h-[18px] w-[18px] shrink-0 ${
-                    active ? "text-primary" : "text-text-muted"
+                {active && !collapsed && (
+                  <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary" />
+                )}
+
+                <span
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
+                    active
+                      ? "bg-primary/15"
+                      : "bg-transparent group-hover:bg-surface"
                   }`}
-                />
+                >
+                  <Icon
+                    className={`h-[17px] w-[17px] ${
+                      active ? "text-primary" : "text-text-muted"
+                    }`}
+                  />
+                </span>
 
                 {!collapsed && item.label}
               </Link>
@@ -464,8 +496,9 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                 <SidebarTooltip
                   key={item.href}
                   content={
-                    <div className="whitespace-nowrap rounded-md bg-text-primary px-2 py-1 text-xs font-medium text-surface shadow-md">
+                    <div className="relative whitespace-nowrap rounded-md bg-text-primary px-2.5 py-1.5 text-xs font-medium text-surface shadow-lg ring-1 ring-black/5">
                       {item.label}
+                      <span className="absolute left-[-4px] top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 bg-text-primary" />
                     </div>
                   }
                 >

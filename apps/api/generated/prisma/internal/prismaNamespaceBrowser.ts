@@ -86,7 +86,10 @@ export const ModelName = {
   TeacherLeaveApplication: 'TeacherLeaveApplication',
   StaffAttendance: 'StaffAttendance',
   StaffLeaveApplication: 'StaffLeaveApplication',
-  StudentAttendance: 'StudentAttendance'
+  StudentAttendance: 'StudentAttendance',
+  Announcement: 'Announcement',
+  AdminAttendance: 'AdminAttendance',
+  GradingScale: 'GradingScale'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -639,6 +642,49 @@ export const StudentAttendanceScalarFieldEnum = {
 } as const
 
 export type StudentAttendanceScalarFieldEnum = (typeof StudentAttendanceScalarFieldEnum)[keyof typeof StudentAttendanceScalarFieldEnum]
+
+
+export const AnnouncementScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  title: 'title',
+  content: 'content',
+  audience: 'audience',
+  createdById: 'createdById',
+  isPushNotified: 'isPushNotified',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
+
+
+export const AdminAttendanceScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  userId: 'userId',
+  date: 'date',
+  status: 'status',
+  markedAt: 'markedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdminAttendanceScalarFieldEnum = (typeof AdminAttendanceScalarFieldEnum)[keyof typeof AdminAttendanceScalarFieldEnum]
+
+
+export const GradingScaleScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  grade: 'grade',
+  minPercent: 'minPercent',
+  maxPercent: 'maxPercent',
+  remarks: 'remarks',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GradingScaleScalarFieldEnum = (typeof GradingScaleScalarFieldEnum)[keyof typeof GradingScaleScalarFieldEnum]
 
 
 export const SortOrder = {
