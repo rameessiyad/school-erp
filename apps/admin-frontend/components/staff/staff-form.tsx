@@ -6,12 +6,20 @@ import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, X, Eye, EyeOff } from "lucide-react";
+import { Plus, Eye, EyeOff } from "lucide-react";
 import { getStaffSchema, CreateStaffValues } from "@/lib/validations/staff";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -29,30 +37,6 @@ interface StaffFormProps {
   staffId?: string;
   defaultValues?: Partial<CreateStaffValues>;
   photoUrl?: string | null;
-}
-
-// Keep this list in sync with your Module enum on the backend
-const ALL_MODULES = [
-  "STUDENT_FEES",
-  "FEE_REPORTS",
-  "PAYMENT_HISTORY",
-  "STUDENT_ADMISSIONS",
-  "STUDENT_REGISTRATION",
-  "PARENT_DETAILS",
-  "TEACHER_MANAGEMENT",
-  "EXAM_SETTINGS",
-  "ACADEMIC_YEAR",
-  "USER_MANAGEMENT",
-  "ATTENDANCE",
-  "PAYROLL",
-  "STUDENT_ATTENDANCE",
-] as const;
-
-function formatModuleLabel(mod: string) {
-  return mod
-    .split("_")
-    .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
-    .join(" ");
 }
 
 export function StaffForm({
@@ -84,6 +68,11 @@ export function StaffForm({
     queryFn: staffDesignationApi.list,
   });
 
+  const { data: moduleGroups = [] } = useQuery({
+    queryKey: ["moduleGroups"],
+    queryFn: staffDesignationApi.getModuleGroups,
+  });
+
   const {
     register,
     handleSubmit,
@@ -98,15 +87,19 @@ export function StaffForm({
     },
   });
 
+  const closeDesignationDialog = () => {
+    setIsAddingDesignation(false);
+    setNewDesignationName("");
+    setNewDesignationModules([]);
+    setNewDesignationError(null);
+  };
+
   const createDesignationMutation = useMutation({
     mutationFn: staffDesignationApi.create,
     onSuccess: (newDesignation) => {
       queryClient.invalidateQueries({ queryKey: ["staffDesignations"] });
       setValue("designationId", newDesignation.id, { shouldValidate: true });
-      setIsAddingDesignation(false);
-      setNewDesignationName("");
-      setNewDesignationModules([]);
-      setNewDesignationError(null);
+      closeDesignationDialog();
       notify.success("Designation added successfully");
     },
     onError: (error) => {
@@ -184,247 +177,178 @@ export function StaffForm({
   };
 
   return (
-    <Card className="rounded-xl border-border bg-surface shadow-sm">
-      <CardHeader className="border-b border-border px-6 py-5">
-        <CardTitle className="text-lg font-semibold text-text-primary">
-          Staff Information
-        </CardTitle>
+    <>
+      <Card className="rounded-xl border-border bg-surface shadow-sm">
+        <CardHeader className="border-b border-border px-6 py-5">
+          <CardTitle className="text-lg font-semibold text-text-primary">
+            Staff Information
+          </CardTitle>
 
-        <p className="text-sm text-text-secondary">
-          Enter the details of the staff member you want to add.
-        </p>
-      </CardHeader>
+          <p className="text-sm text-text-secondary">
+            Enter the details of the staff member you want to add.
+          </p>
+        </CardHeader>
 
-      <CardContent className="p-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-text-primary">
-              Photo
-            </Label>
-
-            <div className="flex items-center gap-4">
-              {photoPreview ? (
-                <Image
-                  src={photoPreview}
-                  alt="Staff photo preview"
-                  width={64}
-                  height={64}
-                  className="h-16 w-16 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary-soft text-lg font-semibold text-primary">
-                  ?
-                </div>
-              )}
-
-              <Input
-                id="photo"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                className="h-11 max-w-xs rounded-lg border-border bg-surface-secondary/50"
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label
-                htmlFor="firstName"
-                className="text-sm font-medium text-text-primary"
-              >
-                First Name
-              </Label>
-
-              <Input
-                id="firstName"
-                placeholder="Enter first name"
-                {...register("firstName")}
-                className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
-              />
-
-              {errors.firstName && (
-                <p className="text-xs text-red-500">
-                  {errors.firstName.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="lastName"
-                className="text-sm font-medium text-text-primary"
-              >
-                Last Name
-              </Label>
-
-              <Input
-                id="lastName"
-                placeholder="Enter last name"
-                {...register("lastName")}
-                className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label
-                htmlFor="email"
-                className="text-sm font-medium text-text-primary"
-              >
-                Email
-              </Label>
-
-              <Input
-                id="email"
-                type="email"
-                placeholder="staff@school.com"
-                {...register("email")}
-                className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
-              />
-
-              {errors.email && (
-                <p className="text-xs text-red-500">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="phone"
-                className="text-sm font-medium text-text-primary"
-              >
-                Phone
-              </Label>
-
-              <MobileInput
-                id="phone"
-                type="tel"
-                placeholder="Enter phone number"
-                {...register("phone")}
-                className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label
-                htmlFor="password"
-                className="text-sm font-medium text-text-primary"
-              >
-                Password
-              </Label>
-
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder={
-                    isEditMode
-                      ? "Leave blank to keep current password"
-                      : "Create a secure password"
-                  }
-                  {...register("password")}
-                  className="h-11 rounded-lg border-border bg-surface-secondary/50 pr-10 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  tabIndex={-1}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-
-              {errors.password && (
-                <p className="text-xs text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
+        <CardContent className="p-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <Label className="text-sm font-medium text-text-primary">
-                Designation
+                Photo
               </Label>
 
-              {isAddingDesignation ? (
-                <div className="space-y-3 rounded-lg border border-border bg-surface-secondary/50 p-4">
-                  <div className="flex gap-2">
-                    <Input
-                      autoFocus
-                      value={newDesignationName}
-                      onChange={(e) => {
-                        setNewDesignationName(e.target.value);
-                        setNewDesignationError(null);
-                      }}
-                      placeholder="e.g. Librarian, Lab Assistant"
-                      className="h-11 rounded-lg border-border bg-surface"
-                    />
-
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setIsAddingDesignation(false);
-                        setNewDesignationName("");
-                        setNewDesignationModules([]);
-                        setNewDesignationError(null);
-                      }}
-                      className="h-11 shrink-0 rounded-lg border-border px-3"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+              <div className="flex items-center gap-4">
+                {photoPreview ? (
+                  <Image
+                    src={photoPreview}
+                    alt="Staff photo preview"
+                    width={64}
+                    height={64}
+                    className="h-16 w-16 rounded-lg object-cover"
+                  />
+                ) : (
+                  <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary-soft text-lg font-semibold text-primary">
+                    ?
                   </div>
+                )}
 
-                  <div>
-                    <p className="mb-2 text-xs font-medium text-text-secondary">
-                      Allowed modules for this designation
-                    </p>
+                <Input
+                  id="photo"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  className="h-11 max-w-xs rounded-lg border-border bg-surface-secondary/50"
+                />
+              </div>
+            </div>
 
-                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                      {ALL_MODULES.map((mod) => (
-                        <label
-                          key={mod}
-                          className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs text-text-secondary hover:bg-surface"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={newDesignationModules.includes(mod)}
-                            onChange={() => toggleModule(mod)}
-                            className="h-3.5 w-3.5 rounded border-border"
-                          />
-                          {formatModuleLabel(mod)}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="firstName"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  First Name
+                </Label>
 
-                  {newDesignationError && (
-                    <p className="text-xs text-red-500">
-                      {newDesignationError}
-                    </p>
-                  )}
+                <Input
+                  id="firstName"
+                  placeholder="Enter first name"
+                  {...register("firstName")}
+                  className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+                />
 
-                  <Button
+                {errors.firstName && (
+                  <p className="text-xs text-red-500">
+                    {errors.firstName.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="lastName"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  Last Name
+                </Label>
+
+                <Input
+                  id="lastName"
+                  placeholder="Enter last name"
+                  {...register("lastName")}
+                  className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  Email
+                </Label>
+
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="staff@school.com"
+                  {...register("email")}
+                  className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+                />
+
+                {errors.email && (
+                  <p className="text-xs text-red-500">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="phone"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  Phone
+                </Label>
+
+                <MobileInput
+                  id="phone"
+                  type="tel"
+                  placeholder="Enter phone number"
+                  {...register("phone")}
+                  className="h-11 rounded-lg border-border bg-surface-secondary/50 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="password"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  Password
+                </Label>
+
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder={
+                      isEditMode
+                        ? "Leave blank to keep current password"
+                        : "Create a secure password"
+                    }
+                    {...register("password")}
+                    className="h-11 rounded-lg border-border bg-surface-secondary/50 pr-10 transition focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/20"
+                  />
+
+                  <button
                     type="button"
-                    onClick={handleAddDesignation}
-                    disabled={createDesignationMutation.isPending}
-                    className="h-10 w-full rounded-lg bg-primary text-primary-foreground hover:bg-primary-hover"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    tabIndex={-1}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary"
                   >
-                    {createDesignationMutation.isPending
-                      ? "Adding..."
-                      : "Add Designation"}
-                  </Button>
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
                 </div>
-              ) : (
+
+                {errors.password && (
+                  <p className="text-xs text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-text-primary">
+                  Designation
+                </Label>
+
                 <Controller
                   control={control}
                   name="designationId"
@@ -476,85 +400,220 @@ export function StaffForm({
                     </Select>
                   )}
                 />
-              )}
 
-              {errors.designationId && (
-                <p className="text-xs text-red-500">
-                  {errors.designationId.message}
-                </p>
-              )}
+                {errors.designationId && (
+                  <p className="text-xs text-red-500">
+                    {errors.designationId.message}
+                  </p>
+                )}
+              </div>
             </div>
+
+            {/* ===================================================== */}
+            {/* Status */}
+            {/* ===================================================== */}
+
+            <section className="border-t border-border py-2">
+              <div className="mb-5">
+                <h3 className="text-sm font-semibold text-text-primary">
+                  Status
+                </h3>
+
+                <p className="mt-1 text-xs text-text-muted">
+                  Inactive staff members are hidden from active listings but
+                  their records are kept.
+                </p>
+              </div>
+
+              <Controller
+                control={control}
+                name="isActive"
+                render={({ field }) => (
+                  <label className="flex w-fit cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface-secondary/50 px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={field.value ?? true}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="h-4 w-4 cursor-pointer rounded border-border"
+                    />
+
+                    <span className="text-sm font-medium text-text-primary">
+                      {(field.value ?? true) ? "Active" : "Inactive"}
+                    </span>
+                  </label>
+                )}
+              />
+            </section>
+
+            {serverError && (
+              <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3">
+                <p className="text-center text-sm text-red-600">
+                  {serverError}
+                </p>
+              </div>
+            )}
+
+            <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+                disabled={saveStaffMutation.isPending}
+                className="h-11 rounded-lg border-border px-5 text-text-secondary hover:bg-surface-secondary"
+              >
+                Cancel
+              </Button>
+
+              <Button
+                type="submit"
+                disabled={saveStaffMutation.isPending}
+                className="h-11 rounded-lg bg-primary px-6 font-medium text-primary-foreground shadow-md shadow-primary/20 transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saveStaffMutation.isPending
+                  ? staffId
+                    ? "Updating..."
+                    : "Creating..."
+                  : staffId
+                    ? "Update Staff"
+                    : "Create Staff"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* ===================================================== */}
+      {/* Add Designation Dialog */}
+      {/* ===================================================== */}
+
+      <Dialog
+        open={isAddingDesignation}
+        onOpenChange={(open) => {
+          if (!open) closeDesignationDialog();
+        }}
+      >
+        <DialogContent className="max-h-[85vh] overflow-y-auto rounded-xl border-border bg-surface sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-text-primary">
+              Add New Designation
+            </DialogTitle>
+            <DialogDescription className="text-text-secondary">
+              Create a designation and choose which modules staff with this role
+              can access.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-text-primary">
+                Name
+              </Label>
+              <Input
+                autoFocus
+                value={newDesignationName}
+                onChange={(e) => {
+                  setNewDesignationName(e.target.value);
+                  setNewDesignationError(null);
+                }}
+                placeholder="e.g. Librarian, Lab Assistant"
+                className="h-11 rounded-lg border-border bg-surface-secondary/50"
+              />
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs font-medium text-text-secondary">
+                Allowed modules for this designation
+              </p>
+
+              <div className="space-y-3">
+                {moduleGroups.map((group) => {
+                  const groupValues = group.modules.map((m) => m.value);
+                  const checkedCount = groupValues.filter((v) =>
+                    newDesignationModules.includes(v),
+                  ).length;
+                  const allChecked =
+                    checkedCount === groupValues.length &&
+                    groupValues.length > 0;
+                  const someChecked = checkedCount > 0 && !allChecked;
+
+                  const toggleGroup = () => {
+                    setNewDesignationModules((prev) =>
+                      allChecked
+                        ? prev.filter((v) => !groupValues.includes(v))
+                        : [...new Set([...prev, ...groupValues])],
+                    );
+                  };
+
+                  return (
+                    <div
+                      key={group.key}
+                      className="rounded-md border border-border p-2.5"
+                    >
+                      <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-text-primary">
+                        <input
+                          type="checkbox"
+                          checked={allChecked}
+                          ref={(el) => {
+                            if (el) el.indeterminate = someChecked;
+                          }}
+                          onChange={toggleGroup}
+                          className="h-3.5 w-3.5 rounded border-border"
+                        />
+                        {group.label}
+                      </label>
+
+                      <div className="mt-2 grid grid-cols-2 gap-1.5 pl-5 sm:grid-cols-3">
+                        {group.modules.map((mod) => (
+                          <label
+                            key={mod.value}
+                            className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-xs text-text-secondary hover:bg-surface"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={newDesignationModules.includes(
+                                mod.value,
+                              )}
+                              onChange={() => toggleModule(mod.value)}
+                              className="h-3.5 w-3.5 rounded border-border"
+                            />
+                            {mod.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {newDesignationError && (
+              <p className="text-xs text-red-500">{newDesignationError}</p>
+            )}
           </div>
 
-          {/* ===================================================== */}
-          {/* Status */}
-          {/* ===================================================== */}
-
-          <section className="border-t border-border py-2">
-            <div className="mb-5">
-              <h3 className="text-sm font-semibold text-text-primary">
-                Status
-              </h3>
-
-              <p className="mt-1 text-xs text-text-muted">
-                Inactive staff members are hidden from active listings but their
-                records are kept.
-              </p>
-            </div>
-
-            <Controller
-              control={control}
-              name="isActive"
-              render={({ field }) => (
-                <label className="flex w-fit cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface-secondary/50 px-4 py-3">
-                  <input
-                    type="checkbox"
-                    checked={field.value ?? true}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                    className="h-4 w-4 cursor-pointer rounded border-border"
-                  />
-
-                  <span className="text-sm font-medium text-text-primary">
-                    {(field.value ?? true) ? "Active" : "Inactive"}
-                  </span>
-                </label>
-              )}
-            />
-          </section>
-
-          {serverError && (
-            <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3">
-              <p className="text-center text-sm text-red-600">{serverError}</p>
-            </div>
-          )}
-
-          <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
+          <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.back()}
-              disabled={saveStaffMutation.isPending}
-              className="h-11 rounded-lg border-border px-5 text-text-secondary hover:bg-surface-secondary"
+              onClick={closeDesignationDialog}
+              className="h-10 rounded-lg border-border"
             >
               Cancel
             </Button>
 
             <Button
-              type="submit"
-              disabled={saveStaffMutation.isPending}
-              className="h-11 rounded-lg bg-primary px-6 font-medium text-primary-foreground shadow-md shadow-primary/20 transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+              type="button"
+              onClick={handleAddDesignation}
+              disabled={createDesignationMutation.isPending}
+              className="h-10 rounded-lg bg-primary text-primary-foreground hover:bg-primary-hover"
             >
-              {saveStaffMutation.isPending
-                ? staffId
-                  ? "Updating..."
-                  : "Creating..."
-                : staffId
-                  ? "Update Staff"
-                  : "Create Staff"}
+              {createDesignationMutation.isPending
+                ? "Adding..."
+                : "Add Designation"}
             </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

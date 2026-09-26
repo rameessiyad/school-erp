@@ -16,6 +16,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { StaffDesignationService } from './staff-designation.service';
 import { CreateStaffDesignationDto } from './dto/create-staff-designation.dto';
 import { UpdateStaffDesignationDto } from './dto/update-staff-designation.dto';
+import { MODULE_GROUPS } from 'src/common/permissions/module-groups';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.SCHOOL_ADMIN)
@@ -26,6 +27,11 @@ export class StaffDesignationController {
   @Post('create')
   create(@Request() req, @Body() dto: CreateStaffDesignationDto) {
     return this.staffDesignationService.create(req.user.schoolId, dto);
+  }
+
+  @Get('module-groups')
+  getModuleGroups() {
+    return MODULE_GROUPS;
   }
 
   @Get()

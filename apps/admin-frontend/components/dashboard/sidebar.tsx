@@ -154,6 +154,14 @@ const navigation: NavItem[] = [
 const SIDEBAR_COLLAPSED_KEY = "sidebarCollapsed";
 const TOOLTIP_HIDE_DELAY_MS = 150;
 
+const ROLE_LABELS: Record<string, string> = {
+  SUPER_ADMIN: "Super Admin",
+  SCHOOL_ADMIN: "Admin",
+  TEACHER: "Teacher",
+  STAFF: "Staff",
+  PARENT: "Parent",
+};
+
 /* -------------------------------------------------------------------------- */
 /* Portal-based tooltip — escapes the nav's overflow-y-auto clipping,        */
 /* and stays open while the cursor travels toward / rests on the panel.      */
@@ -234,6 +242,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
 
   const isAdmin = user.role === "SCHOOL_ADMIN" || user.role === "SUPER_ADMIN";
   const allowedModules = user.allowedModules ?? [];
+  const roleLabel = ROLE_LABELS[user.role] ?? user.role;
 
   const isChildActive = (children?: NavChild[]) =>
     !!children?.some((c) => pathname.startsWith(c.href));
@@ -283,29 +292,30 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
 
   return (
     <aside
-      className={`hidden h-full shrink-0 border-r border-border bg-surface transition-all duration-200 lg:flex lg:flex-col ${
-        collapsed ? "w-[72px]" : "w-64"
+      className={`hidden h-full shrink-0 border-r border-border bg-surface transition-[width] duration-300 ease-in-out lg:flex lg:flex-col ${
+        collapsed ? "w-[76px]" : "w-[264px]"
       }`}
     >
       {/* Logo + collapse toggle */}
       <div
-        className={`flex shrink-0 border-b border-border ${
+        className={`relative flex shrink-0 border-b border-border ${
           collapsed
-            ? "flex-col items-center gap-2 px-2 py-3"
-            : "h-16 items-center justify-between px-5"
+            ? "flex-col items-center gap-2 px-2 py-4"
+            : "h-[68px] items-center justify-between px-5"
         }`}
       >
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md shadow-primary/20">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-1 ring-white/10">
             <School className="h-5 w-5" />
+            <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-surface" />
           </div>
 
           {!collapsed && (
             <div className="min-w-0">
-              <h1 className="truncate text-sm font-bold text-text-primary">
+              <h1 className="truncate text-[15px] font-bold leading-tight text-text-primary">
                 School ERP
               </h1>
-              <p className="truncate text-[11px] text-text-muted">
+              <p className="truncate text-[11px] font-medium text-text-muted">
                 Administration
               </p>
             </div>
@@ -316,7 +326,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           type="button"
           onClick={toggleCollapsed}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted transition hover:bg-surface-secondary hover:text-text-primary"
+          className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted transition-all duration-150 hover:bg-surface-secondary hover:text-text-primary active:scale-90"
         >
           {collapsed ? (
             <ChevronRight className="h-4 w-4" />
@@ -327,14 +337,14 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
       </div>
 
       {/* Navigation */}
-      <div className="scrollbar-thin min-h-0 flex-1 overflow-y-auto px-3 py-5">
+      <div className="scrollbar-thin min-h-0 flex-1 overflow-y-auto px-3 py-4">
         {!collapsed && (
-          <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+          <p className="mb-2.5 px-3 text-[10px] font-bold uppercase tracking-widest text-text-muted/70">
             Main Menu
           </p>
         )}
 
-        <nav className="space-y-1">
+        <nav className="space-y-0.5">
           {visibleNavigation.map((item) => {
             const Icon = item.icon;
 
@@ -346,7 +356,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                 <button
                   type="button"
                   onClick={() => !collapsed && toggleGroup(item.label)}
-                  className={`group relative flex w-full items-center gap-3 rounded-lg py-2.5 pl-3 pr-3 text-sm font-medium transition-all duration-200 ${
+                  className={`group relative flex w-full items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-sm font-medium transition-all duration-150 ${
                     collapsed ? "justify-center px-0" : ""
                   } ${
                     active
@@ -359,10 +369,10 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                   )}
 
                   <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-150 ${
                       active
                         ? "bg-primary/15"
-                        : "bg-transparent group-hover:bg-surface"
+                        : "bg-transparent group-hover:scale-105 group-hover:bg-surface"
                     }`}
                   >
                     <Icon
@@ -374,7 +384,9 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
 
                   {!collapsed && (
                     <>
-                      <span className="flex-1 text-left">{item.label}</span>
+                      <span className="flex-1 truncate text-left">
+                        {item.label}
+                      </span>
                       <ChevronDown
                         className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
                           open ? "rotate-180" : ""
@@ -390,8 +402,8 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                   <SidebarTooltip
                     key={item.label}
                     content={
-                      <div className="min-w-[190px] rounded-lg border border-border bg-surface p-2 shadow-lg">
-                        <p className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
+                      <div className="min-w-[200px] rounded-xl border border-border bg-surface p-2 shadow-xl ring-1 ring-black/5">
+                        <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-text-muted/70">
                           {item.label}
                         </p>
 
@@ -402,7 +414,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                             <Link
                               key={child.href}
                               href={child.href}
-                              className={`block whitespace-nowrap rounded-md px-2 py-1.5 text-sm font-medium transition ${
+                              className={`block whitespace-nowrap rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
                                 childActive
                                   ? "bg-primary-soft text-primary"
                                   : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
@@ -425,7 +437,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                   {groupButton}
 
                   {open && (
-                    <div className="ml-[26px] mt-1 space-y-0.5 border-l border-border/70 pl-4 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="ml-[27px] mt-0.5 space-y-0.5 border-l border-border/70 py-0.5 pl-4 duration-150 animate-in fade-in slide-in-from-top-1">
                       {item.children.map((child) => {
                         const childActive = pathname.startsWith(child.href);
 
@@ -433,7 +445,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                           <Link
                             key={child.href}
                             href={child.href}
-                            className={`relative flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ${
+                            className={`relative flex items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
                               childActive
                                 ? "bg-primary-soft text-primary"
                                 : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
@@ -461,7 +473,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
             const link = (
               <Link
                 href={item.href!}
-                className={`group relative flex items-center gap-3 rounded-lg py-2.5 pl-3 pr-3 text-sm font-medium transition-all duration-200 ${
+                className={`group relative flex items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-sm font-medium transition-all duration-150 ${
                   collapsed ? "justify-center px-0" : ""
                 } ${
                   active
@@ -474,10 +486,10 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                 )}
 
                 <span
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-150 ${
                     active
                       ? "bg-primary/15"
-                      : "bg-transparent group-hover:bg-surface"
+                      : "bg-transparent group-hover:scale-105 group-hover:bg-surface"
                   }`}
                 >
                   <Icon
@@ -487,7 +499,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                   />
                 </span>
 
-                {!collapsed && item.label}
+                {!collapsed && <span className="truncate">{item.label}</span>}
               </Link>
             );
 
@@ -514,22 +526,42 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         {isAdmin && (
           <>
             {!collapsed && (
-              <p className="mb-3 mt-8 px-3 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+              <p className="mb-2.5 mt-7 px-3 text-[10px] font-bold uppercase tracking-widest text-text-muted/70">
                 System
               </p>
             )}
 
-            {collapsed && <div className="mt-4" />}
+            {collapsed && (
+              <div className="mt-4 border-t border-border/70 pt-4" />
+            )}
 
             {(() => {
+              const settingsActive = pathname.startsWith("/dashboard/settings");
+
               const settingsLink = (
                 <Link
                   href="/dashboard/settings"
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-surface-secondary hover:text-text-primary ${
+                  className={`group relative flex items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-sm font-medium transition-all duration-150 ${
                     collapsed ? "justify-center px-0" : ""
+                  } ${
+                    settingsActive
+                      ? "bg-primary-soft text-primary"
+                      : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                   }`}
                 >
-                  <Settings className="h-[18px] w-[18px] shrink-0 text-text-muted" />
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-150 ${
+                      settingsActive
+                        ? "bg-primary/15"
+                        : "bg-transparent group-hover:scale-105 group-hover:bg-surface"
+                    }`}
+                  >
+                    <Settings
+                      className={`h-[17px] w-[17px] ${
+                        settingsActive ? "text-primary" : "text-text-muted"
+                      }`}
+                    />
+                  </span>
                   {!collapsed && "Settings"}
                 </Link>
               );
@@ -538,8 +570,9 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                 return (
                   <SidebarTooltip
                     content={
-                      <div className="whitespace-nowrap rounded-md bg-text-primary px-2 py-1 text-xs font-medium text-surface shadow-md">
+                      <div className="relative whitespace-nowrap rounded-md bg-text-primary px-2.5 py-1.5 text-xs font-medium text-surface shadow-lg ring-1 ring-black/5">
                         Settings
+                        <span className="absolute left-[-4px] top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 bg-text-primary" />
                       </div>
                     }
                   >
@@ -557,12 +590,13 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
       {/* User */}
       <div className="shrink-0 border-t border-border p-3">
         <div
-          className={`flex items-center gap-3 rounded-lg bg-surface-secondary p-3 ${
+          className={`flex items-center gap-3 rounded-xl bg-surface-secondary/70 p-2.5 transition-colors hover:bg-surface-secondary ${
             collapsed ? "flex-col gap-2" : ""
           }`}
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary">
+          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary ring-2 ring-surface">
             {(user.email?.[0] ?? "A").toUpperCase()}
+            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-surface" />
           </div>
 
           {!collapsed && (
@@ -571,9 +605,9 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                 {user.email ?? "Administrator"}
               </p>
 
-              <p className="text-xs capitalize text-text-muted">
-                {user.role.toLowerCase()}
-              </p>
+              <span className="mt-0.5 inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                {roleLabel}
+              </span>
             </div>
           )}
 
@@ -582,7 +616,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
             onClick={handleLogout}
             disabled={loggingOut}
             title="Logout"
-            className="text-text-muted cursor-pointer transition hover:text-error disabled:opacity-50"
+            className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted transition-all duration-150 hover:bg-surface hover:text-error disabled:opacity-50"
           >
             <LogOut className="h-4 w-4" />
           </button>

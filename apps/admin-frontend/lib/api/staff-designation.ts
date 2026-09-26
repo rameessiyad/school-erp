@@ -11,9 +11,20 @@ export interface CreateStaffDesignationValues {
   allowedModules?: string[];
 }
 
+export interface ModuleGroup {
+  key: string;
+  label: string;
+  modules: { value: string; label: string }[];
+}
+
 export const staffDesignationApi = {
   list: async (): Promise<StaffDesignation[]> => {
     const { data } = await apiClient.get("/staff-designation");
+    return data;
+  },
+
+  getModuleGroups: async (): Promise<ModuleGroup[]> => {
+    const { data } = await apiClient.get("/staff-designation/module-groups");
     return data;
   },
 
