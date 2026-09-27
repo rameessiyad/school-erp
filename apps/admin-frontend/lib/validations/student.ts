@@ -39,4 +39,5 @@ export interface Student {
   bloodGroup: string | null;
   isActive: boolean;
   photo: string | null;
+  rollNo: string | null;
 }

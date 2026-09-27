@@ -37,7 +37,15 @@ export default function SectionParentsPage() {
     return <PageLoader text="Loading parents..." />;
   }
 
-  const { section, parents } = details;
+  const { section } = details;
+
+  // Sort parents alphabetically by first name, then last name
+  const parents = [...details.parents].sort((a, b) => {
+    const nameA = `${a.firstName} ${a.lastName ?? ""}`.trim().toLowerCase();
+    const nameB = `${b.firstName} ${b.lastName ?? ""}`.trim().toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
   const isSearching = debouncedSearch.length > 0;
 
   const filteredParents = isSearching

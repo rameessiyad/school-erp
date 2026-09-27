@@ -37,7 +37,17 @@ export default function SectionStudentsPage() {
     return <PageLoader text="Loading students..." />;
   }
 
-  const { section, students } = details;
+  const { section } = details;
+
+  // Sort by rollNo numerically (1, 2, 3, ... 10, 11) instead of
+  // lexicographically (1, 10, 11, 2, 3, ...)
+  const students = [...details.students].sort((a, b) =>
+    (a.rollNo ?? "").localeCompare(b.rollNo ?? "", undefined, {
+      numeric: true,
+      sensitivity: "base",
+    }),
+  );
+
   const isSearching = debouncedSearch.length > 0;
 
   const filteredStudents = isSearching

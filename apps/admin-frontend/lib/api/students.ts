@@ -42,10 +42,21 @@ interface EnrollmentPayload {
   rollNo?: string;
 }
 
+// Sorts students by rollNo numerically (1, 2, 3, ... 10, 11)
+// instead of lexicographically (1, 10, 11, 2, 3, ...)
+function sortByRollNo(students: Student[]): Student[] {
+  return [...students].sort((a, b) =>
+    (a.rollNo ?? "").localeCompare(b.rollNo ?? "", undefined, {
+      numeric: true,
+      sensitivity: "base",
+    }),
+  );
+}
+
 export const studentsApi = {
   list: async (): Promise<Student[]> => {
     const { data } = await apiClient.get("/student");
-    return data;
+    return sortByRollNo(data);
   },
 
   listUnassigned: async (params?: {
@@ -53,7 +64,7 @@ export const studentsApi = {
     sectionId?: string;
   }): Promise<Student[]> => {
     const { data } = await apiClient.get("/student/unassigned", { params });
-    return data;
+    return sortByRollNo(data);
   },
 
   get: async (id: string) => {
