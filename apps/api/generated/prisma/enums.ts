@@ -30,8 +30,7 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 export const StaffDesignationEnum = {
   ACCOUNTANT: 'ACCOUNTANT',
-  ADMISSION_OFFICER: 'ADMISSION_OFFICER',
-  RECEPTIONIST: 'RECEPTIONIST'
+  ADMISSION_OFFICER: 'ADMISSION_OFFICER'
 } as const
 
 export type StaffDesignationEnum = (typeof StaffDesignationEnum)[keyof typeof StaffDesignationEnum]

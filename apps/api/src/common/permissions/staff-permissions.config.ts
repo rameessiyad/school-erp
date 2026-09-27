@@ -13,5 +13,4 @@ export const STAFF_MODULE_PERMISSIONS: Record<StaffDesignationEnum, Module[]> =
       Module.STUDENT_REGISTRATION,
       Module.PARENT_DETAILS,
     ],
-    RECEPTIONIST: [],
   };

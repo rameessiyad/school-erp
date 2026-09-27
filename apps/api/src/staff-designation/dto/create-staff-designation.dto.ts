@@ -1,4 +1,10 @@
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Module } from 'src/common/permissions/module.enum';
 
 export class CreateStaffDesignationDto {

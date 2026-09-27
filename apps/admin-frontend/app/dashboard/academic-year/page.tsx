@@ -30,8 +30,16 @@ export default function AcademicYearsPage() {
     queryFn: academicYearApi.getAll,
   });
 
-  const invalidate = () =>
+  const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["academicYears"] });
+    queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
+    queryClient.invalidateQueries({ queryKey: ["students"] });
+    queryClient.invalidateQueries({ queryKey: ["sectionDetails"] });
+    queryClient.invalidateQueries({ queryKey: ["sectionParents"] });
+    queryClient.invalidateQueries({ queryKey: ["teachers"] });
+    queryClient.invalidateQueries({ queryKey: ["classes"] });
+    queryClient.invalidateQueries({ queryKey: ["fees"] });
+  };
 
   const createMutation = useMutation({
     mutationFn: academicYearApi.create,

@@ -165,7 +165,6 @@ model Staff {
 enum StaffDesignationEnum {
   ACCOUNTANT
   ADMISSION_OFFICER
-  RECEPTIONIST
 }
 
 model Teacher {
