@@ -154,4 +154,72 @@ export class AuthService {
       user: { id: user.id, phone: user.phone, role: user.role },
     };
   }
+
+  async getProfile(userId: string, role: Role) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        role: true,
+        school: { select: { name: true } },
+      },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const profile: {
+      id: string;
+      email: string | null;
+      phone: string | null;
+      role: string;
+      schoolName: string | null;
+      firstName?: string;
+      lastName?: string | null;
+      designation?: string | null;
+    } = {
+      id: user.id,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      schoolName: user.school?.name ?? null,
+    };
+
+    if (role === Role.STAFF) {
+      const staff = await this.prisma.staff.findUnique({
+        where: { userId },
+        include: { designation: true },
+      });
+
+      if (staff) {
+        profile.firstName = staff.firstName;
+        profile.lastName = staff.lastName;
+        profile.designation = staff.designation?.name ?? null;
+      }
+    }
+
+    return profile;
+  }
+
+  async changePassword(
+    userId: string,
+    oldPassword: string,
+    newPassword: string,
+  ) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const isValid = await bcrypt.compare(oldPassword, user.passwordHash);
+    if (!isValid)
+      throw new UnauthorizedException('Current password is incorrect');
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: newHash },
+    });
+
+    return { message: 'Password updated successfully' };
+  }
 }

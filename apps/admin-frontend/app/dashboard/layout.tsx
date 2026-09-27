@@ -106,7 +106,10 @@ export default function DashboardLayout({
                   <div className="absolute right-0 z-10 mt-2 w-48 overflow-hidden rounded-lg border border-border bg-surface shadow-md">
                     <button
                       type="button"
-                      onClick={() => setProfileMenuOpen(false)}
+                      onClick={() => {
+                        setProfileMenuOpen(false);
+                        router.push("/dashboard/profile");
+                      }}
                       className="flex w-full cursor-pointer items-center gap-2 px-3 py-2.5 text-left text-sm text-text-secondary transition hover:bg-primary-soft hover:text-text-primary"
                     >
                       <User className="h-4 w-4" />
