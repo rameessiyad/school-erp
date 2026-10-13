@@ -47,6 +47,7 @@ export type SchoolCountAggregateOutputType = {
   name: number
   subdomain: number
   status: number
+  allowedModules: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -76,6 +77,7 @@ export type SchoolCountAggregateInputType = {
   name?: true
   subdomain?: true
   status?: true
+  allowedModules?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -158,6 +160,7 @@ export type SchoolGroupByOutputType = {
   name: string
   subdomain: string
   status: $Enums.SchoolStatus
+  allowedModules: string[]
   createdAt: Date
   updatedAt: Date
   _count: SchoolCountAggregateOutputType | null
@@ -188,6 +191,7 @@ export type SchoolWhereInput = {
   name?: Prisma.StringFilter<"School"> | string
   subdomain?: Prisma.StringFilter<"School"> | string
   status?: Prisma.EnumSchoolStatusFilter<"School"> | $Enums.SchoolStatus
+  allowedModules?: Prisma.StringNullableListFilter<"School">
   createdAt?: Prisma.DateTimeFilter<"School"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"School"> | Date | string
   academicYears?: Prisma.AcademicYearListRelationFilter
@@ -222,6 +226,7 @@ export type SchoolOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   subdomain?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  allowedModules?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   academicYears?: Prisma.AcademicYearOrderByRelationAggregateInput
@@ -259,6 +264,7 @@ export type SchoolWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SchoolWhereInput | Prisma.SchoolWhereInput[]
   name?: Prisma.StringFilter<"School"> | string
   status?: Prisma.EnumSchoolStatusFilter<"School"> | $Enums.SchoolStatus
+  allowedModules?: Prisma.StringNullableListFilter<"School">
   createdAt?: Prisma.DateTimeFilter<"School"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"School"> | Date | string
   academicYears?: Prisma.AcademicYearListRelationFilter
@@ -293,6 +299,7 @@ export type SchoolOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   subdomain?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  allowedModules?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SchoolCountOrderByAggregateInput
@@ -308,6 +315,7 @@ export type SchoolScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"School"> | string
   subdomain?: Prisma.StringWithAggregatesFilter<"School"> | string
   status?: Prisma.EnumSchoolStatusWithAggregatesFilter<"School"> | $Enums.SchoolStatus
+  allowedModules?: Prisma.StringNullableListFilter<"School">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"School"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"School"> | Date | string
 }
@@ -317,6 +325,7 @@ export type SchoolCreateInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -351,6 +360,7 @@ export type SchoolUncheckedCreateInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -385,6 +395,7 @@ export type SchoolUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -419,6 +430,7 @@ export type SchoolUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -453,6 +465,7 @@ export type SchoolCreateManyInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -462,6 +475,7 @@ export type SchoolUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -471,8 +485,17 @@ export type SchoolUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type SchoolCountOrderByAggregateInput = {
@@ -480,6 +503,7 @@ export type SchoolCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   subdomain?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  allowedModules?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -512,12 +536,21 @@ export type SchoolNullableScalarRelationFilter = {
   isNot?: Prisma.SchoolWhereInput | null
 }
 
+export type SchoolCreateallowedModulesInput = {
+  set: string[]
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
 
 export type EnumSchoolStatusFieldUpdateOperationsInput = {
   set?: $Enums.SchoolStatus
+}
+
+export type SchoolUpdateallowedModulesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -881,6 +914,7 @@ export type SchoolCreateWithoutAcademicYearsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutSchoolInput
@@ -914,6 +948,7 @@ export type SchoolUncheckedCreateWithoutAcademicYearsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutSchoolInput
@@ -963,6 +998,7 @@ export type SchoolUpdateWithoutAcademicYearsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutSchoolNestedInput
@@ -996,6 +1032,7 @@ export type SchoolUncheckedUpdateWithoutAcademicYearsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutSchoolNestedInput
@@ -1029,6 +1066,7 @@ export type SchoolCreateWithoutUsersInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -1062,6 +1100,7 @@ export type SchoolUncheckedCreateWithoutUsersInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -1111,6 +1150,7 @@ export type SchoolUpdateWithoutUsersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -1144,6 +1184,7 @@ export type SchoolUncheckedUpdateWithoutUsersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -1177,6 +1218,7 @@ export type SchoolCreateWithoutStaffDesignationsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -1210,6 +1252,7 @@ export type SchoolUncheckedCreateWithoutStaffDesignationsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -1259,6 +1302,7 @@ export type SchoolUpdateWithoutStaffDesignationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -1292,6 +1336,7 @@ export type SchoolUncheckedUpdateWithoutStaffDesignationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -1325,6 +1370,7 @@ export type SchoolCreateWithoutStaffsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -1358,6 +1404,7 @@ export type SchoolUncheckedCreateWithoutStaffsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -1407,6 +1454,7 @@ export type SchoolUpdateWithoutStaffsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -1440,6 +1488,7 @@ export type SchoolUncheckedUpdateWithoutStaffsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -1473,6 +1522,7 @@ export type SchoolCreateWithoutTeachersInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -1506,6 +1556,7 @@ export type SchoolUncheckedCreateWithoutTeachersInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -1555,6 +1606,7 @@ export type SchoolUpdateWithoutTeachersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -1588,6 +1640,7 @@ export type SchoolUncheckedUpdateWithoutTeachersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -1621,6 +1674,7 @@ export type SchoolCreateWithoutParentsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -1654,6 +1708,7 @@ export type SchoolUncheckedCreateWithoutParentsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -1703,6 +1758,7 @@ export type SchoolUpdateWithoutParentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -1736,6 +1792,7 @@ export type SchoolUncheckedUpdateWithoutParentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -1769,6 +1826,7 @@ export type SchoolCreateWithoutStudentsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -1802,6 +1860,7 @@ export type SchoolUncheckedCreateWithoutStudentsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -1851,6 +1910,7 @@ export type SchoolUpdateWithoutStudentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -1884,6 +1944,7 @@ export type SchoolUncheckedUpdateWithoutStudentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -1917,6 +1978,7 @@ export type SchoolCreateWithoutClassesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -1950,6 +2012,7 @@ export type SchoolUncheckedCreateWithoutClassesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -1999,6 +2062,7 @@ export type SchoolUpdateWithoutClassesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -2032,6 +2096,7 @@ export type SchoolUncheckedUpdateWithoutClassesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -2065,6 +2130,7 @@ export type SchoolCreateWithoutSectionsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -2098,6 +2164,7 @@ export type SchoolUncheckedCreateWithoutSectionsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -2147,6 +2214,7 @@ export type SchoolUpdateWithoutSectionsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -2180,6 +2248,7 @@ export type SchoolUncheckedUpdateWithoutSectionsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -2213,6 +2282,7 @@ export type SchoolCreateWithoutSubjectsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -2246,6 +2316,7 @@ export type SchoolUncheckedCreateWithoutSubjectsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -2295,6 +2366,7 @@ export type SchoolUpdateWithoutSubjectsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -2328,6 +2400,7 @@ export type SchoolUncheckedUpdateWithoutSubjectsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -2361,6 +2434,7 @@ export type SchoolCreateWithoutStudentEnrollmentsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -2394,6 +2468,7 @@ export type SchoolUncheckedCreateWithoutStudentEnrollmentsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -2443,6 +2518,7 @@ export type SchoolUpdateWithoutStudentEnrollmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -2476,6 +2552,7 @@ export type SchoolUncheckedUpdateWithoutStudentEnrollmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -2509,6 +2586,7 @@ export type SchoolCreateWithoutTeacherSubjectAllocationsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -2542,6 +2620,7 @@ export type SchoolUncheckedCreateWithoutTeacherSubjectAllocationsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -2591,6 +2670,7 @@ export type SchoolUpdateWithoutTeacherSubjectAllocationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -2624,6 +2704,7 @@ export type SchoolUncheckedUpdateWithoutTeacherSubjectAllocationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -2657,6 +2738,7 @@ export type SchoolCreateWithoutClassTeacherAssignmentsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -2690,6 +2772,7 @@ export type SchoolUncheckedCreateWithoutClassTeacherAssignmentsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -2739,6 +2822,7 @@ export type SchoolUpdateWithoutClassTeacherAssignmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -2772,6 +2856,7 @@ export type SchoolUncheckedUpdateWithoutClassTeacherAssignmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -2805,6 +2890,7 @@ export type SchoolCreateWithoutTimetablesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -2838,6 +2924,7 @@ export type SchoolUncheckedCreateWithoutTimetablesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -2887,6 +2974,7 @@ export type SchoolUpdateWithoutTimetablesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -2920,6 +3008,7 @@ export type SchoolUncheckedUpdateWithoutTimetablesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -2953,6 +3042,7 @@ export type SchoolCreateWithoutAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -2986,6 +3076,7 @@ export type SchoolUncheckedCreateWithoutAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -3035,6 +3126,7 @@ export type SchoolUpdateWithoutAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -3068,6 +3160,7 @@ export type SchoolUncheckedUpdateWithoutAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -3101,6 +3194,7 @@ export type SchoolCreateWithoutExamTypesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -3134,6 +3228,7 @@ export type SchoolUncheckedCreateWithoutExamTypesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -3183,6 +3278,7 @@ export type SchoolUpdateWithoutExamTypesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -3216,6 +3312,7 @@ export type SchoolUncheckedUpdateWithoutExamTypesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -3249,6 +3346,7 @@ export type SchoolCreateWithoutFeeStructuresInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -3282,6 +3380,7 @@ export type SchoolUncheckedCreateWithoutFeeStructuresInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -3331,6 +3430,7 @@ export type SchoolUpdateWithoutFeeStructuresInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -3364,6 +3464,7 @@ export type SchoolUncheckedUpdateWithoutFeeStructuresInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -3397,6 +3498,7 @@ export type SchoolCreateWithoutTeacherAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -3430,6 +3532,7 @@ export type SchoolUncheckedCreateWithoutTeacherAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -3479,6 +3582,7 @@ export type SchoolUpdateWithoutTeacherAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -3512,6 +3616,7 @@ export type SchoolUncheckedUpdateWithoutTeacherAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -3545,6 +3650,7 @@ export type SchoolCreateWithoutTeacherLeaveApplicationsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -3578,6 +3684,7 @@ export type SchoolUncheckedCreateWithoutTeacherLeaveApplicationsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -3627,6 +3734,7 @@ export type SchoolUpdateWithoutTeacherLeaveApplicationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -3660,6 +3768,7 @@ export type SchoolUncheckedUpdateWithoutTeacherLeaveApplicationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -3693,6 +3802,7 @@ export type SchoolCreateWithoutStaffAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -3726,6 +3836,7 @@ export type SchoolUncheckedCreateWithoutStaffAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -3775,6 +3886,7 @@ export type SchoolUpdateWithoutStaffAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -3808,6 +3920,7 @@ export type SchoolUncheckedUpdateWithoutStaffAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -3841,6 +3954,7 @@ export type SchoolCreateWithoutStaffLeaveApplicationsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -3874,6 +3988,7 @@ export type SchoolUncheckedCreateWithoutStaffLeaveApplicationsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -3923,6 +4038,7 @@ export type SchoolUpdateWithoutStaffLeaveApplicationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -3956,6 +4072,7 @@ export type SchoolUncheckedUpdateWithoutStaffLeaveApplicationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -3989,6 +4106,7 @@ export type SchoolCreateWithoutStudentAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -4022,6 +4140,7 @@ export type SchoolUncheckedCreateWithoutStudentAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -4071,6 +4190,7 @@ export type SchoolUpdateWithoutStudentAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -4104,6 +4224,7 @@ export type SchoolUncheckedUpdateWithoutStudentAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -4137,6 +4258,7 @@ export type SchoolCreateWithoutAnnouncementsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -4170,6 +4292,7 @@ export type SchoolUncheckedCreateWithoutAnnouncementsInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -4219,6 +4342,7 @@ export type SchoolUpdateWithoutAnnouncementsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -4252,6 +4376,7 @@ export type SchoolUncheckedUpdateWithoutAnnouncementsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -4285,6 +4410,7 @@ export type SchoolCreateWithoutAdminAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -4318,6 +4444,7 @@ export type SchoolUncheckedCreateWithoutAdminAttendancesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -4367,6 +4494,7 @@ export type SchoolUpdateWithoutAdminAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -4400,6 +4528,7 @@ export type SchoolUncheckedUpdateWithoutAdminAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -4433,6 +4562,7 @@ export type SchoolCreateWithoutGradingScalesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearCreateNestedManyWithoutSchoolInput
@@ -4466,6 +4596,7 @@ export type SchoolUncheckedCreateWithoutGradingScalesInput = {
   name: string
   subdomain: string
   status?: $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolCreateallowedModulesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   academicYears?: Prisma.AcademicYearUncheckedCreateNestedManyWithoutSchoolInput
@@ -4515,6 +4646,7 @@ export type SchoolUpdateWithoutGradingScalesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUpdateManyWithoutSchoolNestedInput
@@ -4548,6 +4680,7 @@ export type SchoolUncheckedUpdateWithoutGradingScalesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subdomain?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSchoolStatusFieldUpdateOperationsInput | $Enums.SchoolStatus
+  allowedModules?: Prisma.SchoolUpdateallowedModulesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   academicYears?: Prisma.AcademicYearUncheckedUpdateManyWithoutSchoolNestedInput
@@ -4828,6 +4961,7 @@ export type SchoolSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name?: boolean
   subdomain?: boolean
   status?: boolean
+  allowedModules?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   academicYears?: boolean | Prisma.School$academicYearsArgs<ExtArgs>
@@ -4863,6 +4997,7 @@ export type SchoolSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   name?: boolean
   subdomain?: boolean
   status?: boolean
+  allowedModules?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["school"]>
@@ -4872,6 +5007,7 @@ export type SchoolSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   name?: boolean
   subdomain?: boolean
   status?: boolean
+  allowedModules?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["school"]>
@@ -4881,11 +5017,12 @@ export type SchoolSelectScalar = {
   name?: boolean
   subdomain?: boolean
   status?: boolean
+  allowedModules?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SchoolOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "subdomain" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["school"]>
+export type SchoolOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "subdomain" | "status" | "allowedModules" | "createdAt" | "updatedAt", ExtArgs["result"]["school"]>
 export type SchoolInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   academicYears?: boolean | Prisma.School$academicYearsArgs<ExtArgs>
   users?: boolean | Prisma.School$usersArgs<ExtArgs>
@@ -4951,6 +5088,7 @@ export type $SchoolPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     name: string
     subdomain: string
     status: $Enums.SchoolStatus
+    allowedModules: string[]
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["school"]>
@@ -5405,6 +5543,7 @@ export interface SchoolFieldRefs {
   readonly name: Prisma.FieldRef<"School", 'String'>
   readonly subdomain: Prisma.FieldRef<"School", 'String'>
   readonly status: Prisma.FieldRef<"School", 'SchoolStatus'>
+  readonly allowedModules: Prisma.FieldRef<"School", 'String[]'>
   readonly createdAt: Prisma.FieldRef<"School", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"School", 'DateTime'>
 }

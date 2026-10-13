@@ -28,6 +28,7 @@ import { StudentAttendanceModule } from './student-attendance/student-attendance
 import { StaffAttendanceModule } from './staff-attendance/staff-attendance.module';
 import { PromotionModule } from './promotion/promotion.module';
 import { StaffDesignationModule } from './staff-designation/staff-designation.module';
+import { SuperAdminModule } from './super-admin/super-admin.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { StaffDesignationModule } from './staff-designation/staff-designation.mo
     StaffAttendanceModule,
     PromotionModule,
     StaffDesignationModule,
+    SuperAdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -113,6 +113,7 @@ export const SchoolScalarFieldEnum = {
   name: 'name',
   subdomain: 'subdomain',
   status: 'status',
+  allowedModules: 'allowedModules',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

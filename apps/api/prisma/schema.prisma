@@ -12,6 +12,7 @@ model School {
   name      String
   subdomain String       @unique
   status    SchoolStatus @default(ACTIVE)
+  allowedModules String[]     @default([])
 
   academicYears AcademicYear[]
   users         User[]
