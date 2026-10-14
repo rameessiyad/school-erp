@@ -4,7 +4,6 @@ import { authApi } from "@/lib/api/auth";
 import {
   LayoutDashboard,
   GraduationCap,
-  Users,
   UserRound,
   Wallet,
   Settings,
@@ -13,18 +12,17 @@ import {
   Briefcase,
   BookOpen,
   Layers,
-  Receipt,
   ClipboardList,
   School2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  CalendarDays,
   Megaphone,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Module } from "@/lib/permissions/module.enum";
 
@@ -35,6 +33,8 @@ interface DashboardSidebarProps {
     role: string;
     allowedModules?: string[];
   };
+  mobileOpen: boolean;
+  onMobileClose: () => void;
 }
 
 interface NavChild {
@@ -223,17 +223,44 @@ function SidebarTooltip({
   );
 }
 
-export function DashboardSidebar({ user }: DashboardSidebarProps) {
+export function DashboardSidebar({
+  user,
+  mobileOpen,
+  onMobileClose,
+}: DashboardSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
-  const [collapsed, setCollapsed] = useState<boolean>(() => {
+
+  const [collapsedPref, setCollapsedPref] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
   });
 
+  // Track the lg breakpoint so the collapsed state only applies on desktop
+  const [isDesktop, setIsDesktop] = useState<boolean>(() =>
+    typeof window === "undefined"
+      ? true
+      : window.matchMedia("(min-width: 1024px)").matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const onChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  // Close the mobile drawer after navigating
+  useEffect(() => {
+    onMobileClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  const collapsed = collapsedPref && isDesktop;
+
   const toggleCollapsed = () => {
-    setCollapsed((prev) => {
+    setCollapsedPref((prev) => {
       const next = !prev;
       localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next));
       return next;
@@ -291,72 +318,210 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   };
 
   return (
-    <aside
-      className={`hidden h-full shrink-0 border-r border-border bg-surface transition-[width] duration-300 ease-in-out lg:flex lg:flex-col ${
-        collapsed ? "w-[76px]" : "w-[264px]"
-      }`}
-    >
-      {/* Logo + collapse toggle */}
+    <>
+      {/* Mobile overlay */}
       <div
-        className={`relative flex shrink-0 border-b border-border ${
-          collapsed
-            ? "flex-col items-center gap-2 px-2 py-4"
-            : "h-[68px] items-center justify-between px-5"
+        onClick={onMobileClose}
+        aria-hidden="true"
+        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 lg:hidden ${
+          mobileOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
+      />
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex h-full w-[264px] max-w-[85vw] shrink-0 flex-col border-r border-border bg-surface transition-[width,transform] duration-300 ease-in-out lg:static lg:z-auto lg:max-w-none lg:translate-x-0 ${
+          mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        } ${collapsed ? "lg:w-[76px]" : "lg:w-[264px]"}`}
       >
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-1 ring-white/10">
-            <School className="h-5 w-5" />
-            <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-surface" />
+        {/* Logo + collapse / close toggle */}
+        <div
+          className={`relative flex shrink-0 border-b border-border ${
+            collapsed
+              ? "flex-col items-center gap-2 px-2 py-4"
+              : "h-[68px] items-center justify-between px-5"
+          }`}
+        >
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-1 ring-white/10">
+              <School className="h-5 w-5" />
+              <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-surface" />
+            </div>
+
+            {!collapsed && (
+              <div className="min-w-0">
+                <h1 className="truncate text-[15px] font-bold leading-tight text-text-primary">
+                  School ERP
+                </h1>
+                <p className="truncate text-[11px] font-medium text-text-muted">
+                  Administration
+                </p>
+              </div>
+            )}
           </div>
 
-          {!collapsed && (
-            <div className="min-w-0">
-              <h1 className="truncate text-[15px] font-bold leading-tight text-text-primary">
-                School ERP
-              </h1>
-              <p className="truncate text-[11px] font-medium text-text-muted">
-                Administration
-              </p>
-            </div>
-          )}
+          {/* Desktop: collapse toggle */}
+          <button
+            type="button"
+            onClick={toggleCollapsed}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="hidden h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted transition-all duration-150 hover:bg-surface-secondary hover:text-text-primary active:scale-90 lg:flex"
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
+          </button>
+
+          {/* Mobile: close drawer */}
+          <button
+            type="button"
+            onClick={onMobileClose}
+            aria-label="Close menu"
+            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted transition hover:bg-surface-secondary hover:text-text-primary lg:hidden"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={toggleCollapsed}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted transition-all duration-150 hover:bg-surface-secondary hover:text-text-primary active:scale-90"
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
+        {/* Navigation */}
+        <div className="scrollbar-thin min-h-0 flex-1 overflow-y-auto px-3 py-4">
+          {!collapsed && (
+            <p className="mb-2.5 px-3 text-[10px] font-bold uppercase tracking-widest text-text-muted/70">
+              Main Menu
+            </p>
           )}
-        </button>
-      </div>
 
-      {/* Navigation */}
-      <div className="scrollbar-thin min-h-0 flex-1 overflow-y-auto px-3 py-4">
-        {!collapsed && (
-          <p className="mb-2.5 px-3 text-[10px] font-bold uppercase tracking-widest text-text-muted/70">
-            Main Menu
-          </p>
-        )}
+          <nav className="space-y-0.5">
+            {visibleNavigation.map((item) => {
+              const Icon = item.icon;
 
-        <nav className="space-y-0.5">
-          {visibleNavigation.map((item) => {
-            const Icon = item.icon;
+              if (item.children) {
+                const active = isChildActive(item.children);
+                const open = !collapsed && (openGroups[item.label] ?? active);
 
-            if (item.children) {
-              const active = isChildActive(item.children);
-              const open = !collapsed && (openGroups[item.label] ?? active);
+                const groupButton = (
+                  <button
+                    type="button"
+                    onClick={() => !collapsed && toggleGroup(item.label)}
+                    className={`group relative flex w-full items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-sm font-medium transition-all duration-150 ${
+                      collapsed ? "justify-center px-0" : ""
+                    } ${
+                      active
+                        ? "bg-primary-soft text-primary"
+                        : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    {active && !collapsed && (
+                      <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary" />
+                    )}
 
-              const groupButton = (
-                <button
-                  type="button"
-                  onClick={() => !collapsed && toggleGroup(item.label)}
-                  className={`group relative flex w-full items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-sm font-medium transition-all duration-150 ${
+                    <span
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-150 ${
+                        active
+                          ? "bg-primary/15"
+                          : "bg-transparent group-hover:scale-105 group-hover:bg-surface"
+                      }`}
+                    >
+                      <Icon
+                        className={`h-[17px] w-[17px] ${
+                          active ? "text-primary" : "text-text-muted"
+                        }`}
+                      />
+                    </span>
+
+                    {!collapsed && (
+                      <>
+                        <span className="flex-1 truncate text-left">
+                          {item.label}
+                        </span>
+                        <ChevronDown
+                          className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
+                            open ? "rotate-180" : ""
+                          } ${active ? "text-primary" : "text-text-muted"}`}
+                        />
+                      </>
+                    )}
+                  </button>
+                );
+
+                if (collapsed) {
+                  return (
+                    <SidebarTooltip
+                      key={item.label}
+                      content={
+                        <div className="min-w-[200px] rounded-xl border border-border bg-surface p-2 shadow-xl ring-1 ring-black/5">
+                          <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-text-muted/70">
+                            {item.label}
+                          </p>
+
+                          {item.children.map((child) => {
+                            const childActive = pathname.startsWith(child.href);
+
+                            return (
+                              <Link
+                                key={child.href}
+                                href={child.href}
+                                className={`block whitespace-nowrap rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
+                                  childActive
+                                    ? "bg-primary-soft text-primary"
+                                    : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                                }`}
+                              >
+                                {child.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      }
+                    >
+                      {groupButton}
+                    </SidebarTooltip>
+                  );
+                }
+
+                return (
+                  <div key={item.label}>
+                    {groupButton}
+
+                    {open && (
+                      <div className="ml-[27px] mt-0.5 space-y-0.5 border-l border-border/70 py-0.5 pl-4 duration-150 animate-in fade-in slide-in-from-top-1">
+                        {item.children.map((child) => {
+                          const childActive = pathname.startsWith(child.href);
+
+                          return (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className={`relative flex items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                                childActive
+                                  ? "bg-primary-soft text-primary"
+                                  : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                              }`}
+                            >
+                              <span
+                                className={`absolute -left-[21px] h-1.5 w-1.5 rounded-full transition-colors ${
+                                  childActive ? "bg-primary" : "bg-border"
+                                }`}
+                              />
+                              {child.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              const active =
+                pathname === item.href ||
+                (item.href !== "/dashboard" && pathname.startsWith(item.href!));
+
+              const link = (
+                <Link
+                  href={item.href!}
+                  className={`group relative flex items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-sm font-medium transition-all duration-150 ${
                     collapsed ? "justify-center px-0" : ""
                   } ${
                     active
@@ -382,246 +547,132 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                     />
                   </span>
 
-                  {!collapsed && (
-                    <>
-                      <span className="flex-1 truncate text-left">
-                        {item.label}
-                      </span>
-                      <ChevronDown
-                        className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
-                          open ? "rotate-180" : ""
-                        } ${active ? "text-primary" : "text-text-muted"}`}
-                      />
-                    </>
-                  )}
-                </button>
-              );
-
-              if (collapsed) {
-                return (
-                  <SidebarTooltip
-                    key={item.label}
-                    content={
-                      <div className="min-w-[200px] rounded-xl border border-border bg-surface p-2 shadow-xl ring-1 ring-black/5">
-                        <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-text-muted/70">
-                          {item.label}
-                        </p>
-
-                        {item.children.map((child) => {
-                          const childActive = pathname.startsWith(child.href);
-
-                          return (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              className={`block whitespace-nowrap rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
-                                childActive
-                                  ? "bg-primary-soft text-primary"
-                                  : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
-                              }`}
-                            >
-                              {child.label}
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    }
-                  >
-                    {groupButton}
-                  </SidebarTooltip>
-                );
-              }
-
-              return (
-                <div key={item.label}>
-                  {groupButton}
-
-                  {open && (
-                    <div className="ml-[27px] mt-0.5 space-y-0.5 border-l border-border/70 py-0.5 pl-4 duration-150 animate-in fade-in slide-in-from-top-1">
-                      {item.children.map((child) => {
-                        const childActive = pathname.startsWith(child.href);
-
-                        return (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className={`relative flex items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-                              childActive
-                                ? "bg-primary-soft text-primary"
-                                : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
-                            }`}
-                          >
-                            <span
-                              className={`absolute -left-[21px] h-1.5 w-1.5 rounded-full transition-colors ${
-                                childActive ? "bg-primary" : "bg-border"
-                              }`}
-                            />
-                            {child.label}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            const active =
-              pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href!));
-
-            const link = (
-              <Link
-                href={item.href!}
-                className={`group relative flex items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-sm font-medium transition-all duration-150 ${
-                  collapsed ? "justify-center px-0" : ""
-                } ${
-                  active
-                    ? "bg-primary-soft text-primary"
-                    : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
-                }`}
-              >
-                {active && !collapsed && (
-                  <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary" />
-                )}
-
-                <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-150 ${
-                    active
-                      ? "bg-primary/15"
-                      : "bg-transparent group-hover:scale-105 group-hover:bg-surface"
-                  }`}
-                >
-                  <Icon
-                    className={`h-[17px] w-[17px] ${
-                      active ? "text-primary" : "text-text-muted"
-                    }`}
-                  />
-                </span>
-
-                {!collapsed && <span className="truncate">{item.label}</span>}
-              </Link>
-            );
-
-            if (collapsed) {
-              return (
-                <SidebarTooltip
-                  key={item.href}
-                  content={
-                    <div className="relative whitespace-nowrap rounded-md bg-text-primary px-2.5 py-1.5 text-xs font-medium text-surface shadow-lg ring-1 ring-black/5">
-                      {item.label}
-                      <span className="absolute left-[-4px] top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 bg-text-primary" />
-                    </div>
-                  }
-                >
-                  {link}
-                </SidebarTooltip>
-              );
-            }
-
-            return <div key={item.href}>{link}</div>;
-          })}
-        </nav>
-
-        {isAdmin && (
-          <>
-            {!collapsed && (
-              <p className="mb-2.5 mt-7 px-3 text-[10px] font-bold uppercase tracking-widest text-text-muted/70">
-                System
-              </p>
-            )}
-
-            {collapsed && (
-              <div className="mt-4 border-t border-border/70 pt-4" />
-            )}
-
-            {(() => {
-              const settingsActive = pathname.startsWith("/dashboard/settings");
-
-              const settingsLink = (
-                <Link
-                  href="/dashboard/settings"
-                  className={`group relative flex items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-sm font-medium transition-all duration-150 ${
-                    collapsed ? "justify-center px-0" : ""
-                  } ${
-                    settingsActive
-                      ? "bg-primary-soft text-primary"
-                      : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
-                  }`}
-                >
-                  <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-150 ${
-                      settingsActive
-                        ? "bg-primary/15"
-                        : "bg-transparent group-hover:scale-105 group-hover:bg-surface"
-                    }`}
-                  >
-                    <Settings
-                      className={`h-[17px] w-[17px] ${
-                        settingsActive ? "text-primary" : "text-text-muted"
-                      }`}
-                    />
-                  </span>
-                  {!collapsed && "Settings"}
+                  {!collapsed && <span className="truncate">{item.label}</span>}
                 </Link>
               );
 
               if (collapsed) {
                 return (
                   <SidebarTooltip
+                    key={item.href}
                     content={
                       <div className="relative whitespace-nowrap rounded-md bg-text-primary px-2.5 py-1.5 text-xs font-medium text-surface shadow-lg ring-1 ring-black/5">
-                        Settings
+                        {item.label}
                         <span className="absolute left-[-4px] top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 bg-text-primary" />
                       </div>
                     }
                   >
-                    {settingsLink}
+                    {link}
                   </SidebarTooltip>
                 );
               }
 
-              return settingsLink;
-            })()}
-          </>
-        )}
-      </div>
+              return <div key={item.href}>{link}</div>;
+            })}
+          </nav>
 
-      {/* User */}
-      <div className="shrink-0 border-t border-border p-3">
-        <div
-          className={`flex items-center gap-3 rounded-xl bg-surface-secondary/70 p-2.5 transition-colors hover:bg-surface-secondary ${
-            collapsed ? "flex-col gap-2" : ""
-          }`}
-        >
-          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary ring-2 ring-surface">
-            {(user.email?.[0] ?? "A").toUpperCase()}
-            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-surface" />
-          </div>
+          {isAdmin && (
+            <>
+              {!collapsed && (
+                <p className="mb-2.5 mt-7 px-3 text-[10px] font-bold uppercase tracking-widest text-text-muted/70">
+                  System
+                </p>
+              )}
 
-          {!collapsed && (
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-text-primary">
-                {user.email ?? "Administrator"}
-              </p>
+              {collapsed && (
+                <div className="mt-4 border-t border-border/70 pt-4" />
+              )}
 
-              <span className="mt-0.5 inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                {roleLabel}
-              </span>
-            </div>
+              {(() => {
+                const settingsActive = pathname.startsWith(
+                  "/dashboard/settings",
+                );
+
+                const settingsLink = (
+                  <Link
+                    href="/dashboard/settings"
+                    className={`group relative flex items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-sm font-medium transition-all duration-150 ${
+                      collapsed ? "justify-center px-0" : ""
+                    } ${
+                      settingsActive
+                        ? "bg-primary-soft text-primary"
+                        : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-150 ${
+                        settingsActive
+                          ? "bg-primary/15"
+                          : "bg-transparent group-hover:scale-105 group-hover:bg-surface"
+                      }`}
+                    >
+                      <Settings
+                        className={`h-[17px] w-[17px] ${
+                          settingsActive ? "text-primary" : "text-text-muted"
+                        }`}
+                      />
+                    </span>
+                    {!collapsed && "Settings"}
+                  </Link>
+                );
+
+                if (collapsed) {
+                  return (
+                    <SidebarTooltip
+                      content={
+                        <div className="relative whitespace-nowrap rounded-md bg-text-primary px-2.5 py-1.5 text-xs font-medium text-surface shadow-lg ring-1 ring-black/5">
+                          Settings
+                          <span className="absolute left-[-4px] top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 bg-text-primary" />
+                        </div>
+                      }
+                    >
+                      {settingsLink}
+                    </SidebarTooltip>
+                  );
+                }
+
+                return settingsLink;
+              })()}
+            </>
           )}
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={loggingOut}
-            title="Logout"
-            className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted transition-all duration-150 hover:bg-surface hover:text-error disabled:opacity-50"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
         </div>
-      </div>
-    </aside>
+
+        {/* User */}
+        <div className="shrink-0 border-t border-border p-3">
+          <div
+            className={`flex items-center gap-3 rounded-xl bg-surface-secondary/70 p-2.5 transition-colors hover:bg-surface-secondary ${
+              collapsed ? "flex-col gap-2" : ""
+            }`}
+          >
+            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary ring-2 ring-surface">
+              {(user.email?.[0] ?? "A").toUpperCase()}
+              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-surface" />
+            </div>
+
+            {!collapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-text-primary">
+                  {user.email ?? "Administrator"}
+                </p>
+
+                <span className="mt-0.5 inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                  {roleLabel}
+                </span>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={loggingOut}
+              title="Logout"
+              className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted transition-all duration-150 hover:bg-surface hover:text-error disabled:opacity-50"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 }

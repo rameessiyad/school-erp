@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, User } from "lucide-react";
+import { LogOut, Menu, User } from "lucide-react";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { authApi } from "@/lib/api/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -19,6 +19,7 @@ export default function DashboardLayout({
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const hasToken =
     typeof window !== "undefined" && !!localStorage.getItem("accessToken");
@@ -54,6 +55,19 @@ export default function DashboardLayout({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileNavOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [mobileNavOpen]);
+
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     queryClient.clear();
@@ -71,17 +85,29 @@ export default function DashboardLayout({
   return (
     <div className="h-screen overflow-hidden bg-background">
       <div className="flex h-full">
-        <DashboardSidebar user={user} />
+        <DashboardSidebar
+          user={user}
+          mobileOpen={mobileNavOpen}
+          onMobileClose={() => setMobileNavOpen(false)}
+        />
 
-        <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-surface px-6">
-            <div>
-              <h2 className="text-sm font-medium text-text-secondary">
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border bg-surface px-4 sm:px-6">
+            <div className="flex min-w-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setMobileNavOpen(true)}
+                aria-label="Open menu"
+                className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition hover:bg-surface-secondary lg:hidden"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+              <h2 className="truncate text-sm font-medium text-text-secondary">
                 School Administration
               </h2>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <ThemeToggle />
 
               <div className="relative" ref={profileMenuRef}>
@@ -132,7 +158,7 @@ export default function DashboardLayout({
             </div>
           </header>
 
-          <div className="min-h-0 flex-1 overflow-y-auto p-6 lg:p-8">
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             {children}
           </div>
         </main>
