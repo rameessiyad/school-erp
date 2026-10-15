@@ -2,9 +2,14 @@ import { apiClient } from "@/lib/axios/client";
 
 export interface CurrentUser {
   id: string;
-  email: string;
+  email: string | null;
+  phone: string | null;
   role: string;
+  schoolName: string | null;
   allowedModules: string[];
+  firstName?: string;
+  lastName?: string | null;
+  designation?: string | null;
 }
 
 export const authApi = {

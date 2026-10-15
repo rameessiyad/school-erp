@@ -73,6 +73,7 @@ export class AuthService {
       });
 
       if (!staff) throw new UnauthorizedException('Staff record not found');
+      if (!staff.isActive) throw new UnauthorizedException('Account inactive');
 
       allowedModules = (staff.designation?.allowedModules ?? []) as Module[];
       staffId = staff.id;
@@ -163,7 +164,7 @@ export class AuthService {
         email: true,
         phone: true,
         role: true,
-        school: { select: { name: true } },
+        school: { select: { name: true, allowedModules: true } },
       },
     });
 
@@ -175,6 +176,7 @@ export class AuthService {
       phone: string | null;
       role: string;
       schoolName: string | null;
+      allowedModules: string[];
       firstName?: string;
       lastName?: string | null;
       designation?: string | null;
@@ -184,6 +186,7 @@ export class AuthService {
       phone: user.phone,
       role: user.role,
       schoolName: user.school?.name ?? null,
+      allowedModules: [],
     };
 
     if (role === Role.STAFF) {
@@ -196,6 +199,14 @@ export class AuthService {
         profile.firstName = staff.firstName;
         profile.lastName = staff.lastName;
         profile.designation = staff.designation?.name ?? null;
+
+        const schoolModules = user.school?.allowedModules ?? [];
+        const designationModules = staff.designation?.allowedModules ?? [];
+
+        // only modules the school has enabled AND the designation grants
+        profile.allowedModules = designationModules.filter((m) =>
+          schoolModules.includes(m),
+        );
       }
     }
 

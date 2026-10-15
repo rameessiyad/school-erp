@@ -42,6 +42,7 @@ interface NavChild {
   href: string;
   adminOnly?: boolean;
   staffOnly?: boolean;
+  requiredModules?: string[];
 }
 
 interface NavItem {
@@ -115,9 +116,21 @@ const navigation: NavItem[] = [
     icon: ClipboardList,
     requiredModules: [Module.STUDENT_ATTENDANCE, Module.ATTENDANCE],
     children: [
-      { label: "Teacher Attendance", href: "/dashboard/teacher-attendance" },
-      { label: "Staff Attendance", href: "/dashboard/staff-attendance" },
-      { label: "Student Attendance", href: "/dashboard/student-attendance" },
+      {
+        label: "Teacher Attendance",
+        href: "/dashboard/teacher-attendance",
+        requiredModules: [Module.ATTENDANCE],
+      },
+      {
+        label: "Staff Attendance",
+        href: "/dashboard/staff-attendance",
+        requiredModules: [Module.ATTENDANCE],
+      },
+      {
+        label: "Student Attendance",
+        href: "/dashboard/student-attendance",
+        requiredModules: [Module.STUDENT_ATTENDANCE],
+      },
     ],
   },
   {
@@ -292,17 +305,21 @@ export function DashboardSidebar({
     children?.filter((c) => {
       if (c.adminOnly) return isAdmin;
       if (c.staffOnly) return user.role === "STAFF";
-      return true;
+      if (isAdmin || !c.requiredModules) return true;
+      return c.requiredModules.some((m) => allowedModules.includes(m));
     });
 
   const visibleNavigation = navigation
     .map((item) => ({ ...item, children: filterChildren(item.children) }))
     .filter((item) => {
-      if (item.children) return item.children.length > 0;
+      // group with no visible children -> hide
+      if (item.children && item.children.length === 0) return false;
+
       if (item.adminOnly) return isAdmin;
       if (item.staffOnly) return user.role === "STAFF";
       if (isAdmin) return true;
       if (!item.requiredModules) return true;
+
       return item.requiredModules.some((m) => allowedModules.includes(m));
     });
 
