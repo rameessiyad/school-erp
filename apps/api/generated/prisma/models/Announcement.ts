@@ -29,7 +29,9 @@ export type AnnouncementMinAggregateOutputType = {
   schoolId: string | null
   title: string | null
   content: string | null
+  category: $Enums.AnnouncementCategory | null
   audience: $Enums.AnnouncementAudience | null
+  expiresAt: Date | null
   createdById: string | null
   isPushNotified: boolean | null
   createdAt: Date | null
@@ -41,7 +43,9 @@ export type AnnouncementMaxAggregateOutputType = {
   schoolId: string | null
   title: string | null
   content: string | null
+  category: $Enums.AnnouncementCategory | null
   audience: $Enums.AnnouncementAudience | null
+  expiresAt: Date | null
   createdById: string | null
   isPushNotified: boolean | null
   createdAt: Date | null
@@ -53,7 +57,9 @@ export type AnnouncementCountAggregateOutputType = {
   schoolId: number
   title: number
   content: number
+  category: number
   audience: number
+  expiresAt: number
   createdById: number
   isPushNotified: number
   createdAt: number
@@ -67,7 +73,9 @@ export type AnnouncementMinAggregateInputType = {
   schoolId?: true
   title?: true
   content?: true
+  category?: true
   audience?: true
+  expiresAt?: true
   createdById?: true
   isPushNotified?: true
   createdAt?: true
@@ -79,7 +87,9 @@ export type AnnouncementMaxAggregateInputType = {
   schoolId?: true
   title?: true
   content?: true
+  category?: true
   audience?: true
+  expiresAt?: true
   createdById?: true
   isPushNotified?: true
   createdAt?: true
@@ -91,7 +101,9 @@ export type AnnouncementCountAggregateInputType = {
   schoolId?: true
   title?: true
   content?: true
+  category?: true
   audience?: true
+  expiresAt?: true
   createdById?: true
   isPushNotified?: true
   createdAt?: true
@@ -176,7 +188,9 @@ export type AnnouncementGroupByOutputType = {
   schoolId: string
   title: string
   content: string
+  category: $Enums.AnnouncementCategory
   audience: $Enums.AnnouncementAudience
+  expiresAt: Date
   createdById: string
   isPushNotified: boolean
   createdAt: Date
@@ -209,7 +223,9 @@ export type AnnouncementWhereInput = {
   schoolId?: Prisma.StringFilter<"Announcement"> | string
   title?: Prisma.StringFilter<"Announcement"> | string
   content?: Prisma.StringFilter<"Announcement"> | string
+  category?: Prisma.EnumAnnouncementCategoryFilter<"Announcement"> | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFilter<"Announcement"> | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
   createdById?: Prisma.StringFilter<"Announcement"> | string
   isPushNotified?: Prisma.BoolFilter<"Announcement"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
@@ -223,7 +239,9 @@ export type AnnouncementOrderByWithRelationInput = {
   schoolId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   audience?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPushNotified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -240,7 +258,9 @@ export type AnnouncementWhereUniqueInput = Prisma.AtLeast<{
   schoolId?: Prisma.StringFilter<"Announcement"> | string
   title?: Prisma.StringFilter<"Announcement"> | string
   content?: Prisma.StringFilter<"Announcement"> | string
+  category?: Prisma.EnumAnnouncementCategoryFilter<"Announcement"> | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFilter<"Announcement"> | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
   createdById?: Prisma.StringFilter<"Announcement"> | string
   isPushNotified?: Prisma.BoolFilter<"Announcement"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
@@ -254,7 +274,9 @@ export type AnnouncementOrderByWithAggregationInput = {
   schoolId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   audience?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPushNotified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -272,7 +294,9 @@ export type AnnouncementScalarWhereWithAggregatesInput = {
   schoolId?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
   title?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
   content?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
+  category?: Prisma.EnumAnnouncementCategoryWithAggregatesFilter<"Announcement"> | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceWithAggregatesFilter<"Announcement"> | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeWithAggregatesFilter<"Announcement"> | Date | string
   createdById?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
   isPushNotified?: Prisma.BoolWithAggregatesFilter<"Announcement"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Announcement"> | Date | string
@@ -283,7 +307,9 @@ export type AnnouncementCreateInput = {
   id?: string
   title: string
   content: string
+  category?: $Enums.AnnouncementCategory
   audience?: $Enums.AnnouncementAudience
+  expiresAt: Date | string
   isPushNotified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -296,7 +322,9 @@ export type AnnouncementUncheckedCreateInput = {
   schoolId: string
   title: string
   content: string
+  category?: $Enums.AnnouncementCategory
   audience?: $Enums.AnnouncementAudience
+  expiresAt: Date | string
   createdById: string
   isPushNotified?: boolean
   createdAt?: Date | string
@@ -307,7 +335,9 @@ export type AnnouncementUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -320,7 +350,9 @@ export type AnnouncementUncheckedUpdateInput = {
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -332,7 +364,9 @@ export type AnnouncementCreateManyInput = {
   schoolId: string
   title: string
   content: string
+  category?: $Enums.AnnouncementCategory
   audience?: $Enums.AnnouncementAudience
+  expiresAt: Date | string
   createdById: string
   isPushNotified?: boolean
   createdAt?: Date | string
@@ -343,7 +377,9 @@ export type AnnouncementUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -354,7 +390,9 @@ export type AnnouncementUncheckedUpdateManyInput = {
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -376,7 +414,9 @@ export type AnnouncementCountOrderByAggregateInput = {
   schoolId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   audience?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPushNotified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -388,7 +428,9 @@ export type AnnouncementMaxOrderByAggregateInput = {
   schoolId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   audience?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPushNotified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -400,7 +442,9 @@ export type AnnouncementMinOrderByAggregateInput = {
   schoolId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   audience?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   isPushNotified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -491,6 +535,10 @@ export type AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput = {
   deleteMany?: Prisma.AnnouncementScalarWhereInput | Prisma.AnnouncementScalarWhereInput[]
 }
 
+export type EnumAnnouncementCategoryFieldUpdateOperationsInput = {
+  set?: $Enums.AnnouncementCategory
+}
+
 export type EnumAnnouncementAudienceFieldUpdateOperationsInput = {
   set?: $Enums.AnnouncementAudience
 }
@@ -499,7 +547,9 @@ export type AnnouncementCreateWithoutSchoolInput = {
   id?: string
   title: string
   content: string
+  category?: $Enums.AnnouncementCategory
   audience?: $Enums.AnnouncementAudience
+  expiresAt: Date | string
   isPushNotified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -510,7 +560,9 @@ export type AnnouncementUncheckedCreateWithoutSchoolInput = {
   id?: string
   title: string
   content: string
+  category?: $Enums.AnnouncementCategory
   audience?: $Enums.AnnouncementAudience
+  expiresAt: Date | string
   createdById: string
   isPushNotified?: boolean
   createdAt?: Date | string
@@ -551,7 +603,9 @@ export type AnnouncementScalarWhereInput = {
   schoolId?: Prisma.StringFilter<"Announcement"> | string
   title?: Prisma.StringFilter<"Announcement"> | string
   content?: Prisma.StringFilter<"Announcement"> | string
+  category?: Prisma.EnumAnnouncementCategoryFilter<"Announcement"> | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFilter<"Announcement"> | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
   createdById?: Prisma.StringFilter<"Announcement"> | string
   isPushNotified?: Prisma.BoolFilter<"Announcement"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
@@ -562,7 +616,9 @@ export type AnnouncementCreateWithoutCreatedByInput = {
   id?: string
   title: string
   content: string
+  category?: $Enums.AnnouncementCategory
   audience?: $Enums.AnnouncementAudience
+  expiresAt: Date | string
   isPushNotified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -574,7 +630,9 @@ export type AnnouncementUncheckedCreateWithoutCreatedByInput = {
   schoolId: string
   title: string
   content: string
+  category?: $Enums.AnnouncementCategory
   audience?: $Enums.AnnouncementAudience
+  expiresAt: Date | string
   isPushNotified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -610,7 +668,9 @@ export type AnnouncementCreateManySchoolInput = {
   id?: string
   title: string
   content: string
+  category?: $Enums.AnnouncementCategory
   audience?: $Enums.AnnouncementAudience
+  expiresAt: Date | string
   createdById: string
   isPushNotified?: boolean
   createdAt?: Date | string
@@ -621,7 +681,9 @@ export type AnnouncementUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -632,7 +694,9 @@ export type AnnouncementUncheckedUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -643,7 +707,9 @@ export type AnnouncementUncheckedUpdateManyWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -655,7 +721,9 @@ export type AnnouncementCreateManyCreatedByInput = {
   schoolId: string
   title: string
   content: string
+  category?: $Enums.AnnouncementCategory
   audience?: $Enums.AnnouncementAudience
+  expiresAt: Date | string
   isPushNotified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -665,7 +733,9 @@ export type AnnouncementUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -677,7 +747,9 @@ export type AnnouncementUncheckedUpdateWithoutCreatedByInput = {
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -688,7 +760,9 @@ export type AnnouncementUncheckedUpdateManyWithoutCreatedByInput = {
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumAnnouncementCategoryFieldUpdateOperationsInput | $Enums.AnnouncementCategory
   audience?: Prisma.EnumAnnouncementAudienceFieldUpdateOperationsInput | $Enums.AnnouncementAudience
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPushNotified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -701,7 +775,9 @@ export type AnnouncementSelect<ExtArgs extends runtime.Types.Extensions.Internal
   schoolId?: boolean
   title?: boolean
   content?: boolean
+  category?: boolean
   audience?: boolean
+  expiresAt?: boolean
   createdById?: boolean
   isPushNotified?: boolean
   createdAt?: boolean
@@ -715,7 +791,9 @@ export type AnnouncementSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   schoolId?: boolean
   title?: boolean
   content?: boolean
+  category?: boolean
   audience?: boolean
+  expiresAt?: boolean
   createdById?: boolean
   isPushNotified?: boolean
   createdAt?: boolean
@@ -729,7 +807,9 @@ export type AnnouncementSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   schoolId?: boolean
   title?: boolean
   content?: boolean
+  category?: boolean
   audience?: boolean
+  expiresAt?: boolean
   createdById?: boolean
   isPushNotified?: boolean
   createdAt?: boolean
@@ -743,14 +823,16 @@ export type AnnouncementSelectScalar = {
   schoolId?: boolean
   title?: boolean
   content?: boolean
+  category?: boolean
   audience?: boolean
+  expiresAt?: boolean
   createdById?: boolean
   isPushNotified?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AnnouncementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "schoolId" | "title" | "content" | "audience" | "createdById" | "isPushNotified" | "createdAt" | "updatedAt", ExtArgs["result"]["announcement"]>
+export type AnnouncementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "schoolId" | "title" | "content" | "category" | "audience" | "expiresAt" | "createdById" | "isPushNotified" | "createdAt" | "updatedAt", ExtArgs["result"]["announcement"]>
 export type AnnouncementInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -775,7 +857,9 @@ export type $AnnouncementPayload<ExtArgs extends runtime.Types.Extensions.Intern
     schoolId: string
     title: string
     content: string
+    category: $Enums.AnnouncementCategory
     audience: $Enums.AnnouncementAudience
+    expiresAt: Date
     createdById: string
     isPushNotified: boolean
     createdAt: Date
@@ -1209,7 +1293,9 @@ export interface AnnouncementFieldRefs {
   readonly schoolId: Prisma.FieldRef<"Announcement", 'String'>
   readonly title: Prisma.FieldRef<"Announcement", 'String'>
   readonly content: Prisma.FieldRef<"Announcement", 'String'>
+  readonly category: Prisma.FieldRef<"Announcement", 'AnnouncementCategory'>
   readonly audience: Prisma.FieldRef<"Announcement", 'AnnouncementAudience'>
+  readonly expiresAt: Prisma.FieldRef<"Announcement", 'DateTime'>
   readonly createdById: Prisma.FieldRef<"Announcement", 'String'>
   readonly isPushNotified: Prisma.FieldRef<"Announcement", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Announcement", 'DateTime'>

@@ -3922,7 +3922,9 @@ export const AnnouncementScalarFieldEnum = {
   schoolId: 'schoolId',
   title: 'title',
   content: 'content',
+  category: 'category',
   audience: 'audience',
+  expiresAt: 'expiresAt',
   createdById: 'createdById',
   isPushNotified: 'isPushNotified',
   createdAt: 'createdAt',
@@ -4302,6 +4304,20 @@ export type EnumStudentAttendanceStatusFieldRefInput<$PrismaModel> = FieldRefInp
  * Reference to a field of type 'StudentAttendanceStatus[]'
  */
 export type ListEnumStudentAttendanceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StudentAttendanceStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AnnouncementCategory'
+ */
+export type EnumAnnouncementCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementCategory'>
+    
+
+
+/**
+ * Reference to a field of type 'AnnouncementCategory[]'
+ */
+export type ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementCategory[]'>
     
 
 

@@ -182,3 +182,15 @@ export const AnnouncementAudience = {
 } as const
 
 export type AnnouncementAudience = (typeof AnnouncementAudience)[keyof typeof AnnouncementAudience]
+
+
+export const AnnouncementCategory = {
+  IMPORTANT_NOTICE: 'IMPORTANT_NOTICE',
+  LEAVE: 'LEAVE',
+  EXAM: 'EXAM',
+  HOLIDAY: 'HOLIDAY',
+  EVENT: 'EVENT',
+  GENERAL: 'GENERAL'
+} as const
+
+export type AnnouncementCategory = (typeof AnnouncementCategory)[keyof typeof AnnouncementCategory]
