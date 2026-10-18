@@ -44,6 +44,7 @@ import { parentRelationships } from "@/lib/validations/student";
 import { parentsApi } from "@/lib/api/parents";
 import { Checkbox } from "@/components/ui/checkbox";
 import { notify } from "@/lib/toast";
+import { MobileInput } from "../ui/mobile-input";
 
 interface Option {
   id: string;
@@ -944,7 +945,7 @@ export function StudentForm({
                       >
                         Phone
                       </Label>
-                      <Input
+                      <MobileInput
                         id="parentPhone"
                         placeholder="e.g. 9876543210"
                         {...register("parentPhone")}
