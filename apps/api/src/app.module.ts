@@ -30,6 +30,7 @@ import { PromotionModule } from './promotion/promotion.module';
 import { StaffDesignationModule } from './staff-designation/staff-designation.module';
 import { SuperAdminModule } from './super-admin/super-admin.module';
 import { AnnouncementsModule } from './announcements/announcements.module';
+import { StudentImportModule } from './student-import/student-import.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { AnnouncementsModule } from './announcements/announcements.module';
     StaffDesignationModule,
     SuperAdminModule,
     AnnouncementsModule,
+    StudentImportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
