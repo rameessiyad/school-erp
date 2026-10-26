@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -127,6 +127,8 @@ export function StudentForm({
   const [photoPreview, setPhotoPreview] = useState<string | null>(
     initialPhotoUrl,
   );
+
+  const createdStudentIdRef = useRef<string | null>(null);
 
   /* ---------------------------------------------------------------------- */
   /* Load Options                                                            */
@@ -273,28 +275,42 @@ export function StudentForm({
         ...studentPayload
       } = values;
 
-      const student = isEditMode
-        ? await studentsApi.update(studentId!, studentPayload, photoFile)
-        : await studentsApi.create(studentPayload, photoFile);
+      const wantsEnrollment =
+        enableEnrollment && !!sectionId && !!academicYearId;
 
-      if (enableEnrollment && sectionId && academicYearId) {
-        try {
-          await studentsApi.createEnrollment(student.id, {
-            sectionId,
-            academicYearId,
-            rollNo,
-          });
-        } catch (enrollError) {
-          throw new Error(
-            `Student ${isEditMode ? "updated" : "created"}, but enrollment ${
-              isEditMode ? "update" : "creation"
-            } failed: ${getErrorMessage(enrollError)}`,
-          );
+      // ── Edit ──
+      if (isEditMode) {
+        await studentsApi.update(studentId!, studentPayload, photoFile);
+
+        if (wantsEnrollment) {
+          try {
+            await studentsApi.createEnrollment(studentId!, {
+              sectionId: sectionId!,
+              academicYearId: academicYearId!,
+              rollNo,
+            });
+          } catch (enrollError) {
+            throw new Error(
+              `Student updated, but enrollment update failed: ${getErrorMessage(enrollError)}`,
+            );
+          }
         }
+        return studentId!;
+      }
+
+      // ── Create: the backend saves student + enrollment in one transaction ──
+      if (!createdStudentIdRef.current) {
+        const student = await studentsApi.create(
+          {
+            ...studentPayload,
+            ...(wantsEnrollment && { sectionId, academicYearId, rollNo }),
+          },
+          photoFile,
+        );
+        createdStudentIdRef.current = student.id;
       }
 
       if (
-        !isEditMode &&
         enableParent &&
         parentFirstName &&
         parentPhone &&
@@ -310,29 +326,26 @@ export function StudentForm({
             occupation: parentOccupation || undefined,
             relationship: parentRelationship,
             isPrimary: parentIsPrimary ?? true,
-            studentId: student.id,
+            studentId: createdStudentIdRef.current,
           });
         } catch (parentError) {
           throw new Error(
-            `Student created, but parent creation failed: ${getErrorMessage(
+            `Student was created, but adding the parent failed: ${getErrorMessage(
               parentError,
-            )}`,
+            )}. Fix the parent details and submit again. The student will not be created twice.`,
           );
         }
       }
 
-      return student;
+      return createdStudentIdRef.current;
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["students"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["students"] });
+      queryClient.invalidateQueries({ queryKey: ["schoolClasses"] }); // section student counts
 
       if (isEditMode) {
-        queryClient.invalidateQueries({
-          queryKey: ["student", studentId],
-        });
+        queryClient.invalidateQueries({ queryKey: ["student", studentId] });
       }
 
       notify.success(
@@ -341,10 +354,21 @@ export function StudentForm({
           : "Student created successfully",
       );
 
-      router.push("/dashboard/students");
+      // Edit: go back to wherever the user came from (a section page, search results, etc.)
+      // Fall back to the students page if the edit page was opened directly.
+      if (isEditMode && window.history.length > 1) {
+        router.back();
+      } else {
+        router.push("/dashboard/students");
+      }
     },
 
     onError: (error) => {
+      // the student may already exist even though a later step failed
+      if (createdStudentIdRef.current) {
+        queryClient.invalidateQueries({ queryKey: ["students"] });
+      }
+
       const message = getErrorMessage(
         error,
         `Failed to ${isEditMode ? "update" : "create"} student`,

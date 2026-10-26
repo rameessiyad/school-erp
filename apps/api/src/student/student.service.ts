@@ -1,16 +1,19 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from 'generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateStudentDto } from './dto/create-student.dto';
+// import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { EnrollStudentDto } from './dto/enroll-student.dto';
 import {
   FileUploadService,
   UploadedFile,
 } from 'src/file-upload/file-upload.service';
+import { CreateStudentWithEnrollmentDto } from './dto/create-student-with-enrollment.dto';
 
 @Injectable()
 export class StudentService {
@@ -19,16 +22,31 @@ export class StudentService {
     private fileUploadService: FileUploadService,
   ) {}
 
-  async create(schoolId: string, dto: CreateStudentDto, photo?: UploadedFile) {
+  async create(
+    schoolId: string,
+    dto: CreateStudentWithEnrollmentDto,
+    photo?: UploadedFile,
+  ) {
     const existing = await this.prisma.student.findFirst({
       where: { schoolId, admissionNo: dto.admissionNo },
     });
-
     if (existing)
       throw new ConflictException('Admission number already in use');
 
-    let photoUrl: string | undefined;
+    const { sectionId, academicYearId } = dto;
+    const wantsEnrollment = !!(sectionId || academicYearId);
 
+    // validate BEFORE uploading the photo or writing anything
+    if (wantsEnrollment) {
+      if (!sectionId || !academicYearId) {
+        throw new BadRequestException(
+          'Both section and academic year are required to enroll the student',
+        );
+      }
+      await this.assertSectionInYear(schoolId, sectionId, academicYearId);
+    }
+
+    let photoUrl: string | undefined;
     if (photo) {
       photoUrl = await this.fileUploadService.uploadImage(
         photo,
@@ -36,21 +54,48 @@ export class StudentService {
       );
     }
 
-    return this.prisma.student.create({
-      data: {
-        schoolId,
-        admissionNo: dto.admissionNo,
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        gender: dto.gender,
-        dob: dto.dob ? new Date(dto.dob) : undefined,
-        bloodGroup: dto.bloodGroup,
-        admissionDate: dto.admissionDate
-          ? new Date(dto.admissionDate)
-          : undefined,
-        photoUrl,
-      },
-    });
+    try {
+      // student + enrollment succeed or fail together
+      return await this.prisma.$transaction(async (tx) => {
+        const student = await tx.student.create({
+          data: {
+            schoolId,
+            admissionNo: dto.admissionNo,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            gender: dto.gender,
+            dob: dto.dob ? new Date(dto.dob) : undefined,
+            bloodGroup: dto.bloodGroup,
+            admissionDate: dto.admissionDate
+              ? new Date(dto.admissionDate)
+              : undefined,
+            photoUrl,
+          },
+        });
+
+        if (sectionId && academicYearId) {
+          await tx.studentEnrollment.create({
+            data: {
+              schoolId,
+              studentId: student.id,
+              sectionId,
+              academicYearId,
+              rollNo: dto.rollNo || null,
+            },
+          });
+        }
+
+        return student;
+      });
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2002'
+      ) {
+        throw new ConflictException('Admission number already in use');
+      }
+      throw e;
+    }
   }
 
   async findAll(schoolId: string) {
@@ -128,11 +173,7 @@ export class StudentService {
   //   enrollment
   async enroll(schoolId: string, studentId: string, dto: EnrollStudentDto) {
     await this.findOne(schoolId, studentId);
-
-    const section = await this.prisma.section.findFirst({
-      where: { id: dto.sectionId, schoolId },
-    });
-    if (!section) throw new NotFoundException('Section not found');
+    await this.assertSectionInYear(schoolId, dto.sectionId, dto.academicYearId);
 
     return this.prisma.studentEnrollment.upsert({
       where: {
@@ -141,10 +182,7 @@ export class StudentService {
           studentId,
         },
       },
-      update: {
-        sectionId: dto.sectionId,
-        rollNo: dto.rollNo,
-      },
+      update: { sectionId: dto.sectionId, rollNo: dto.rollNo },
       create: {
         schoolId,
         studentId,
@@ -153,6 +191,22 @@ export class StudentService {
         rollNo: dto.rollNo,
       },
     });
+  }
+
+  // the section must belong to this school AND to the given academic year
+  private async assertSectionInYear(
+    schoolId: string,
+    sectionId: string,
+    academicYearId: string,
+  ) {
+    const section = await this.prisma.section.findFirst({
+      where: { id: sectionId, schoolId, academicYearId },
+    });
+    if (!section) {
+      throw new NotFoundException(
+        'Section not found in the selected academic year',
+      );
+    }
   }
 
   async getEnrollment(

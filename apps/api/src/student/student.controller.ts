@@ -18,10 +18,10 @@ import { UploadedFile as UploadedFileType } from 'src/file-upload/file-upload.se
 import { ModulePermissionGuard } from 'src/auth/guards/module-permission.guard';
 import { Module } from 'src/common/permissions/module.enum';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { CreateStudentDto } from './dto/create-student.dto';
 import { StudentService } from './student.service';
 import { EnrollStudentDto } from './dto/enroll-student.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateStudentWithEnrollmentDto } from './dto/create-student-with-enrollment.dto';
 
 @UseGuards(JwtAuthGuard, ModulePermissionGuard)
 @RequireModule(Module.STUDENT_ADMISSIONS)
@@ -33,7 +33,7 @@ export class StudentController {
   @UseInterceptors(FileInterceptor('photo'))
   create(
     @Request() req,
-    @Body() dto: CreateStudentDto,
+    @Body() dto: CreateStudentWithEnrollmentDto,
     @UploadedFile() photo?: UploadedFileType,
   ) {
     return this.studentService.create(req.user.schoolId, dto, photo);
