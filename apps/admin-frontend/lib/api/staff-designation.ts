@@ -4,6 +4,7 @@ export interface StaffDesignation {
   id: string;
   name: string;
   allowedModules: string[];
+  _count?: { staff: number };
 }
 
 export interface CreateStaffDesignationValues {

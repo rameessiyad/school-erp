@@ -1,11 +1,31 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { MODULE_GROUPS } from 'src/common/permissions/module-groups';
 import { CreateStaffDesignationDto } from './dto/create-staff-designation.dto';
 import { UpdateStaffDesignationDto } from './dto/update-staff-designation.dto';
+
+// typed as Set<string> so incoming DTO strings can be checked against it
+const VALID_MODULES = new Set<string>(
+  MODULE_GROUPS.flatMap((g) => g.modules.map((m) => m.value as string)),
+);
+
+// de-duplicates and rejects module keys that don't exist
+function cleanModules(modules?: string[]) {
+  if (!modules) return undefined;
+  const unique = [...new Set(modules)];
+  const unknown = unique.filter((m) => !VALID_MODULES.has(m));
+  if (unknown.length) {
+    throw new BadRequestException(`Unknown module(s): ${unknown.join(', ')}`);
+  }
+  return unique;
+}
+
+const withCount = { _count: { select: { staff: true } } } as const;
 
 @Injectable()
 export class StaffDesignationService {
@@ -23,8 +43,9 @@ export class StaffDesignationService {
       data: {
         schoolId,
         name: dto.name,
-        allowedModules: dto.allowedModules ?? [],
+        allowedModules: cleanModules(dto.allowedModules) ?? [],
       },
+      include: withCount,
     });
   }
 
@@ -32,12 +53,14 @@ export class StaffDesignationService {
     return this.prisma.staffDesignation.findMany({
       where: { schoolId },
       orderBy: { name: 'asc' },
+      include: withCount, // gives _count.staff
     });
   }
 
   async findOne(schoolId: string, id: string) {
     const designation = await this.prisma.staffDesignation.findFirst({
       where: { id, schoolId },
+      include: withCount,
     });
     if (!designation) throw new NotFoundException('Designation not found');
     return designation;
@@ -55,9 +78,15 @@ export class StaffDesignationService {
       }
     }
 
+    const allowedModules = cleanModules(dto.allowedModules);
+
     return this.prisma.staffDesignation.update({
       where: { id },
-      data: dto,
+      data: {
+        ...(dto.name !== undefined && { name: dto.name }),
+        ...(allowedModules && { allowedModules }),
+      },
+      include: withCount,
     });
   }
 

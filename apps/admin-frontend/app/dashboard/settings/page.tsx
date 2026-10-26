@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { FileSpreadsheet, type LucideIcon } from "lucide-react";
+import { FileSpreadsheet, ShieldCheck, type LucideIcon } from "lucide-react";
+import { StaffPermissionsPanel } from "@/components/settings/permissions/staff-permissions-panel";
 import { StudentImportPanel } from "@/components/settings/student-import/student-import-panel";
 
 interface Section {
@@ -14,13 +15,20 @@ interface Section {
 
 const SECTIONS: Section[] = [
   {
+    key: "staff-permissions",
+    label: "Staff & Permissions",
+    description: "Manage designations and the modules each one can access.",
+    icon: ShieldCheck,
+    component: StaffPermissionsPanel,
+  },
+  {
     key: "student-import",
     label: "Bulk Student Import",
     description: "Add many students at once from an Excel file.",
     icon: FileSpreadsheet,
     component: StudentImportPanel,
   },
-  // add: School Profile, Academic, Staff & Permissions, Notifications, Account
+  // add: School Profile, Academic, Notifications, Account
 ];
 
 export default function SettingsPage() {

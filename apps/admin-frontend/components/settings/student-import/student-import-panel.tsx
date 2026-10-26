@@ -295,7 +295,7 @@ export function StudentImportPanel() {
             <Select
               value={academicYearId}
               onValueChange={(v) => {
-                setAcademicYearId(v);
+                setAcademicYearId(v ?? "");
                 setClassId("");
                 setSectionId("");
               }}
@@ -327,7 +327,7 @@ export function StudentImportPanel() {
               value={classId}
               disabled={!academicYearId || multiClass}
               onValueChange={(v) => {
-                setClassId(v);
+                setClassId(v ?? "");
                 setSectionId("");
               }}
             >
@@ -355,7 +355,7 @@ export function StudentImportPanel() {
             <Select
               value={sectionId}
               disabled={!classId || multiClass}
-              onValueChange={setSectionId}
+              onValueChange={(v) => setSectionId(v ?? "")}
             >
               <SelectTrigger className={triggerClass}>
                 <SelectValue placeholder="Select section">
@@ -365,6 +365,7 @@ export function StudentImportPanel() {
                   }
                 </SelectValue>
               </SelectTrigger>
+
               <SelectContent>
                 {sectionOptions.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
