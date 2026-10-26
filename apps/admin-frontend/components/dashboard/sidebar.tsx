@@ -29,7 +29,7 @@ import { Module } from "@/lib/permissions/module.enum";
 interface DashboardSidebarProps {
   user: {
     id: string;
-    email?: string;
+    email?: string | null;
     role: string;
     allowedModules?: string[];
   };
